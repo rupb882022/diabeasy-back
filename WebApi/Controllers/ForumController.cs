@@ -19,9 +19,10 @@ namespace WebApi.Controllers
         public IHttpActionResult Get(string type)
         {
             try
-            { switch (type) {
+            {
+                switch (type)
+                {
                     case "all":
-               
                         string sqlQuery = @"select F.id,date_time,subject,value,
                                             CASE
                                             WHEN P.firstname is not null
@@ -41,7 +42,6 @@ namespace WebApi.Controllers
                         from tblForum F left join tblPatients P on F.Patients_id = P.id
                         left join tblDoctor D on F.Doctor_id = D.id
                         order by subject,Id_Continue_comment";
-
                         SqlDataAdapter adpter = new SqlDataAdapter(sqlQuery, con);
                         DataSet ds = new DataSet();
                         adpter.Fill(ds, "tblForum");
@@ -49,20 +49,20 @@ namespace WebApi.Controllers
                         object[] allComents = new object[dt.Rows.Count];
 
                         object obj;
-                        for (int index= 0; index < dt.Rows.Count; index++)
+                        for (int index = 0; index < dt.Rows.Count; index++)
                         {
                             obj = new { id = dt.Rows[index]["id"].ToString(), date_time = dt.Rows[index]["date_time"].ToString(), subject = dt.Rows[index]["subject"].ToString(), value = dt.Rows[index]["value"].ToString(), userName = dt.Rows[index]["userName"].ToString(), userId = dt.Rows[index]["userId"].ToString(), Id_Continue_comment = dt.Rows[index]["Id_Continue_comment"].ToString() };
                             allComents[index] = obj;
                         }
 
                         return Content(HttpStatusCode.OK, allComents);
-                
-                case "subject":
-                    List<string> subjects = DB.tblForum.Select(x => x.subject).Distinct().ToList();
-                     return Content(HttpStatusCode.OK, subjects);
+
+                    case "subject":
+                        List<string> subjects = DB.tblForum.Select(x => x.subject).Distinct().ToList();
+                        return Content(HttpStatusCode.OK, subjects);
                     default:
                         return null;
-            }
+                }
             }
             catch (Exception e)
             {
@@ -70,24 +70,24 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
-     
+
         }
 
-        public IHttpActionResult Post([FromBody] tblForum obj,string type)
+        public IHttpActionResult Post([FromBody] tblForum obj, string type)
         {
             try
             {
                 switch (type)
                 {
                     case "add_comment":
-                      
+
                         DB.tblForum.Add(obj);
                         DB.SaveChanges();
                         return Created(new Uri(Request.RequestUri.AbsoluteUri + obj.id), obj);
-                       
+
                     default:
                         return null;
-                    
+
                 }
             }
             catch (Exception e)
