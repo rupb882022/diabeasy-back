@@ -11,6 +11,7 @@ using System.Data;
 
 namespace WebApi.Controllers
 {
+    //[RoutePrefix("api/forun")]
     public class ForumController : ApiController
     {
         diabeasyDBContext DB = new diabeasyDBContext();
@@ -100,6 +101,15 @@ namespace WebApi.Controllers
                 tblForum comment = DB.tblForum.SingleOrDefault(x => x.id == id);
                 if (comment != null)
                 {
+                    List<tblForum> Continue_comments = DB.tblForum.Where(x => x.Id_Continue_comment == id).ToList();
+                    if (Continue_comments != null)
+                    {
+                        foreach (tblForum item in Continue_comments)
+                        {
+                            DB.tblForum.Remove(item);
+                        }
+                     
+                    }
                     DB.tblForum.Remove(comment);
                     DB.SaveChanges();
                     return Content(HttpStatusCode.OK, comment);
