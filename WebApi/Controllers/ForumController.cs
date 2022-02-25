@@ -61,34 +61,70 @@ namespace WebApi.Controllers
                         List<string> subjects = DB.tblForum.Select(x => x.subject).Distinct().ToList();
                         return Content(HttpStatusCode.OK, subjects);
                     default:
-                        return null;
+                        return Content(HttpStatusCode.NotFound, type+" is not exist"); 
                 }
             }
             catch (Exception e)
             {
-
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
 
         }
 
-        public IHttpActionResult Post([FromBody] tblForum obj, string type)
+        public IHttpActionResult Post(string type,[FromBody] tblForum obj)
         {
             try
             {
                 switch (type)
                 {
                     case "add_comment":
-
                         DB.tblForum.Add(obj);
                         DB.SaveChanges();
                         return Created(new Uri(Request.RequestUri.AbsoluteUri + obj.id), obj);
-
                     default:
-                        return null;
+                        return Content(HttpStatusCode.NotFound, type + " is not exist");
 
                 }
+            }
+            catch (Exception e)
+            {
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        public IHttpActionResult Delete(int id)
+        {
+            try
+            {
+                tblForum comment = DB.tblForum.SingleOrDefault(x => x.id == id);
+                if (comment != null)
+                {
+                    DB.tblForum.Remove(comment);
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, comment);
+                }
+                return Content(HttpStatusCode.NotFound,"id="+ id + "of comment is not found");
+            }
+            catch (Exception e)
+            {
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        public IHttpActionResult Put(int id,[FromBody] tblForum obj )
+        {
+            try
+            {
+                tblForum comment = DB.tblForum.SingleOrDefault(x => x.id == id);
+                if (comment != null)
+                {
+                    comment.value = obj.value;
+                    comment.subject = obj.subject;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, comment);
+                }
+                return Content(HttpStatusCode.NotFound, "id=" + id + "of comment is not found");
             }
             catch (Exception e)
             {

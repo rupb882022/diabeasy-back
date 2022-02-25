@@ -13,7 +13,7 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         public IHttpActionResult Get(string url, int id)
         {
-            int assisant_phone = 0;
+            string assisant_phone="";
 
             try
             {
@@ -21,18 +21,16 @@ namespace WebApi.Controllers
                 {
                     case "assistant_phone":
                         tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
-                        if (patient == null)
+                        if (patient != null)
                         {
-                            return Content(HttpStatusCode.OK, assisant_phone);
+                            assisant_phone = patient.assistant_phone.ToString();
                         }
-                        assisant_phone = (int)patient.assistant_phone;
                         break;
 
                     default:
                         return null;
                 }
-                //List<string> s = DB.tblPatients.Select(x => x.firstname + " " + x.lastname + "  email:" + x.email).ToList();
-                return null;
+                return Content(HttpStatusCode.OK, assisant_phone);
             }
             catch (Exception e)
             {
