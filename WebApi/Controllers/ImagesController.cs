@@ -36,7 +36,7 @@ namespace WebApi.Controllers
         }
 
 
-        [Route("uploadpicture")]
+        [Route("api/uploadpicture")]
         public Task<HttpResponseMessage> Post()
         {
             string outputForNir = "start---";
@@ -96,7 +96,7 @@ namespace WebApi.Controllers
                         catch (Exception ex)
                         {
                             outputForNir += " ---excption=" + ex.Message;
-                            string message = ex.Message;
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, outputForNir);
                         }
                     }
 
