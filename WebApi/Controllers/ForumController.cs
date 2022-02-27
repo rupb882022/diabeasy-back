@@ -35,6 +35,11 @@ namespace WebApi.Controllers
                                             THEN P.id
                                             ELSE D.id
                                             END as userId,
+	                                         CASE
+                                            WHEN P.profileimage is not null
+                                            THEN P.profileimage
+                                            ELSE D.profileimage
+                                            END as profileimage,
                                          CASE
                                             WHEN F.Id_Continue_comment is  null
                                             THEN 0
@@ -52,7 +57,7 @@ namespace WebApi.Controllers
                         object obj;
                         for (int index = 0; index < dt.Rows.Count; index++)
                         {
-                            obj = new { id = dt.Rows[index]["id"].ToString(), date_time = dt.Rows[index]["date_time"].ToString(), subject = dt.Rows[index]["subject"].ToString(), value = dt.Rows[index]["value"].ToString(), userName = dt.Rows[index]["userName"].ToString(), userId = dt.Rows[index]["userId"].ToString(), Id_Continue_comment = dt.Rows[index]["Id_Continue_comment"].ToString() };
+                            obj = new { id = dt.Rows[index]["id"].ToString(), date_time = dt.Rows[index]["date_time"].ToString(), subject = dt.Rows[index]["subject"].ToString(), value = dt.Rows[index]["value"].ToString(), userName = dt.Rows[index]["userName"].ToString(), userId = dt.Rows[index]["userId"].ToString(), profileimage = dt.Rows[index]["profileimage"].ToString(), Id_Continue_comment = dt.Rows[index]["Id_Continue_comment"].ToString() };
                             allComents[index] = obj;
                         }
 
