@@ -67,7 +67,7 @@ namespace WebApi.Controllers
                         List<string> subjects = DB.tblForum.Select(x => x.subject).Distinct().ToList();
                         return Content(HttpStatusCode.OK, subjects);
                     default:
-                        return Content(HttpStatusCode.NotFound, type+" is not exist"); 
+                        return Content(HttpStatusCode.NotFound, type + " is not exist");
                 }
             }
             catch (Exception e)
@@ -78,25 +78,41 @@ namespace WebApi.Controllers
 
         }
 
-        public IHttpActionResult Post(string type,[FromBody] tblForum obj)
+        public dynamic Post(string type, [FromBody] tblForum obj)
         {
+            //Dictionary<string, string> res = new Dictionary<string, string>();
+            //res.Add("start", "start");
             try
             {
+                //res.Add("type", type);
+                //res.Add("id", obj.id.ToString());
+                //res.Add("subject", obj.subject.ToString());
+                //res.Add("value", obj.value.ToString());
+                //res.Add("date", obj.date_time.ToString());
+                //res.Add("Patients_id", obj.Patients_id.ToString());
+                //res.Add("Id_Continue_comment", obj.Id_Continue_comment.ToString());
                 switch (type)
                 {
-                    case "add_comment":
+                    case "addComment":
                         DB.tblForum.Add(obj);
+                        //res.Add("id1", obj.id.ToString());
                         DB.SaveChanges();
-                        return Created(new Uri(Request.RequestUri.AbsoluteUri + obj.id), obj);
+                        //res.Add("id3", obj.id.ToString());
+                       
+                        return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                     default:
+     
                         return Content(HttpStatusCode.NotFound, type + " is not exist");
-
                 }
+               
             }
             catch (Exception e)
             {
-                return Content(HttpStatusCode.BadRequest, e.Message);
+
+                return Content(HttpStatusCode.BadRequest, "some exption happend");
             }
+         
+        
         }
 
         public IHttpActionResult Delete(int id)
@@ -113,13 +129,13 @@ namespace WebApi.Controllers
                         {
                             DB.tblForum.Remove(item);
                         }
-                     
+
                     }
                     DB.tblForum.Remove(comment);
                     DB.SaveChanges();
                     return Content(HttpStatusCode.OK, comment);
                 }
-                return Content(HttpStatusCode.NotFound,"id="+ id + "of comment is not found");
+                return Content(HttpStatusCode.NotFound, "id=" + id + "of comment is not found");
             }
             catch (Exception e)
             {
@@ -127,7 +143,7 @@ namespace WebApi.Controllers
             }
         }
 
-        public IHttpActionResult Put(int id,[FromBody] tblForum obj )
+        public IHttpActionResult Put(int id, [FromBody] tblForum obj)
         {
             try
             {
