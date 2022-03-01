@@ -65,7 +65,9 @@ namespace WebApi.Controllers
                             outputForNir += " ---here2=" + name;
 
                             //need the guid because in react native in order to refresh an inamge it has to have a new name
-                            string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + CreateDateTimeWithValidChars() + Path.GetExtension(name);
+//                            string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + CreateDateTimeWithValidChars() + Path.GetExtension(name);
+                            string newFileName = CreateNewNameOrMakeItUniqe(Path.GetFileNameWithoutExtension(name));
+
                             //string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + Guid.NewGuid() + Path.GetExtension(name);
                             //string newFileName = name + "" + Guid.NewGuid();
                             outputForNir += " ---here3" + newFileName;
@@ -108,6 +110,38 @@ namespace WebApi.Controllers
         private string CreateDateTimeWithValidChars()
         {
             return DateTime.Now.ToString().Replace('/', '_').Replace(':', '-').Replace(' ', '_');
+        }
+
+        private string CreateNewNameOrMakeItUniqe(string name)
+        {
+            string start = Path.GetFileNameWithoutExtension(name);
+            string end = Path.GetExtension(name);
+            try
+            {
+              switch (name)
+                 {
+                case "profileDoctor":
+                   tblDoctor doctor= DB.tblDoctor.OrderByDescending(x => x.id).FirstOrDefault();
+                        int newDoctorId = doctor.id + 2;
+                        return start+newDoctorId.ToString()+end;
+                    
+                case "profilePatient":
+                   tblPatients patient = DB.tblPatients.OrderByDescending(x => x.id).FirstOrDefault();
+                        int newPatientId = patient.id + 2;
+                        return start+newPatientId.ToString()+end;
+
+                        // case for ingredients and recipes.
+
+                    default:
+                return start+end;
+            }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+
         }
     }
 
