@@ -80,25 +80,14 @@ namespace WebApi.Controllers
 
         public dynamic Post(string type, [FromBody] tblForum obj)
         {
-            //Dictionary<string, string> res = new Dictionary<string, string>();
-            //res.Add("start", "start");
+          
             try
             {
-                //res.Add("type", type);
-                //res.Add("id", obj.id.ToString());
-                //res.Add("subject", obj.subject.ToString());
-                //res.Add("value", obj.value.ToString());
-                //res.Add("date", obj.date_time.ToString());
-                //res.Add("Patients_id", obj.Patients_id.ToString());
-                //res.Add("Id_Continue_comment", obj.Id_Continue_comment.ToString());
                 switch (type)
                 {
                     case "addComment":
                         DB.tblForum.Add(obj);
-                        //res.Add("id1", obj.id.ToString());
                         DB.SaveChanges();
-                        //res.Add("id3", obj.id.ToString());
-                       
                         return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                     default:
      
@@ -109,7 +98,7 @@ namespace WebApi.Controllers
             catch (Exception e)
             {
 
-                return Content(HttpStatusCode.BadRequest, "some exption happend");
+                return Content(HttpStatusCode.BadRequest, e.Message);
             }
          
         
@@ -153,7 +142,7 @@ namespace WebApi.Controllers
                     comment.value = obj.value;
                     comment.subject = obj.subject;
                     DB.SaveChanges();
-                    return Content(HttpStatusCode.OK, comment);
+                    return Content(HttpStatusCode.OK, new { id = comment.id, value = comment.value, subject = comment.subject });
                 }
                 return Content(HttpStatusCode.NotFound, "id=" + id + "of comment is not found");
             }
