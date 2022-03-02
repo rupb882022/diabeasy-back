@@ -67,7 +67,7 @@ namespace WebApi.Controllers
                         List<string> subjects = DB.tblForum.Select(x => x.subject).Distinct().ToList();
                         return Content(HttpStatusCode.OK, subjects);
                     default:
-                        return Content(HttpStatusCode.NotFound, type + " is not exist");
+                        return Content(HttpStatusCode.NotFound, type+" is not exist"); 
                 }
             }
             catch (Exception e)
@@ -78,30 +78,25 @@ namespace WebApi.Controllers
 
         }
 
-        public dynamic Post(string type, [FromBody] tblForum obj)
+        public IHttpActionResult Post(string type,[FromBody] tblForum obj)
         {
-          
             try
             {
                 switch (type)
                 {
-                    case "addComment":
+                    case "add_comment":
                         DB.tblForum.Add(obj);
                         DB.SaveChanges();
                         return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                     default:
-     
                         return Content(HttpStatusCode.NotFound, type + " is not exist");
+
                 }
-               
             }
             catch (Exception e)
             {
-
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
-         
-        
         }
 
         public IHttpActionResult Delete(int id)
@@ -118,13 +113,13 @@ namespace WebApi.Controllers
                         {
                             DB.tblForum.Remove(item);
                         }
-
+                     
                     }
                     DB.tblForum.Remove(comment);
                     DB.SaveChanges();
                     return Content(HttpStatusCode.OK, comment);
                 }
-                return Content(HttpStatusCode.NotFound, "id=" + id + "of comment is not found");
+                return Content(HttpStatusCode.NotFound,"id="+ id + "of comment is not found");
             }
             catch (Exception e)
             {
@@ -132,7 +127,7 @@ namespace WebApi.Controllers
             }
         }
 
-        public IHttpActionResult Put(int id, [FromBody] tblForum obj)
+        public IHttpActionResult Put(int id,[FromBody] tblForum obj )
         {
             try
             {
