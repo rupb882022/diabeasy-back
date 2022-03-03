@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace diabeasy_back.Extention
+namespace diabeasy_back
 {
     [MetadataType(typeof(tblForumMetaData))]
     public partial class tblForum
     {
+        public void getName()
+        {
 
+        }
     }
     public class tblForumMetaData
     {
