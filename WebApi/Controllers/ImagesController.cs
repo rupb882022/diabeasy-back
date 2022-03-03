@@ -65,8 +65,8 @@ namespace WebApi.Controllers
                             outputForNir += " ---here2=" + name;
 
                             //need the guid because in react native in order to refresh an inamge it has to have a new name
-                           string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + CreateDateTimeWithValidChars() + Path.GetExtension(name);
-//                            string newFileName = CreateNewNameOrMakeItUniqe(Path.GetFileNameWithoutExtension(name)) + Path.GetExtension(name);
+ //                          string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + CreateDateTimeWithValidChars() + Path.GetExtension(name);
+                            string newFileName = CreateNewNameOrMakeItUniqe(Path.GetFileNameWithoutExtension(name)) + Path.GetExtension(name);
 
                             //string newFileName = Path.GetFileNameWithoutExtension(name) + "_" + Guid.NewGuid() + Path.GetExtension(name);
                             //string newFileName = name + "" + Guid.NewGuid();
@@ -107,43 +107,42 @@ namespace WebApi.Controllers
             return task;
         }
 
-        private string CreateDateTimeWithValidChars()
+        //private string CreateDateTimeWithValidChars()
+        //{
+        //    return DateTime.Now.ToString().Replace('/', '_').Replace(':', '-').Replace(' ', '_');
+        //}
+
+        private string CreateNewNameOrMakeItUniqe(string name)
         {
-           
-            return DateTime.Now.ToString().Replace('/', '_').Replace(':', '-').Replace(' ', '_');
+            string start = name;//Path.GetFileNameWithoutExtension(name);
+                                // string end = Path.GetExtension(name);
+            try
+            {
+                switch (name)
+                {
+                    case "profileDoctor":
+                        tblDoctor doctor = DB.tblDoctor.OrderByDescending(x => x.id).FirstOrDefault();
+                        int newDoctorId = doctor.id + 2;
+                        return start + newDoctorId.ToString();
+
+                    case "profilePatient":
+                        tblPatients patient = DB.tblPatients.OrderByDescending(x => x.id).FirstOrDefault();
+                        int newPatientId = patient.id + 2;
+                        return start + newPatientId.ToString();
+
+                    // case for ingredients and recipes.
+
+                    default:
+                        return start;
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+
         }
-
-        //    private string CreateNewNameOrMakeItUniqe(string name)
-        //    {
-        //        string start = name;//Path.GetFileNameWithoutExtension(name);
-        //       // string end = Path.GetExtension(name);
-        //        try
-        //        {
-        //          switch (name)
-        //             {
-        //            case "profileDoctor":
-        //               tblDoctor doctor= DB.tblDoctor.OrderByDescending(x => x.id).FirstOrDefault();
-        //                    int newDoctorId = doctor.id + 2;
-        //                    return start+newDoctorId.ToString();
-
-        //            case "profilePatient":
-        //               tblPatients patient = DB.tblPatients.OrderByDescending(x => x.id).FirstOrDefault();
-        //                    int newPatientId = patient.id + 2;
-        //                    return start+newPatientId.ToString();
-
-        //                    // case for ingredients and recipes.
-
-        //                default:
-        //            return start;
-        //        }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return e.Message;
-        //        }
-
-
-        //    }
     }
 
 
