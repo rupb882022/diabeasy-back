@@ -95,14 +95,16 @@ namespace WebApi.Controllers
                     case "getPassword":
                         try
                         {
+                     
                             Random rnd = new Random();
                             string code = rnd.Next(100, 1000).ToString();//generet 3 digits code
-                            string userType=user.getTypeByMail(mail);
+                         string userType = user.GetTypeByMail(mail);
 
                             if (userType == "Patient")
                             {
                                 code += "1";
-                            } else if(userType== "doctor")
+                            }
+                            else if (userType == "doctor")
                             {
                                 code += "0";
                             }

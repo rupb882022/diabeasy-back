@@ -10,7 +10,7 @@ namespace diabeasy_back
     public class User
     {
         diabeasyDBContext DB = new diabeasyDBContext();
-
+       
         public bool sendEmial(string mail, string subject, string Body)
         {
 
@@ -39,7 +39,7 @@ namespace diabeasy_back
             }
 
         }
-        public string getTypeByMail(string mail)
+        public string GetTypeByMail(string mail)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace diabeasy_back
                 }
                 return "Patient";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //logger
                 return null;
