@@ -120,17 +120,12 @@ namespace WebApi.Controllers
                             {
                                 throw new Exception("email is not send");
                             }
-<<<<<<< HEAD
-                        }
-                        catch (Exception e)
-                        {
-=======
+
 
                         }
                         catch (Exception e)
                         {
 
->>>>>>> tal
                             return Content(HttpStatusCode.BadRequest, e.Message);
                         }
                     default:
