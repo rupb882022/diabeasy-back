@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Web.Http;
+using System.Text;
 
 namespace WebApi.Controllers
 {
     public class PatientsController : ApiController
     {
         diabeasyDBContext DB = new diabeasyDBContext();
+        User user = new User();
         public IHttpActionResult Get(string url, int id)
         {
-            string assisant_phone="";
+            string assisant_phone = "";
 
             try
             {
@@ -44,7 +47,7 @@ namespace WebApi.Controllers
         {
 
             try
-            {
+            {//ToDo function for doctor
                 switch (url)
                 {
                     case "userDetails":
@@ -58,9 +61,74 @@ namespace WebApi.Controllers
                         {
                             throw new Exception();
                         }
+                    case "setNewpassword":
+                        tblPatients Patients = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
+                        if (Patients != null)
+                        {
+                            Patients.password = password;
+                            DB.SaveChanges();
+                            return Content(HttpStatusCode.OK, Patients);
+                        }
+                        throw new Exception("do not found user- worng email");
 
                     default:
-                        break;  
+                        break;
+                }
+                return null;
+
+            }
+            catch (Exception e)
+            {
+
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
+        public IHttpActionResult Get(string url, string mail)
+        {
+
+            try
+            {
+
+                switch (url)
+                {
+                    case "getPassword":
+                        try
+                        {
+                            Random rnd = new Random();
+                            string code = rnd.Next(100, 1000).ToString();//generet 3 digits code
+                            string userType=user.getTypeByMail(mail);
+
+                            if (userType == "Patient")
+                            {
+                                code += "1";
+                            } else if(userType== "doctor")
+                            {
+                                code += "0";
+                            }
+                            else
+                            {
+                                throw new Exception("do not found email");
+                            }
+
+                            bool reqest = user.sendEmial(mail, "reset password", $"please enter this code-{code} in app to reset password");
+                            if (reqest)
+                            {
+                                return Content(HttpStatusCode.OK, code);
+                            }
+                            else
+                            {
+                                throw new Exception("email is not send");
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+
+                            return Content(HttpStatusCode.BadRequest, e.Message);
+                        }
+                    default:
+                        break;
                 }
                 return null;
 

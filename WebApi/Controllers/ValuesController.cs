@@ -15,20 +15,9 @@ namespace WebApi.Controllers
         
         // GET api/values
         [HttpGet]
-        public IEnumerable <string> Get()
+        public string Get()
         {
-            try
-            {
-                List<string> s = DB.tblPatients.Select(x => x.firstname + " " + x.lastname + "  email:" + x.email).ToList();
-                //return Content(HttpStatusCode.OK,s);
-                return s;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-           
+            return "value1";
         }
 
         // GET api/values/5
