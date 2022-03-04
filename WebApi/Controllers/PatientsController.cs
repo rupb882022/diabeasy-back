@@ -104,6 +104,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("api/Patients/getPassword/{email}")]
+        [AllowAnonymous]
         public IHttpActionResult getPassword(string email)
         {
             try

@@ -9,14 +9,16 @@ using System.Web.Http;
 using Newtonsoft.Json;
 using System.Data;
 using NLog;
+using System.Configuration;
 
 namespace WebApi.Controllers
 {
     //[RoutePrefix("api/forun")]
     public class ForumController : ApiController
     {
+
         diabeasyDBContext DB = new diabeasyDBContext();
-        SqlConnection con = new SqlConnection("Data Source=media.ruppin.ac.il;Initial Catalog=bgroup88_test2;Persist Security Info=True;User ID=bgroup88;Password=bgroup88_06613;MultipleActiveResultSets=True;Application Name=EntityFramework");
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
 
         [HttpGet]
@@ -26,6 +28,7 @@ namespace WebApi.Controllers
             try
             {
 
+              
                 string sqlQuery = @"select F.id,date_time,subject,value,
                                             CASE
                                             WHEN P.firstname is not null

@@ -15,7 +15,7 @@ namespace diabeasy_back
     public class tblForumMetaData
     {
         //[Range(0, 100, "my messge")]
-        [Required(AllowEmptyStrings = false,ErrorMessage ="value cannot be empty")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "value cannot be empty")]
         public string value;
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "subject cannot be empty")]
