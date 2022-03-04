@@ -4,14 +4,17 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 
 namespace diabeasy_back
 {
     public class User
     {
         diabeasyDBContext DB = new diabeasyDBContext();
-       
-        public bool sendEmial(string mail, string subject, string Body)
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
+
+        public bool SendMial(string mail, string subject, string Body)
         {
 
             string from = "diabeasyapp@gmail.com"; //From address    
@@ -20,7 +23,8 @@ namespace diabeasy_back
             message.Body = Body;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
+            SmtpClient client = new SmtpClient("smtp.gmail.com",587); //Gmail smtp    
+            client.UseDefaultCredentials = false;
             System.Net.NetworkCredential basicCredential1 = new
             System.Net.NetworkCredential("diabeasyapp", "talgalidan");
             client.EnableSsl = true;
@@ -31,10 +35,9 @@ namespace diabeasy_back
                 client.Send(message);
                 return true;
             }
-
             catch (Exception ex)
             {
-                //logger
+                logger.Fatal("the " + message + " was not send");
                 return false;
             }
 
@@ -50,7 +53,7 @@ namespace diabeasy_back
                     tblDoctor d = DB.tblDoctor.Where(x => x.email == mail).SingleOrDefault();
                     if (d == null)
                     {
-                        throw new Exception("do not find email");
+                        throw new Exception("do not found email");
                     }
                     else
                     {
@@ -61,7 +64,7 @@ namespace diabeasy_back
             }
             catch (Exception ex)
             {
-                //logger
+                logger.Fatal("do not found user in DB");
                 return null;
             }
 

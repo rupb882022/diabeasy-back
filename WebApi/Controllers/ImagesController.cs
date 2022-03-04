@@ -107,11 +107,7 @@ namespace WebApi.Controllers
             return task;
         }
 
-        //private string CreateDateTimeWithValidChars()
-        //{
-        //    return DateTime.Now.ToString().Replace('/', '_').Replace(':', '-').Replace(' ', '_');
-        //}
-
+        //TODO out to Extention folder
         private string CreateNewNameOrMakeItUniqe(string name)
         {
             string start = name;//Path.GetFileNameWithoutExtension(name);

@@ -10,10 +10,7 @@ namespace diabeasy_back
     [MetadataType(typeof(tblForumMetaData))]
     public partial class tblForum
     {
-        public void getName()
-        {
-
-        }
+  
     }
     public class tblForumMetaData
     {
