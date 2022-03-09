@@ -6,13 +6,13 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Web.Http;
-using System.Text;
+using WebApi.DTO;
 using System.Data.Entity.Infrastructure;
 using NLog;
 
 namespace WebApi.Controllers
 {
-    public class PatientsController : ApiController
+    public class UserController : ApiController
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
@@ -20,15 +20,15 @@ namespace WebApi.Controllers
 
 
         [HttpGet]
-        [Route("api/Prescription/{id}")]
-        public IHttpActionResult Get(int id)
+        [Route("api/User/Prescription/{id}")]
+        public IHttpActionResult Prescription(int id)
         {
             List<tblPrescriptions> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptions() { id=x.id, date_time= x.date_time, subject= x.subject, value= x.value }).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
 
         [HttpGet]
-        [Route("api/Patients/assistant_phone/{id}")]
+        [Route("api/User/assistant_phone/{id}")]
         public IHttpActionResult assistant_phone(int id)
         {
             string assisant_phone = "";
@@ -52,7 +52,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/Patients/userDetails/{email}/{password}")]
+        [Route("api/User/userDetails/{email}/{password}")]
         public IHttpActionResult userDetails(string email, string password)
         {
             try
@@ -82,11 +82,11 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/Patients/setNewpassword/{email}/{password}")]
+        [Route("api/User/setNewpassword/{email}/{password}")]
         public IHttpActionResult setNewpassword(string email, string password)
         {
             try
-            {//ToDo function for doctor
+            {//ToDo function for doctor and checnge method to post
                 tblPatients Patients = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
                 if (Patients != null)
                 {
@@ -111,7 +111,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/Patients/getPassword/{email}")]
+        [Route("api/User/getPassword/{email}")]
         [AllowAnonymous]
         public IHttpActionResult getPassword(string email)
         {
@@ -151,6 +151,34 @@ namespace WebApi.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("api/User/getInsulinType")]
+        public IHttpActionResult getInsulinType()
+        {
+            try
+            {
+                List<tblInsulinTypeDto> Types = DB.tblInsulinType.Select(x => new tblInsulinTypeDto() { id = x.id, name = x.name, type = x.type }).ToList();
+                if (Types != null)
+                {
+                    return Content(HttpStatusCode.OK, Types);
+                }
+                else
+                {
+                    return Content(HttpStatusCode.BadRequest, "no types");
+                }
 
+            }
+            //handel erorrs from DB like uniqe value
+            catch (DbUpdateException e)
+            {
+                logger.Fatal("DB Eror");
+                return Content(HttpStatusCode.BadRequest, e.InnerException.InnerException.Message);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
     }
 }

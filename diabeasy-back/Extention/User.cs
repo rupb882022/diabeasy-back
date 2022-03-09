@@ -34,7 +34,7 @@ namespace diabeasy_back
                 client.Send(message);
                 return true;
             }
-            catch (Exception )
+            catch (Exception ex)
             {
                 logger.Fatal("the " + message + " was not send"+ ex.Message);
                 return false;
