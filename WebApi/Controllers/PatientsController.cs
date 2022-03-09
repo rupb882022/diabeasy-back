@@ -8,7 +8,7 @@ using System.Net.Mail;
 using System.Web.Http;
 using System.Text;
 using System.Data.Entity.Infrastructure;
-//using NLog;
+using NLog;
 
 namespace WebApi.Controllers
 {
@@ -16,10 +16,10 @@ namespace WebApi.Controllers
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
-        // static Logger logger = LogManager.GetCurrentClassLogger();
+        static Logger logger = LogManager.GetCurrentClassLogger();
 
         [Route("api/Prescription/{id}")]
-        // GET: api/Prescription/5
+        //GET: api/Prescription/5
         public IHttpActionResult Get(int id)
         {
             var allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new { x.id, x.date_time, x.subject, x.value }).ToList();
@@ -44,7 +44,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-          //      logger.Error("do not found assistant_phone");
+                logger.Error("do not found assistant_phone");
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
@@ -70,12 +70,12 @@ namespace WebApi.Controllers
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)
             {
-                //logger.Fatal("DB Eror");
+                logger.Fatal("DB Eror");
                 return Content(HttpStatusCode.BadRequest, e.InnerException.InnerException.Message);
             }
             catch (Exception e)
             {
-           //     logger.Fatal(e.Message);
+                logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -99,12 +99,12 @@ namespace WebApi.Controllers
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)
             {
-       //         logger.Fatal("DB Eror");
+                logger.Fatal("DB Eror");
                 return Content(HttpStatusCode.BadRequest, e.InnerException.InnerException.Message);
             }
             catch (Exception e)
             {
-       //         logger.Fatal(e.Message);
+               logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -146,7 +146,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-         //       logger.Fatal(e.Message);
+                logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
