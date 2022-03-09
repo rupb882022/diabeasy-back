@@ -18,13 +18,13 @@ namespace WebApi.Controllers
         User user = new User();
         static Logger logger = LogManager.GetCurrentClassLogger();
 
-        [Route("api/Prescription/{id}")]
-        //GET: api/Prescription/5
-        public IHttpActionResult Get(int id)
-        {
-            var allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new { x.id, x.date_time, x.subject, x.value }).ToList();
-            return Content(HttpStatusCode.OK, allPrescriptions);
-        }
+      //  [Route("api/Prescription/{id}")]
+        //---------GET: api/Prescription/5
+        //public IHttpActionResult Get(int id)
+        //{
+          //  var allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new { x.id, x.date_time, x.subject, x.value }).ToList();
+            //return Content(HttpStatusCode.OK, allPrescriptions);
+       // }
 
         [HttpGet]
         [Route("api/Patients/assistant_phone/{id}")]
