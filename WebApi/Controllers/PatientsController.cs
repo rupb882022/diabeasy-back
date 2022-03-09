@@ -127,8 +127,7 @@ namespace WebApi.Controllers
                     throw new Exception("do not found email");
                 }
 
-                bool reqest = user.SendMial(email, "reset password", $"please enter this code-{code} in app to reset password");
-                if (reqest)
+                if (user.SendMial(email, "reset password", $"please enter this code-{code} in app to reset password"))
                 {
                     return Content(HttpStatusCode.OK, code);
                 }

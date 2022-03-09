@@ -16,14 +16,13 @@ namespace diabeasy_back
 
         public bool SendMial(string mail, string subject, string Body)
         {
-
             string from = "diabeasyapp@gmail.com"; //From address    
             MailMessage message = new MailMessage(from, mail);
             message.Subject = subject;
             message.Body = Body;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
-            SmtpClient client = new SmtpClient("smtp.gmail.com",587); //Gmail smtp    
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
             client.UseDefaultCredentials = false;
             System.Net.NetworkCredential basicCredential1 = new
             System.Net.NetworkCredential("diabeasyapp", "talgalidan");
@@ -37,7 +36,7 @@ namespace diabeasy_back
             }
             catch (Exception ex)
             {
-                logger.Fatal("the " + message + " was not send");
+                logger.Fatal("the " + message + " was not send"+ ex.Message);
                 return false;
             }
 

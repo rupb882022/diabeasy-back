@@ -26,9 +26,7 @@ namespace WebApi.Controllers
         public IHttpActionResult GetAllCommentsDetails()
         {
             try
-            {
-
-              
+            { 
                 string sqlQuery = @"select F.id,date_time,subject,value,
                                             CASE
                                             WHEN P.firstname is not null
