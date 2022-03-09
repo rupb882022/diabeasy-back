@@ -20,6 +20,14 @@ namespace WebApi.Controllers
 
 
         [HttpGet]
+        [Route("api/Prescription/{id}")]
+        public IHttpActionResult Get(int id)
+        {
+            List<tblPrescriptions> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptions() { id=x.id, date_time= x.date_time, subject= x.subject, value= x.value }).ToList();
+            return Content(HttpStatusCode.OK, allPrescriptions);
+        }
+
+        [HttpGet]
         [Route("api/Patients/assistant_phone/{id}")]
         public IHttpActionResult assistant_phone(int id)
         {
@@ -97,7 +105,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+               logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
