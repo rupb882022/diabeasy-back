@@ -8,8 +8,9 @@ using System.Net.Http;
 using System.Web.Http;
 using Newtonsoft.Json;
 using System.Data;
-using NLog;
+//using NLog;
 using System.Configuration;
+
 
 namespace WebApi.Controllers
 {
@@ -19,7 +20,7 @@ namespace WebApi.Controllers
 
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
-        static Logger logger = LogManager.GetCurrentClassLogger();
+     //   static Logger logger = LogManager.GetCurrentClassLogger();
 
         [HttpGet]
         [Route("api/Forum")]
@@ -70,7 +71,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+     //           logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -86,7 +87,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+       //         logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
@@ -104,7 +105,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+         //       logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -135,7 +136,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+            //    logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -157,7 +158,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Fatal(e.Message);
+               // logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }

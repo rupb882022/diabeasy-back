@@ -35,7 +35,7 @@ namespace diabeasy_back
                 client.Send(message);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 logger.Fatal("the " + message + " was not send");
                 return false;
@@ -62,7 +62,7 @@ namespace diabeasy_back
                 }
                 return "Patient";
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 logger.Fatal("do not found user in DB");
                 return null;
