@@ -186,7 +186,6 @@ namespace WebApi.Controllers
         {
             try
             {
-               
                 //cheack uniqe email
                 if (!user.checkUniqeMail(obj.email, obj.weight == null))
                 {
@@ -225,7 +224,7 @@ namespace WebApi.Controllers
                     }) ;
                     //todo triger to group user type
                     DB.SaveChanges();
-                    return Created(new Uri(Request.RequestUri.AbsoluteUri),Doctor_id);
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                 }
                 else
                 {
