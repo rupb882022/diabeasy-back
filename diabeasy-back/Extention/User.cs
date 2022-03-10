@@ -61,12 +61,62 @@ namespace diabeasy_back
                 }
                 return "Patient";
             }
-            catch (Exception )
+            catch (Exception ex)
             {
-                logger.Fatal("do not found user in DB");
+                logger.Fatal("do not found user in DB" + ex.Message);
                 return null;
             }
 
+        }
+        public Nullable<int> checkDoctorMail(string email)
+        {
+            try
+            {
+                return DB.tblDoctor.Where(x => x.email == email).Select(x => x.id).SingleOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+
+                logger.Fatal("do not found doctor in DB "+ex.Message);
+                return null;
+            }
+   
+        }
+        public bool checkUniqeMail(string email,bool isDoctor)
+        {
+            try
+            {
+                if (isDoctor)
+                {
+                   tblDoctor d= DB.tblDoctor.Where(x => x.email == email).SingleOrDefault();
+                    return d == null;
+                }
+                else
+                {
+                    tblPatients p = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
+                    return p == null;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                logger.Fatal("do not found doctor in DB " + ex.Message);
+                return false;
+            }
+
+        }
+        public string NameToUpper(string str)
+        {
+            if (str == null)
+                return null;
+
+            if (str.Length > 1)
+                return char.ToUpper(str[0]) + str.Substring(1);
+
+            return str.ToUpper();
         }
     }
 }

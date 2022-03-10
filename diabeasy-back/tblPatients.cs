@@ -43,6 +43,7 @@ namespace diabeasy_back
         public Nullable<int> InsulinType_id { get; set; }
         public Nullable<int> GroupType_id { get; set; }
         public Nullable<int> Doctor_id { get; set; }
+        public Nullable<int> InsulinType_long_id { get; set; }
     
         public virtual tblDoctor tblDoctor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -59,5 +60,6 @@ namespace diabeasy_back
         public virtual ICollection<tblPrescriptions> tblPrescriptions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblRecipes> tblRecipes { get; set; }
+        public virtual tblInsulinType tblInsulinType1 { get; set; }
     }
 }

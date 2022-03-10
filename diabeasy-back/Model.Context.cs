@@ -42,5 +42,6 @@ namespace diabeasy_back
         public virtual DbSet<tblPrescriptions> tblPrescriptions { get; set; }
         public virtual DbSet<tblRecipes> tblRecipes { get; set; }
         public virtual DbSet<tblUnitOfMeasure> tblUnitOfMeasure { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }
 }

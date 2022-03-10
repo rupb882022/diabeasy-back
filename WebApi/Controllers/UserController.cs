@@ -180,5 +180,82 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+        [HttpPost]
+        [Route("api/User/RegisterUser")]
+        public IHttpActionResult RegisterUser([FromBody] UserDto obj)
+        {
+            try
+            {
+                //cheack uniqe email
+                if (!user.checkUniqeMail(obj.email, obj.weight == null))
+                {
+                    return Content(HttpStatusCode.Conflict,"the email is allready exist");
+                }
+
+                //will upper first letter in first and last name
+                obj.firstName = user.NameToUpper(obj.firstName);
+                obj.lastName = user.NameToUpper(obj.lastName);
+
+                //if weight exesist it is patient else doctor
+                if (obj.weight != null)
+                {
+                    Nullable<int> Doctor_id =null;
+                    if (obj.mailDoctor !=null)
+                    {//Todo send mail to doctor+alert
+                         Doctor_id=user.checkDoctorMail(obj.mailDoctor);
+                    }
+
+                    //todo change gender to char
+                    DB.tblPatients.Add(new tblPatients()
+                    {
+                        email = obj.email,
+                        firstname = obj.firstName,
+                        lastname = obj.lastName,   
+                        birthdate=obj.BirthDate,
+                        password = obj.password,
+                        gender=obj.gender,
+                        profileimage=obj.image,
+                        height=obj.height,
+                        weight=obj.weight,
+                        InsulinType_id = obj.InsulinType_id,
+                        InsulinType_long_id = obj.InsulinType_long_id,
+                        assistant_phone =obj.phoneNumber,
+                        Doctor_id= Doctor_id,
+                    }) ;
+                    //todo triger to group user type
+                    DB.SaveChanges();
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri),Doctor_id);
+                }
+                else
+                {
+                    //todo change gender to char
+                    DB.tblDoctor.Add(new tblDoctor()
+                    {
+                        email = obj.email,
+                        firstname = obj.firstName,
+                        lastname = obj.lastName,
+                        birthdate = obj.BirthDate,
+                        password = obj.password,
+                        gender = obj.gender,
+                        profileimage = obj.image,
+                    });
+                    DB.SaveChanges();
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+                }
+                
+
+            }
+            //handel erorrs from DB like uniqe value, todo send messge back
+            catch (DbUpdateException e)
+            {
+                logger.Fatal("DB Eror- " + e.InnerException.InnerException.Message);
+                return Content(HttpStatusCode.BadRequest, e.InnerException.InnerException.Message);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
     }
 }

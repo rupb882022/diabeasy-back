@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Newtonsoft.Json;
+using WebApi.DTO;
 using System.Data;
 using NLog;
 using System.Configuration;
@@ -56,12 +56,22 @@ namespace WebApi.Controllers
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblForum");
                 DataTable dt = ds.Tables["tblForum"];
-                object[] allComents = new object[dt.Rows.Count];
+                tblForumDto[] allComents = new tblForumDto[dt.Rows.Count];
 
-                object obj;
                 for (int index = 0; index < dt.Rows.Count; index++)
                 {
-                    obj = new { id = dt.Rows[index]["id"].ToString(), date_time = dt.Rows[index]["date_time"].ToString(), subject = dt.Rows[index]["subject"].ToString(), value = dt.Rows[index]["value"].ToString(), userName = dt.Rows[index]["userName"].ToString(), userId = dt.Rows[index]["userId"].ToString(), profileimage = dt.Rows[index]["profileimage"].ToString(), Id_Continue_comment = dt.Rows[index]["Id_Continue_comment"].ToString() };
+                    tblForumDto obj = new tblForumDto()
+                    {
+                        id = dt.Rows[index]["id"].ToString(), 
+                        date_time = dt.Rows[index]["date_time"].ToString(),
+                        subject = dt.Rows[index]["subject"].ToString(),
+                        value = dt.Rows[index]["value"].ToString(),
+                        userName = dt.Rows[index]["userName"].ToString(),
+                        userId = dt.Rows[index]["userId"].ToString(),
+                        profileimage = dt.Rows[index]["profileimage"].ToString(),
+                        Id_Continue_comment = dt.Rows[index]["Id_Continue_comment"].ToString()
+                    };
+
                     allComents[index] = obj;
                 }
 

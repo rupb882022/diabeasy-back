@@ -18,6 +18,7 @@ namespace diabeasy_back
         public tblInsulinType()
         {
             this.tblPatients = new HashSet<tblPatients>();
+            this.tblPatients1 = new HashSet<tblPatients>();
         }
     
         public int id { get; set; }
@@ -26,5 +27,7 @@ namespace diabeasy_back
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPatients> tblPatients { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblPatients> tblPatients1 { get; set; }
     }
 }

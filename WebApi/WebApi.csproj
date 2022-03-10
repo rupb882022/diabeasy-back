@@ -181,7 +181,9 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\PrescriptionController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DTO\tblForumDto.cs" />
     <Compile Include="DTO\tblInsulinTypeDto.cs" />
+    <Compile Include="DTO\UserDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

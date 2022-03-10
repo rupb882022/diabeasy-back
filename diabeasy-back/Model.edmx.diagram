@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b2526f23a12244a2b0748405a0cdbb2c" Name="Diagram1" ZoomLevel="42">
+      <Diagram DiagramId="b2526f23a12244a2b0748405a0cdbb2c" Name="Diagram1" ZoomLevel="116">
         <EntityTypeShape EntityType="diabeasyModel.tblATE_Ingredients" Width="1.5" PointX="13.5" PointY="14.25" IsExpanded="true" />
         <EntityTypeShape EntityType="diabeasyModel.tblATE_Recipes" Width="1.5" PointX="13.5" PointY="10.375" IsExpanded="true" />
         <EntityTypeShape EntityType="diabeasyModel.tblBelong" Width="1.5" PointX="16.5" PointY="14.625" IsExpanded="true" />
@@ -48,6 +48,8 @@
         <AssociationConnector Association="diabeasyModel.tblEventOf" ManuallyRouted="false" />
         <AssociationConnector Association="diabeasyModel.tblPartOf_Ingredients" ManuallyRouted="false" />
         <AssociationConnector Association="diabeasyModel.tblPartOf_Recipes" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="diabeasyModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" />
+        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Insul__70A8B9AE" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
