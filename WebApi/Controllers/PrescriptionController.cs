@@ -12,6 +12,7 @@ namespace WebApi.Controllers
     public class PrescriptionController : ApiController
     {
         diabeasyDBContext DB = new diabeasyDBContext();
+        User user = new User();
 
         // GET: api/Prescription
         public IEnumerable<string> Get()
@@ -19,6 +20,7 @@ namespace WebApi.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        // todo - move to user 
         [Route("api/Prescription/{id}")]
         // GET: api/Prescription/5
         public IHttpActionResult Get(int id)
@@ -26,6 +28,8 @@ namespace WebApi.Controllers
             var allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x=>x.date_time).Select(x => new {x.id, x.date_time, x.subject, x.value }).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
+
+        // todo - move to user + make an official mail for the doctor 
         // POST: api/Prescription
         [HttpPost]
         [Route("api/Prescription/addRequest")]
@@ -33,9 +37,20 @@ namespace WebApi.Controllers
         {
             try
             {
-                DB.tblPrescriptions.Add(obj);
-                DB.SaveChanges();
-                return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+
+                tblDoctor d = DB.tblDoctor.Where(x => x.id == obj.Doctor_id).SingleOrDefault();
+                tblPatients p = DB.tblPatients.Where(x => x.id == obj.Patients_id).SingleOrDefault();
+                if (user.SendMial(d.email.ToString(), "New Prescription Request", $"your patient -{p.firstname+ " " + p.lastname} ask for {obj.subject}...."))
+                {
+                     DB.tblPrescriptions.Add(obj);
+                     DB.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("email is not send");
+                }
+                
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
             }
             catch (Exception e)
             {
