@@ -76,7 +76,7 @@ namespace WebApi.Controllers
                             string[] names = Directory.GetFiles(rootPath);
                             foreach (var fileName in names)
                             {
-                                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(name)) != -1)
+                                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
                                 {
                                     File.Delete(fileName);
                                 }
