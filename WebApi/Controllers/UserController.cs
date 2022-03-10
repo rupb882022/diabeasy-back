@@ -186,6 +186,7 @@ namespace WebApi.Controllers
         {
             try
             {
+               
                 //cheack uniqe email
                 if (!user.checkUniqeMail(obj.email, obj.weight == null))
                 {
