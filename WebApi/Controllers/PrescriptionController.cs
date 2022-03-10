@@ -38,17 +38,17 @@ namespace WebApi.Controllers
             try
             {
 
-                tblDoctor d = DB.tblDoctor.Where(x => x.id == obj.Doctor_id).SingleOrDefault();
-                tblPatients p = DB.tblPatients.Where(x => x.id == obj.Patients_id).SingleOrDefault();
-                if (user.SendMial(d.email.ToString(), "New Prescription Request", $"your patient -{p.firstname+ " " + p.lastname} ask for {obj.subject}...."))
-                {
+                //tblDoctor d = DB.tblDoctor.Where(x => x.id == obj.Doctor_id).SingleOrDefault();
+                //tblPatients p = DB.tblPatients.Where(x => x.id == obj.Patients_id).SingleOrDefault();
+                //if (user.SendMial(d.email, "New Prescription Request", $"your patient -{p.firstname+ " " + p.lastname} ask for {obj.subject}...."))
+                //{
                      DB.tblPrescriptions.Add(obj);
                      DB.SaveChanges();
-                }
-                else
-                {
-                    throw new Exception("email is not send");
-                }
+                //}
+                //else
+                //{
+                //    throw new Exception("email is not send");
+                //}
                 
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
             }
