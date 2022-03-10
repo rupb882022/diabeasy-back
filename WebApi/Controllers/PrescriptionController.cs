@@ -26,11 +26,24 @@ namespace WebApi.Controllers
             var allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x=>x.date_time).Select(x => new {x.id, x.date_time, x.subject, x.value }).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
-
         // POST: api/Prescription
-        public void Post([FromBody]string value)
+        [HttpPost]
+        [Route("api/Prescription/addRequest")]
+        public IHttpActionResult Post([FromBody] tblPrescriptions obj)
         {
+            try
+            {
+                DB.tblPrescriptions.Add(obj);
+                DB.SaveChanges();
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+            }
+            catch (Exception e)
+            {
+               // logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
         }
+
 
         // PUT: api/Prescription/5
         public void Put(int id, [FromBody]string value)
