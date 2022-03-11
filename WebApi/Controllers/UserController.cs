@@ -267,5 +267,22 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+        [HttpPost]
+        [Route("api/User/Prescription/addRequest")]
+        public IHttpActionResult Prescription_addRequest([FromBody] tblPrescriptions obj)
+        {
+            try
+            {
+                DB.tblPrescriptions.Add(obj);
+                DB.SaveChanges();
+
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
     }
 }
