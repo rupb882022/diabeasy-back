@@ -118,5 +118,8 @@ namespace diabeasy_back
 
             return str.ToUpper();
         }
+
     }
+
+
 }
