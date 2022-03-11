@@ -16,6 +16,7 @@ namespace WebApi.Controllers
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
+        Images images = new Images();   
         static Logger logger = LogManager.GetCurrentClassLogger();
 
 
@@ -23,7 +24,7 @@ namespace WebApi.Controllers
         [Route("api/User/Prescription/{id}")]
         public IHttpActionResult Prescription(int id)
         {
-            List<tblPrescriptions> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptions() { id=x.id, date_time= x.date_time, subject= x.subject, value= x.value }).ToList();
+            List<tblPrescriptionDto> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptionDto() { id=x.id, date_time = x.date_time, subject= x.subject, value= x.value }).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
 
@@ -63,10 +64,15 @@ namespace WebApi.Controllers
                     var userDetalis = new { id = user.id, profileimage = user.profileimage, name = user.firstname + " " + user.lastname };
                     return Content(HttpStatusCode.OK, userDetalis);
                 }
-                else
+
+                tblDoctor Doctoruser = DB.tblDoctor.Where(x => x.email == email && x.password == password).SingleOrDefault();
+                if (Doctoruser != null)
                 {
-                    throw new Exception();
+                    var userDetalis = new { id = Doctoruser.id, profileimage = Doctoruser.profileimage, name = Doctoruser.firstname + " " + Doctoruser.lastname };
+                    return Content(HttpStatusCode.OK, userDetalis);
                 }
+
+                return Content(HttpStatusCode.BadRequest,"worng user details");
             }
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)
@@ -186,7 +192,7 @@ namespace WebApi.Controllers
         {
             try
             {
-               
+                string image = "";
                 //cheack uniqe email
                 if (!user.checkUniqeMail(obj.email, obj.weight == null))
                 {
@@ -206,6 +212,8 @@ namespace WebApi.Controllers
                          Doctor_id=user.checkDoctorMail(obj.mailDoctor);
                     }
 
+                    image = images.CreateNewNameOrMakeItUniqe("profilePatient")+".jpg";
+
                     //todo change gender to char
                     DB.tblPatients.Add(new tblPatients()
                     {
@@ -215,7 +223,7 @@ namespace WebApi.Controllers
                         birthdate=obj.BirthDate,
                         password = obj.password,
                         gender=obj.gender,
-                        profileimage=obj.image,
+                        profileimage=image,
                         height=obj.height,
                         weight=obj.weight,
                         InsulinType_id = obj.InsulinType_id,
@@ -229,6 +237,7 @@ namespace WebApi.Controllers
                 }
                 else
                 {
+                    image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg"; 
                     //todo change gender to char
                     DB.tblDoctor.Add(new tblDoctor()
                     {
@@ -238,7 +247,7 @@ namespace WebApi.Controllers
                         birthdate = obj.BirthDate,
                         password = obj.password,
                         gender = obj.gender,
-                        profileimage = obj.image,
+                        profileimage = image,
                     });
                     DB.SaveChanges();
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
