@@ -12,6 +12,7 @@ namespace WebApi.Controllers
     public class PrescriptionController : ApiController
     {
         diabeasyDBContext DB = new diabeasyDBContext();
+        User user = new User();
 
         // GET: api/Prescription
         public IEnumerable<string> Get()
@@ -19,6 +20,7 @@ namespace WebApi.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        // todo - move to user 
         [Route("api/Prescription/{id}")]
         // GET: api/Prescription/5
         public IHttpActionResult Get(int id)
@@ -27,10 +29,36 @@ namespace WebApi.Controllers
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
 
+        // todo - move to user + make an official mail for the doctor 
         // POST: api/Prescription
-        public void Post([FromBody]string value)
+        [HttpPost]
+        [Route("api/Prescription/addRequest")]
+        public IHttpActionResult Post([FromBody] tblPrescriptions obj)
         {
+            try
+            {
+
+                //tblDoctor d = DB.tblDoctor.Where(x => x.id == obj.Doctor_id).SingleOrDefault();
+                //tblPatients p = DB.tblPatients.Where(x => x.id == obj.Patients_id).SingleOrDefault();
+                //if (user.SendMial(d.email, "New Prescription Request", $"your patient -{p.firstname+ " " + p.lastname} ask for {obj.subject}...."))
+                //{
+                     DB.tblPrescriptions.Add(obj);
+                     DB.SaveChanges();
+                //}
+                //else
+                //{
+                //    throw new Exception("email is not send");
+                //}
+                
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+            }
+            catch (Exception e)
+            {
+               // logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
         }
+
 
         // PUT: api/Prescription/5
         public void Put(int id, [FromBody]string value)
