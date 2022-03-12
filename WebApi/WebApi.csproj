@@ -53,6 +53,7 @@
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=8.0.26.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.7.14\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -179,11 +180,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\PrescriptionController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DTO\IngrediantDto.cs" />
     <Compile Include="DTO\tblForumDto.cs" />
     <Compile Include="DTO\tblInsulinTypeDto.cs" />
     <Compile Include="DTO\tblPrescriptionDto.cs" />
+    <Compile Include="DTO\tblUnitOfMeasureDto.cs" />
     <Compile Include="DTO\UserDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

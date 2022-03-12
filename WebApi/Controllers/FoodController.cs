@@ -11,6 +11,7 @@ using System.Data;
 using NLog;
 using System.Configuration;
 using System.Data.Entity.Infrastructure;
+using WebApi.DTO;
 
 namespace WebApi.Controllers
 {
@@ -19,8 +20,9 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
 
-
-        public IHttpActionResult Get()
+        [HttpGet]
+        [Route("api/Food/Category")]
+        public IHttpActionResult GetCategory()
         {
             try
             {
@@ -44,33 +46,64 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query = @"select C.name, I.id, I.name as IngrediantName, I.image, UM.name as UnitOfMeasure, B.carbohydrates, B.sugars
+                string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name, B.carbohydrates, B.sugars,B.weightInGrams
                                  from tblIngredients I inner join tblPartOf_Ingredients TPI on I.id= TPI.Ingredients_id
                                 inner join tblCategory C on TPI.Category_id= C.id inner join tblBelong B on B.Ingredients_id= I.id
                                  inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id
-                                    order by C.name";
+                                    order by I.id";
 
-
-                
-                SqlDataAdapter adpter = new SqlDataAdapter(query,con);
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblIngredients");
                 DataTable dt = ds.Tables["tblIngredients"];
 
-                object[] ingrediant = new object[dt.Rows.Count];
-
-                object obj;
-                for (int index = 0; index < dt.Rows.Count; index++)
+                List<IngrediantDto> ingrediants = new List<IngrediantDto>();
+                IngrediantDto ingrediant = new IngrediantDto();
+  
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    obj = new { CategoryName = dt.Rows[index]["name"].ToString(), id = dt.Rows[index]["id"].ToString(), IngrediantName = dt.Rows[index]["IngrediantName"].ToString(), image = dt.Rows[index]["image"].ToString(), UnitOfMeasure = dt.Rows[index]["UnitOfMeasure"].ToString(), carbohydrates = dt.Rows[index]["carbohydrates"].ToString(), sugars = dt.Rows[index]["sugars"].ToString()};
-                    ingrediant[index] = obj;
-                }
+                    if (i!=0&&(int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
+                    {
+                        ingrediants.Add(ingrediant);
+                    }
+                    tblUnitOfMeasureDto Unit = new tblUnitOfMeasureDto()
+                    {
+                        id = (int)dt.Rows[i]["UM_ID"],
+                        name = dt.Rows[i]["UM_name"].ToString(),
+                        carbs = float.Parse(dt.Rows[i]["carbohydrates"].ToString()),
+                        suger = float.Parse(dt.Rows[i]["sugars"].ToString()),
+                        weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString())
 
-                return Content(HttpStatusCode.OK, ingrediant);
+                    };
+                    if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
+                    {
+                        ingrediant = new IngrediantDto()
+                        {
+                            id = (int)dt.Rows[i]["id"],
+                            name = dt.Rows[i]["IngrediantName"].ToString(),
+                            image = dt.Rows[i]["image"].ToString(),
+                        };
+                        ingrediant.UnitOfMeasure.Add(Unit);
+                    }
+
+                    if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
+                    {
+                        ingrediant.category.Add(dt.Rows[i]["categoryName"].ToString());
+                    }
+                    else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"]&& ingrediant.category.Count<=1)
+                    {
+                        ingrediant.UnitOfMeasure.Add(Unit);
+                    }
+                }
+                //add last ingrediant in query list
+                ingrediants.Add(ingrediant);
+
+
+                return Content(HttpStatusCode.OK, ingrediants);
             }
             catch (Exception e)
             {
-            
+
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 

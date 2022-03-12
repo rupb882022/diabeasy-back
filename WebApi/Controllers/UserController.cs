@@ -57,7 +57,7 @@ namespace WebApi.Controllers
         public IHttpActionResult userDetails(string email, string password)
         {
             try
-            {//ToDo function for doctor
+            {
                 tblPatients user = DB.tblPatients.Where(x => x.email == email && x.password == password).SingleOrDefault();
                 if (user != null)
                 {
