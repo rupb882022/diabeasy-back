@@ -29,6 +29,16 @@ namespace diabeasy_back
             client.EnableSsl = true;
             client.UseDefaultCredentials = false;
             client.Credentials = basicCredential1;
+
+
+            //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+            //{
+            //    Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
+            //    EnableSsl = true
+            //};
+            //client.Send("diabeasyapp@gmail.com", "idanlavee10@gmail.com", "test", "testbody");
+
+
             try
             {
                 client.Send(message);
