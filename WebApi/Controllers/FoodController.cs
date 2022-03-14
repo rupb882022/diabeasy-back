@@ -19,6 +19,7 @@ namespace WebApi.Controllers
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
+        static Logger logger = LogManager.GetCurrentClassLogger();
 
         [HttpGet]
         [Route("api/Food/Category")]
@@ -26,7 +27,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var allCategory = DB.tblCategory.Select(x => new { id = x.id, name = x.name }).ToList();
+                List<tblCategoryDto> allCategory = DB.tblCategory.Select(x => new tblCategoryDto(){ id = x.id, name = x.name }).ToList();
                 if (allCategory == null)
                 {
                     throw new NullReferenceException();
@@ -35,7 +36,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-
+                logger.Fatal(e);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
@@ -46,7 +47,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name, B.carbohydrates, B.sugars,B.weightInGrams
+                string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams
                                  from tblIngredients I inner join tblPartOf_Ingredients TPI on I.id= TPI.Ingredients_id
                                 inner join tblCategory C on TPI.Category_id= C.id inner join tblBelong B on B.Ingredients_id= I.id
                                  inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id
@@ -72,8 +73,8 @@ namespace WebApi.Controllers
                         name = dt.Rows[i]["UM_name"].ToString(),
                         carbs = float.Parse(dt.Rows[i]["carbohydrates"].ToString()),
                         suger = float.Parse(dt.Rows[i]["sugars"].ToString()),
-                        weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString())
-
+                        weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString()),
+                        image = dt.Rows[i]["UM_image"].ToString()
                     };
                     if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                     {
@@ -88,7 +89,8 @@ namespace WebApi.Controllers
 
                     if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
                     {
-                        ingrediant.category.Add(dt.Rows[i]["categoryName"].ToString());
+                        
+                        ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
                     }
                     else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"]&& ingrediant.category.Count<=1)
                     {
@@ -103,13 +105,27 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-
+                logger.Fatal(e);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
         }
-        //ingrediant details
 
+        [HttpGet]
+        [Route("api/Food/getUnitOfMeasure")]
+        public IHttpActionResult GetUnitOfMeasure()
+        {
+            try
+            {
+                List<tblUnitOfMeasureDto> unit= DB.tblUnitOfMeasure.Select(x => new tblUnitOfMeasureDto() { id = x.id, name = x.name, image = x.image }).ToList();
+                return Content(HttpStatusCode.OK, unit);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
 
-    }
+        }
 }
