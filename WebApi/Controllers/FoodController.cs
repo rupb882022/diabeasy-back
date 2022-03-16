@@ -20,6 +20,8 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
+        Images image=new Images();
+        User user=new User();
 
         [HttpGet]
         [Route("api/Food/Category")]
@@ -127,5 +129,43 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("api/Food/AddIngredient")]
+        public IHttpActionResult AddIngredient([FromBody] dynamic ingredient)
+        {
+            try
+            {
+                string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient");
+                string name= user.NameToUpper((string)ingredient.name);
+                DB.tblIngredients.Add(new tblIngredients() { name =name, image = imageName, addByUserId = ingredient.userId });
+                //check better way todo
+                DB.SaveChanges();
+
+                //get the new ingredient for connection tables 
+                tblIngredients newingredient = DB.tblIngredients.OrderByDescending(x => x.id).FirstOrDefault();
+
+                DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredients_id = newingredient.id, carbohydrates = ingredient.carbs, sugars = ingredient.sugar, weightInGrams = ingredient.weightInGrams });
+                string query = $"insert into tblPartOf_Ingredients values ({newingredient.id},{ingredient.category})";
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query,con);
+                int res=cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot insert values into tblPartOf_Ingredients");
+                }
+                DB.SaveChanges();
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
         }
+
+    }
 }
