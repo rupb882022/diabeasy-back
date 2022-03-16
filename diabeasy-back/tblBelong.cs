@@ -14,8 +14,8 @@ namespace diabeasy_back
     
     public partial class tblBelong
     {
-        public Nullable<float> carbohydrates { get; set; }
-        public Nullable<float> sugars { get; set; }
+        public Nullable<double> carbohydrates { get; set; }
+        public Nullable<double> sugars { get; set; }
         public Nullable<int> weightInGrams { get; set; }
         public int UnitOfMeasure_id { get; set; }
         public int Ingredients_id { get; set; }

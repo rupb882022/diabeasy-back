@@ -54,12 +54,12 @@ namespace diabeasy_back
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblIngredients> tblIngredients { get; set; }
         public virtual tblInsulinType tblInsulinType { get; set; }
+        public virtual tblInsulinType tblInsulinType1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPatientData> tblPatientData { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPrescriptions> tblPrescriptions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblRecipes> tblRecipes { get; set; }
-        public virtual tblInsulinType tblInsulinType1 { get; set; }
     }
 }

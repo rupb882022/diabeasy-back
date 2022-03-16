@@ -73,8 +73,8 @@ namespace WebApi.Controllers
                     {
                         id = (int)dt.Rows[i]["UM_ID"],
                         name = dt.Rows[i]["UM_name"].ToString(),
-                        carbs = float.Parse(dt.Rows[i]["carbohydrates"].ToString()),
-                        suger = float.Parse(dt.Rows[i]["sugars"].ToString()),
+                        carbs = double.Parse(dt.Rows[i]["carbohydrates"].ToString()),
+                        suger = double.Parse(dt.Rows[i]["sugars"].ToString()),
                         weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString()),
                         image = dt.Rows[i]["UM_image"].ToString()
                     };
@@ -148,8 +148,8 @@ namespace WebApi.Controllers
                 string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient");
                 imageName+=".jpg";
                 string name= user.NameToUpper((string)ingredient.name);
-                float carbohydrates = unit.carbs;
-                float sugars = unit.suger;
+                double carbohydrates = unit.carbs;
+                double sugars = unit.suger;
                 DB.tblIngredients.Add(new tblIngredients() { name =name, image = imageName, addByUserId = ingredient.userId });
                 //check better way todo
                 DB.SaveChanges();

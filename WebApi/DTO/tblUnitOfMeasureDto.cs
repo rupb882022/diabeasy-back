@@ -10,8 +10,8 @@ namespace WebApi.DTO
         public int id;
         public string name;
         public string image;
-        public float carbs;
-        public float suger;
+        public double carbs;
+        public double suger;
         public float weightInGrams;
 
     }
