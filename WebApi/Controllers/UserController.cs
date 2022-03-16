@@ -186,7 +186,26 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
-        [HttpPost]
+
+        [HttpGet]
+        [Route("api/User/Doctor/{id}")]
+        public IHttpActionResult PatientBelongToDoctor(int id)
+        {
+            try
+            {
+            var Patients = DB.tblPatients.Where(x => x.Doctor_id == id).Select(x => new { id = x.id, firstname=x.firstname,lastname=x.lastname,profileimage=x.profileimage, select= false }).ToList();
+            return Content(HttpStatusCode.OK, Patients);
+            }
+            catch (Exception e)
+            {
+                logger.Error("no patients found");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+           
+
+
+        }
+            [HttpPost]
         [Route("api/User/RegisterUser")]
         public IHttpActionResult RegisterUser([FromBody] UserDto obj)
         {
