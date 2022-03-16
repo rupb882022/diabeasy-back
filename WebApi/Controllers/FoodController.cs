@@ -135,8 +135,21 @@ namespace WebApi.Controllers
         {
             try
             {
+
+
+                tblUnitOfMeasureDto unit = new tblUnitOfMeasureDto()
+                {
+                    id = ingredient.unit,
+                    carbs= ingredient.carbs,
+                    suger= ingredient.suger,
+                    weightInGrams= ingredient.weightInGrams
+                };
+
                 string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient");
+                imageName+=".jpg";
                 string name= user.NameToUpper((string)ingredient.name);
+                float carbohydrates = unit.carbs;
+                float sugars = unit.suger;
                 DB.tblIngredients.Add(new tblIngredients() { name =name, image = imageName, addByUserId = ingredient.userId });
                 //check better way todo
                 DB.SaveChanges();
@@ -144,7 +157,7 @@ namespace WebApi.Controllers
                 //get the new ingredient for connection tables 
                 tblIngredients newingredient = DB.tblIngredients.OrderByDescending(x => x.id).FirstOrDefault();
 
-                DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredients_id = newingredient.id, carbohydrates = ingredient.carbs, sugars = ingredient.sugar, weightInGrams = ingredient.weightInGrams });
+               DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredients_id = newingredient.id, carbohydrates = unit.carbs, sugars = unit.suger, weightInGrams = ingredient.weightInGrams });
                 string query = $"insert into tblPartOf_Ingredients values ({newingredient.id},{ingredient.category})";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query,con);

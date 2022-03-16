@@ -12,6 +12,7 @@ namespace WebApi.DTO
         public string lastName;
         public string email;
         public string gender;
+        public string image;
         public DateTime BirthDate;
         public string password;
         public Nullable<int> height;

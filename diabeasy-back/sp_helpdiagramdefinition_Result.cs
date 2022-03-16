@@ -10,17 +10,10 @@
 namespace diabeasy_back
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class tblBelong
+    public partial class sp_helpdiagramdefinition_Result
     {
-        public Nullable<float> carbohydrates { get; set; }
-        public Nullable<float> sugars { get; set; }
-        public Nullable<int> weightInGrams { get; set; }
-        public int UnitOfMeasure_id { get; set; }
-        public int Ingredients_id { get; set; }
-    
-        public virtual tblIngredients tblIngredients { get; set; }
-        public virtual tblUnitOfMeasure tblUnitOfMeasure { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }
