@@ -46,7 +46,7 @@ namespace diabeasy_back
             }
             catch (Exception ex)
             {
-                logger.Fatal("the " + message + " was not send"+ ex.Message);
+                logger.Fatal("the " + message + " was not send "+ ex.Message+ "\ninner Exception: " + ex.InnerException );
                 return false;
             }
 
