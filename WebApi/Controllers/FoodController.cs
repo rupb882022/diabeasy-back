@@ -49,21 +49,22 @@ namespace WebApi.Controllers
         {
             try
             {
-                 
-                if (foodName == "all")
-                {
-                    foodName = "";
-                }
-                    string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams
+
+
+                string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams
                                  from tblIngredients I inner join tblPartOf_Ingredients TPI on I.id= TPI.Ingredients_id
                                 inner join tblCategory C on TPI.Category_id= C.id inner join tblBelong B on B.Ingredients_id= I.id
-                                 inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id
-                                   where I.name like @search
-                                    order by I.id";
-                
-
+                                 inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id";
+                                                          
+                if (foodName != "all")
+                {
+                    query += " where I.name like @search ";
+                }
+                query += " order by I.id";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
-                adpter.SelectCommand.Parameters.AddWithValue("@search", "%" + foodName + "%");
+
+                if (foodName != "all")
+                { adpter.SelectCommand.Parameters.AddWithValue("@search", "%" + foodName + "%"); }
 
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblIngredients");
