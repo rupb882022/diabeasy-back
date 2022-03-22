@@ -219,6 +219,7 @@
           <Property Name="value" Type="nvarchar" MaxLength="255" />
           <Property Name="Patients_id" Type="int" />
           <Property Name="Doctor_id" Type="int" />
+          <Property Name="status" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblRecipes">
           <Key>
@@ -988,6 +989,7 @@
           <Property Name="Doctor_id" Type="Int32" />
           <NavigationProperty Name="tblDoctor" Relationship="Self.FK__tblPrescr__Docto__44CA3770" FromRole="tblPrescriptions" ToRole="tblDoctor" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPrescr__Patie__43D61337" FromRole="tblPrescriptions" ToRole="tblPatients" />
+          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblRecipes">
           <Key>
@@ -1643,6 +1645,7 @@
           <EntitySetMapping Name="tblPrescriptions">
             <EntityTypeMapping TypeName="diabeasyModel.tblPrescriptions">
               <MappingFragment StoreEntitySet="tblPrescriptions">
+                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="subject" ColumnName="subject" />
