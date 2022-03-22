@@ -24,7 +24,7 @@ namespace WebApi.Controllers
         [Route("api/User/Prescription/{id}")]
         public IHttpActionResult Prescription(int id)
         {
-            List<tblPrescriptionDto> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptionDto() { id=x.id, date_time = x.date_time, subject= x.subject, value= x.value }).ToList();
+            List<tblPrescriptionDto> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptionDto() { id=x.id, date_time = x.date_time, subject= x.subject, value= x.value ,status=x.status}).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
 
