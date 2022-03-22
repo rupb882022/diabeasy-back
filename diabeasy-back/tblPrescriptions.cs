@@ -20,6 +20,7 @@ namespace diabeasy_back
         public string value { get; set; }
         public Nullable<int> Patients_id { get; set; }
         public Nullable<int> Doctor_id { get; set; }
+        public string status { get; set; }
     
         public virtual tblDoctor tblDoctor { get; set; }
         public virtual tblPatients tblPatients { get; set; }

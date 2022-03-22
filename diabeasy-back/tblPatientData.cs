@@ -29,6 +29,7 @@ namespace diabeasy_back
         public Nullable<double> value_of_ingection { get; set; }
         public string injection_site { get; set; }
         public int Patients_id { get; set; }
+        public Nullable<double> totalCarbs { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblATE_Ingredients> tblATE_Ingredients { get; set; }

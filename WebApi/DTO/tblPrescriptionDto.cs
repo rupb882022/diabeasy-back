@@ -13,5 +13,7 @@ namespace WebApi.DTO
         public string value;
         public Nullable<int> Patients_id;
         public Nullable<int> Doctor_id;
+        public string status;
+
     }
 }

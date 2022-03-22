@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -183,6 +183,7 @@
           <Property Name="value_of_ingection" Type="float" />
           <Property Name="injection_site" Type="nvarchar" MaxLength="255" />
           <Property Name="Patients_id" Type="int" Nullable="false" />
+          <Property Name="totalCarbs" Type="float" />
         </EntityType>
         <EntityType Name="tblPatients">
           <Key>
@@ -218,6 +219,7 @@
           <Property Name="value" Type="nvarchar" MaxLength="255" />
           <Property Name="Patients_id" Type="int" />
           <Property Name="Doctor_id" Type="int" />
+          <Property Name="status" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblRecipes">
           <Key>
@@ -749,8 +751,7 @@
             <End Role="tblRecipes" EntitySet="tblRecipes" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="diabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -940,6 +941,7 @@
           <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Recipes__55F4C372" FromRole="tblPatientData" ToRole="tblATE_Recipes" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPatien__Patie__3C34F16F" FromRole="tblPatientData" ToRole="tblPatients" />
           <NavigationProperty Name="tblExceptionalEvent" Relationship="Self.tblEventOf" FromRole="tblPatientData" ToRole="tblExceptionalEvent" />
+          <Property Name="totalCarbs" Type="Double" />
         </EntityType>
         <EntityType Name="tblPatients">
           <Key>
@@ -987,6 +989,7 @@
           <Property Name="Doctor_id" Type="Int32" />
           <NavigationProperty Name="tblDoctor" Relationship="Self.FK__tblPrescr__Docto__44CA3770" FromRole="tblPrescriptions" ToRole="tblDoctor" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPrescr__Patie__43D61337" FromRole="tblPrescriptions" ToRole="tblPatients" />
+          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblRecipes">
           <Key>
@@ -1603,6 +1606,7 @@
           <EntitySetMapping Name="tblPatientData">
             <EntityTypeMapping TypeName="diabeasyModel.tblPatientData">
               <MappingFragment StoreEntitySet="tblPatientData">
+                <ScalarProperty Name="totalCarbs" ColumnName="totalCarbs" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="blood_sugar_level" ColumnName="blood_sugar_level" />
                 <ScalarProperty Name="injectionType" ColumnName="injectionType" />
@@ -1641,6 +1645,7 @@
           <EntitySetMapping Name="tblPrescriptions">
             <EntityTypeMapping TypeName="diabeasyModel.tblPrescriptions">
               <MappingFragment StoreEntitySet="tblPrescriptions">
+                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="subject" ColumnName="subject" />
