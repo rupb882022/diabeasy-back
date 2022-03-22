@@ -205,7 +205,8 @@ namespace WebApi.Controllers
 
 
         }
-            [HttpPost]
+
+        [HttpPost]
         [Route("api/User/RegisterUser")]
         public IHttpActionResult RegisterUser([FromBody] UserDto obj)
         {
@@ -286,6 +287,7 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
         [HttpPost]
         [Route("api/User/Prescription/addRequest")]
         public IHttpActionResult Prescription_addRequest([FromBody] tblPrescriptions obj)
@@ -296,6 +298,24 @@ namespace WebApi.Controllers
                 DB.SaveChanges();
 
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/User/InsertData")]
+        public IHttpActionResult InsertData([FromBody] tblPatientData PatientDatadata)
+        {
+            try
+            {
+                DB.tblPatientData.Add(PatientDatadata);
+                DB.SaveChanges();
+
+                return Created(new Uri(Request.RequestUri.AbsoluteUri),PatientDatadata);
             }
             catch (Exception e)
             {

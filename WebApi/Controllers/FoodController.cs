@@ -20,8 +20,8 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
-        Images image=new Images();
-        User user=new User();
+        Images image = new Images();
+        User user = new User();
 
         [HttpGet]
         [Route("api/Food/Category")]
@@ -29,7 +29,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                List<tblCategoryDto> allCategory = DB.tblCategory.Select(x => new tblCategoryDto(){ id = x.id, name = x.name }).ToList();
+                List<tblCategoryDto> allCategory = DB.tblCategory.Select(x => new tblCategoryDto() { id = x.id, name = x.name }).ToList();
                 if (allCategory == null)
                 {
                     throw new NullReferenceException();
@@ -44,28 +44,38 @@ namespace WebApi.Controllers
 
         }
         [HttpGet]
-        [Route("api/Food/getIngredients")]
-        public IHttpActionResult GetIngredients()
+        [Route("api/Food/getIngredients/{foodName}")]
+        public IHttpActionResult GetIngredients(string foodName)
         {
             try
             {
+
+
                 string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams
                                  from tblIngredients I inner join tblPartOf_Ingredients TPI on I.id= TPI.Ingredients_id
                                 inner join tblCategory C on TPI.Category_id= C.id inner join tblBelong B on B.Ingredients_id= I.id
-                                 inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id
-                                    order by I.id";
-
+                                 inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id";
+                                                          
+                if (foodName != "all")
+                {
+                    query += " where I.name like @search ";
+                }
+                query += " order by I.id";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+
+                if (foodName != "all")
+                { adpter.SelectCommand.Parameters.AddWithValue("@search", "%" + foodName + "%"); }
+
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblIngredients");
                 DataTable dt = ds.Tables["tblIngredients"];
 
                 List<IngrediantDto> ingrediants = new List<IngrediantDto>();
                 IngrediantDto ingrediant = new IngrediantDto();
-  
+
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    if (i!=0&&(int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
+                    if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                     {
                         ingrediants.Add(ingrediant);
                     }
@@ -91,10 +101,10 @@ namespace WebApi.Controllers
 
                     if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
                     {
-                        
+
                         ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
                     }
-                    else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"]&& ingrediant.category.Count<=1)
+                    else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"] && ingrediant.category.Count <= 1)
                     {
                         ingrediant.UnitOfMeasure.Add(Unit);
                     }
@@ -119,7 +129,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                List<tblUnitOfMeasureDto> unit= DB.tblUnitOfMeasure.Select(x => new tblUnitOfMeasureDto() { id = x.id, name = x.name, image = x.image }).ToList();
+                List<tblUnitOfMeasureDto> unit = DB.tblUnitOfMeasure.Select(x => new tblUnitOfMeasureDto() { id = x.id, name = x.name, image = x.image }).ToList();
                 return Content(HttpStatusCode.OK, unit);
             }
             catch (Exception e)
@@ -140,28 +150,26 @@ namespace WebApi.Controllers
                 tblUnitOfMeasureDto unit = new tblUnitOfMeasureDto()
                 {
                     id = ingredient.unit,
-                    carbs= ingredient.carbs,
-                    suger= ingredient.suger,
-                    weightInGrams= ingredient.weightInGrams
+                    carbs = ingredient.carbs,
+                    suger = ingredient.suger,
+                    weightInGrams = ingredient.weightInGrams
                 };
 
-                string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient");
-                imageName+=".jpg";
-                string name= user.NameToUpper((string)ingredient.name);
-                double carbohydrates = unit.carbs;
-                double sugars = unit.suger;
-                DB.tblIngredients.Add(new tblIngredients() { name =name, image = imageName, addByUserId = ingredient.userId });
+                string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient") + ".jpg";
+                string name = user.NameToUpper((string)ingredient.name);
+
+                DB.tblIngredients.Add(new tblIngredients() { name = name, image = imageName, addByUserId = ingredient.userId });
                 //check better way todo
                 DB.SaveChanges();
 
                 //get the new ingredient for connection tables 
                 tblIngredients newingredient = DB.tblIngredients.OrderByDescending(x => x.id).FirstOrDefault();
 
-               DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredients_id = newingredient.id, carbohydrates = unit.carbs, sugars = unit.suger, weightInGrams = ingredient.weightInGrams });
+                DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredients_id = newingredient.id, carbohydrates = unit.carbs, sugars = unit.suger, weightInGrams = ingredient.weightInGrams });
                 string query = $"insert into tblPartOf_Ingredients values ({newingredient.id},{ingredient.category})";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query,con);
-                int res=cmd.ExecuteNonQuery();
+                SqlCommand cmd = new SqlCommand(query, con);
+                int res = cmd.ExecuteNonQuery();
                 if (res < 1)
                 {
                     throw new Exception("cannot insert values into tblPartOf_Ingredients");
