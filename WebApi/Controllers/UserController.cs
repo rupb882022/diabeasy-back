@@ -323,5 +323,27 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
+        [HttpPut]
+        [Route("api/User/Prescription/{id}")]
+        public IHttpActionResult Put(int id, [FromBody] tblPrescriptions obj)
+        {
+            try
+            {
+                tblPrescriptions prescription = DB.tblPrescriptions.SingleOrDefault(x => x.id == id);
+                if (prescription != null)
+                {
+                    prescription.status = obj.status;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, new { id = prescription.id, status = prescription.status });
+                }
+                return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
     }
 }
