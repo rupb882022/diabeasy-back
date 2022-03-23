@@ -10,6 +10,7 @@ namespace WebApi.DTO
         public int id;
         public string name;
         public string image;
+        public string addByUserId;
         public List<tblCategoryDto> category=new List<tblCategoryDto>();
         public List<tblUnitOfMeasureDto> UnitOfMeasure=new List<tblUnitOfMeasureDto>();
     }

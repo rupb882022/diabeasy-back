@@ -182,10 +182,12 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DTO\IngrediantDto.cs" />
+    <Compile Include="DTO\IngredientsForRecipeDto.cs" />
     <Compile Include="DTO\tblCategoryDto.cs" />
     <Compile Include="DTO\tblForumDto.cs" />
     <Compile Include="DTO\tblInsulinTypeDto.cs" />
     <Compile Include="DTO\tblPrescriptionDto.cs" />
+    <Compile Include="DTO\tblRecipesDto.cs" />
     <Compile Include="DTO\tblUnitOfMeasureDto.cs" />
     <Compile Include="DTO\UserDto.cs" />
     <Compile Include="Global.asax.cs">
