@@ -300,13 +300,12 @@ namespace WebApi.Controllers
                 {
                 DB.tblPrescriptions.Add(obj);
                 DB.SaveChanges();
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
                 }
                 else
                 {
                     return Content(HttpStatusCode.Forbidden, "Only 3 requests per day, please try again tomorrow ");
                 }
-
-                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
             }
             catch (Exception e)
             {
