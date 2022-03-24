@@ -17,16 +17,16 @@ namespace diabeasy_back
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblCategory()
         {
-            this.tblIngredients = new HashSet<tblIngredients>();
-            this.tblRecipes = new HashSet<tblRecipes>();
+            this.Ingredients = new HashSet<Ingredients>();
+            this.Recipes = new HashSet<Recipes>();
         }
     
         public int id { get; set; }
         public string name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblIngredients> tblIngredients { get; set; }
+        public virtual ICollection<Ingredients> Ingredients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblRecipes> tblRecipes { get; set; }
+        public virtual ICollection<Recipes> Recipes { get; set; }
     }
 }

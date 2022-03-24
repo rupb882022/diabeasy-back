@@ -4,52 +4,55 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="67d59e8bd391439588bc2a89876bb42d" Name="Diagram1" ZoomLevel="83">
-        <EntityTypeShape EntityType="diabeasyModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblATE_Ingredients" Width="1.5" PointX="13.5" PointY="14.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblATE_Recipes" Width="1.5" PointX="13.5" PointY="10.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblBelong" Width="1.5" PointX="16.5" PointY="14.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblCategory" Width="1.5" PointX="9" PointY="6.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblConsistOf" Width="1.5" PointX="16.5" PointY="11.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblDoctor" Width="1.5" PointX="0.75" PointY="14.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblExceptionalEvent" Width="1.5" PointX="6" PointY="9.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblForum" Width="1.5" PointX="3" PointY="14.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblGroupType" Width="1.5" PointX="3.75" PointY="10.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblHistorylog" Width="1.5" PointX="8.25" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblIngredients" Width="1.5" PointX="11.25" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblInsulinType" Width="1.5" PointX="3.75" PointY="18.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblPatientData" Width="1.5" PointX="8.25" PointY="10.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblPatients" Width="1.5" PointX="6" PointY="12.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblPrescriptions" Width="1.5" PointX="8.25" PointY="18.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblRecipes" Width="1.5" PointX="11.25" PointY="10.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="diabeasyModel.tblUnitOfMeasure" Width="1.5" PointX="11.25" PointY="6.375" IsExpanded="true" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_In__Ingre__5BAD9CC8" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_In__UnitO__59C55456" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_Ingredien__5AB9788F" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_Re__Recip__56E8E7AB" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_Re__UnitO__55009F39" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblATE_Recipes__55F4C372" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblBelong__Ingre__6BE40491" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblBelong__UnitO__6AEFE058" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblConsis__Ingre__671F4F74" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblConsis__Recip__662B2B3B" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblConsis__UnitO__681373AD" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblForum__Doctor__40058253" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Docto__395884C4" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPrescr__Docto__44CA3770" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblForum__Id_Con__40F9A68C" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblForum__Patien__3F115E1A" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Group__3864608B" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblHistor__Patie__489AC854" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblIngred__addBy__4B7734FF" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Insul__37703C52" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Insul__70A8B9AE" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPatien__Patie__3C34F16F" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblPrescr__Patie__43D61337" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.FK__tblRecipe__addBy__4E53A1AA" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.tblEventOf" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.tblPartOf_Ingredients" ManuallyRouted="false" />
-        <AssociationConnector Association="diabeasyModel.tblPartOf_Recipes" ManuallyRouted="false" />
+      <Diagram DiagramId="41af03e28c99408fbbf14f6e94d69a9d" Name="Diagram1">
+        <EntityTypeShape EntityType="DiabeasyModel.Ingredients" Width="1.5" PointX="8.25" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.Recipes" Width="1.5" PointX="11.25" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblATE_Ingredients" Width="1.5" PointX="10.5" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblATE_Recipes" Width="1.5" PointX="13.5" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblBelong" Width="1.5" PointX="13.5" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblBelongToRecipe" Width="1.5" PointX="13.5" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblCategory" Width="1.5" PointX="6" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblConsistOf" Width="1.5" PointX="16.5" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblDoctor" Width="1.5" PointX="0.75" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblExceptionalEvent" Width="1.5" PointX="6" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblForum" Width="1.5" PointX="3" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblGroupType" Width="1.5" PointX="3.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblHistorylog" Width="1.5" PointX="8.25" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblInsulinType" Width="1.5" PointX="3.75" PointY="20.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblPatientData" Width="1.5" PointX="8.25" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblPatients" Width="1.5" PointX="6" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblPrescriptions" Width="1.5" PointX="8.25" PointY="20.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblUnitOfMeasure" Width="1.5" PointX="8.25" PointY="8.125" IsExpanded="true" />
+        <AssociationConnector Association="DiabeasyModel.FK__Ingredien__addBy__7755B73D" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_In__Ingre__214BF109" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblBelong__Ingre__28ED12D1" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblConsis__Ingre__0B5CAFEA" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__Recipes__addByUs__7A3223E8" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_Re__Recip__18B6AB08" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblBelong__Recip__10216507" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblConsis__Recip__0A688BB1" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_In__UnitO__1F63A897" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_Ingredien__2057CCD0" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_Re__UnitO__16CE6296" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblATE_Recipes2__17C286CF" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblBelong__UnitO__27F8EE98" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblBelong__UnitO__0F2D40CE" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblConsis__UnitO__0C50D423" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblForum__Doctor__40058253" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPatien__Docto__395884C4" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPrescr__Docto__44CA3770" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblForum__Id_Con__40F9A68C" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblForum__Patien__3F115E1A" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPatien__Group__3864608B" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblHistor__Patie__489AC854" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPatien__Insul__37703C52" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPatien__Insul__70A8B9AE" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPatien__Patie__3C34F16F" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.FK__tblPrescr__Patie__43D61337" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.PartOf_Ingredients" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.tblEventOf" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.tblPartOf_Recipes" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

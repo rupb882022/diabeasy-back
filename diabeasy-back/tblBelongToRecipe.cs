@@ -12,15 +12,15 @@ namespace diabeasy_back
     using System;
     using System.Collections.Generic;
     
-    public partial class tblBelong
+    public partial class tblBelongToRecipe
     {
-        public Nullable<double> carbohydrates { get; set; }
-        public Nullable<double> sugars { get; set; }
+        public Nullable<int> carbohydrates { get; set; }
+        public Nullable<int> sugars { get; set; }
         public Nullable<int> weightInGrams { get; set; }
         public int UnitOfMeasure_id { get; set; }
-        public int Ingredient_id { get; set; }
+        public int Recipe_id { get; set; }
     
-        public virtual Ingredients Ingredients { get; set; }
+        public virtual Recipes Recipes { get; set; }
         public virtual tblUnitOfMeasure tblUnitOfMeasure { get; set; }
     }
 }

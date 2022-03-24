@@ -12,12 +12,13 @@ namespace diabeasy_back
     using System;
     using System.Collections.Generic;
     
-    public partial class tblRecipes
+    public partial class Recipes
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tblRecipes()
+        public Recipes()
         {
             this.tblATE_Recipes = new HashSet<tblATE_Recipes>();
+            this.tblBelongToRecipe = new HashSet<tblBelongToRecipe>();
             this.tblConsistOf = new HashSet<tblConsistOf>();
             this.tblCategory = new HashSet<tblCategory>();
         }
@@ -31,11 +32,13 @@ namespace diabeasy_back
         public string cookingMethod { get; set; }
         public Nullable<int> addByUserId { get; set; }
     
+        public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblATE_Recipes> tblATE_Recipes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblBelongToRecipe> tblBelongToRecipe { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblConsistOf> tblConsistOf { get; set; }
-        public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblCategory> tblCategory { get; set; }
     }

@@ -25,10 +25,13 @@ namespace diabeasy_back
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Ingredients> Ingredients { get; set; }
+        public virtual DbSet<Recipes> Recipes { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tblATE_Ingredients> tblATE_Ingredients { get; set; }
         public virtual DbSet<tblATE_Recipes> tblATE_Recipes { get; set; }
         public virtual DbSet<tblBelong> tblBelong { get; set; }
+        public virtual DbSet<tblBelongToRecipe> tblBelongToRecipe { get; set; }
         public virtual DbSet<tblCategory> tblCategory { get; set; }
         public virtual DbSet<tblConsistOf> tblConsistOf { get; set; }
         public virtual DbSet<tblDoctor> tblDoctor { get; set; }
@@ -36,12 +39,10 @@ namespace diabeasy_back
         public virtual DbSet<tblForum> tblForum { get; set; }
         public virtual DbSet<tblGroupType> tblGroupType { get; set; }
         public virtual DbSet<tblHistorylog> tblHistorylog { get; set; }
-        public virtual DbSet<tblIngredients> tblIngredients { get; set; }
         public virtual DbSet<tblInsulinType> tblInsulinType { get; set; }
         public virtual DbSet<tblPatientData> tblPatientData { get; set; }
         public virtual DbSet<tblPatients> tblPatients { get; set; }
         public virtual DbSet<tblPrescriptions> tblPrescriptions { get; set; }
-        public virtual DbSet<tblRecipes> tblRecipes { get; set; }
         public virtual DbSet<tblUnitOfMeasure> tblUnitOfMeasure { get; set; }
     }
 }

@@ -4,7 +4,37 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DiabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Ingredients">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="image" Type="nvarchar" MaxLength="255" />
+          <Property Name="addByUserId" Type="int" />
+        </EntityType>
+        <EntityType Name="PartOf_Ingredients">
+          <Key>
+            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Category_id" />
+          </Key>
+          <Property Name="Ingredients_id" Type="int" Nullable="false" />
+          <Property Name="Category_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Recipes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="image" Type="nvarchar" MaxLength="255" />
+          <Property Name="totalCarbohydrates" Type="float" />
+          <Property Name="totalsugars" Type="float" />
+          <Property Name="totalWeigthInGrams" Type="float" />
+          <Property Name="cookingMethod" Type="nvarchar" MaxLength="255" />
+          <Property Name="addByUserId" Type="int" />
+        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -19,7 +49,7 @@
           <Key>
             <PropertyRef Name="Patients_id" />
             <PropertyRef Name="date_time" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Ingredient_id" />
           </Key>
           <Property Name="isFavorite" Type="bit" />
           <Property Name="isGood" Type="bit" />
@@ -27,13 +57,13 @@
           <Property Name="UnitOfMeasure_id" Type="int" />
           <Property Name="Patients_id" Type="int" Nullable="false" />
           <Property Name="date_time" Type="datetime" Nullable="false" />
-          <Property Name="Ingredients_id" Type="int" Nullable="false" />
+          <Property Name="Ingredient_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblATE_Recipes">
           <Key>
             <PropertyRef Name="Patients_id" />
             <PropertyRef Name="date_time" />
-            <PropertyRef Name="Recipes_id" />
+            <PropertyRef Name="Recipe_id" />
           </Key>
           <Property Name="isFavorite" Type="bit" />
           <Property Name="isGood" Type="bit" />
@@ -41,18 +71,29 @@
           <Property Name="UnitOfMeasure_id" Type="int" />
           <Property Name="Patients_id" Type="int" Nullable="false" />
           <Property Name="date_time" Type="datetime" Nullable="false" />
-          <Property Name="Recipes_id" Type="int" Nullable="false" />
+          <Property Name="Recipe_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblBelong">
           <Key>
             <PropertyRef Name="UnitOfMeasure_id" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Ingredient_id" />
           </Key>
           <Property Name="carbohydrates" Type="float" />
           <Property Name="sugars" Type="float" />
           <Property Name="weightInGrams" Type="int" />
           <Property Name="UnitOfMeasure_id" Type="int" Nullable="false" />
-          <Property Name="Ingredients_id" Type="int" Nullable="false" />
+          <Property Name="Ingredient_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblBelongToRecipe">
+          <Key>
+            <PropertyRef Name="UnitOfMeasure_id" />
+            <PropertyRef Name="Recipe_id" />
+          </Key>
+          <Property Name="carbohydrates" Type="int" />
+          <Property Name="sugars" Type="int" />
+          <Property Name="weightInGrams" Type="int" />
+          <Property Name="UnitOfMeasure_id" Type="int" Nullable="false" />
+          <Property Name="Recipe_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -63,13 +104,13 @@
         </EntityType>
         <EntityType Name="tblConsistOf">
           <Key>
-            <PropertyRef Name="Recipes_id" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Recipe_id" />
+            <PropertyRef Name="Ingredient_id" />
             <PropertyRef Name="UnitOfMeasure_id" />
           </Key>
           <Property Name="amount" Type="float" />
-          <Property Name="Recipes_id" Type="int" Nullable="false" />
-          <Property Name="Ingredients_id" Type="int" Nullable="false" />
+          <Property Name="Recipe_id" Type="int" Nullable="false" />
+          <Property Name="Ingredient_id" Type="int" Nullable="false" />
           <Property Name="UnitOfMeasure_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblDoctor">
@@ -138,15 +179,6 @@
           <Property Name="Historylog_value" Type="nvarchar" MaxLength="255" />
           <Property Name="Patients_id" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="tblIngredients">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="name" Type="nvarchar" MaxLength="255" />
-          <Property Name="image" Type="nvarchar" MaxLength="255" />
-          <Property Name="addByUserId" Type="int" />
-        </EntityType>
         <EntityType Name="tblInsulinType">
           <Key>
             <PropertyRef Name="id" />
@@ -155,20 +187,12 @@
           <Property Name="name" Type="nvarchar" MaxLength="255" />
           <Property Name="type" Type="nvarchar" MaxLength="255" />
         </EntityType>
-        <EntityType Name="tblPartOf_Ingredients">
-          <Key>
-            <PropertyRef Name="Ingredients_id" />
-            <PropertyRef Name="Category_id" />
-          </Key>
-          <Property Name="Ingredients_id" Type="int" Nullable="false" />
-          <Property Name="Category_id" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="tblPartOf_Recipes">
           <Key>
-            <PropertyRef Name="Recipes_id" />
+            <PropertyRef Name="Recipe_id" />
             <PropertyRef Name="Category_id" />
           </Key>
-          <Property Name="Recipes_id" Type="int" Nullable="false" />
+          <Property Name="Recipe_id" Type="int" Nullable="false" />
           <Property Name="Category_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblPatientData">
@@ -221,19 +245,6 @@
           <Property Name="Doctor_id" Type="int" />
           <Property Name="status" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="tblRecipes">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="name" Type="nvarchar" MaxLength="255" />
-          <Property Name="image" Type="nvarchar" MaxLength="255" />
-          <Property Name="totalCarbohydrates" Type="float" />
-          <Property Name="totalsugars" Type="float" />
-          <Property Name="totalWeigthInGrams" Type="float" />
-          <Property Name="cookingMethod" Type="nvarchar" MaxLength="255" />
-          <Property Name="addByUserId" Type="int" />
-        </EntityType>
         <EntityType Name="tblUnitOfMeasure">
           <Key>
             <PropertyRef Name="id" />
@@ -242,19 +253,67 @@
           <Property Name="name" Type="nvarchar" MaxLength="255" />
           <Property Name="image" Type="nvarchar" MaxLength="255" />
         </EntityType>
-        <Association Name="FK__tblATE_In__Ingre__5BAD9CC8">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
-          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
+        <Association Name="FK__Ingredien__addBy__7755B73D">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="tblPatients">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="tblATE_Ingredients">
+            <Dependent Role="Ingredients">
+              <PropertyRef Name="addByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PartOf_In__Categ__7E02B4CC">
+          <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="1" />
+          <End Role="PartOf_Ingredients" Type="Self.PartOf_Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCategory">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PartOf_Ingredients">
+              <PropertyRef Name="Category_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PartOf_In__Ingre__7D0E9093">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
+          <End Role="PartOf_Ingredients" Type="Self.PartOf_Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PartOf_Ingredients">
               <PropertyRef Name="Ingredients_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_In__UnitO__59C55456">
+        <Association Name="FK__Recipes__addByUs__7A3223E8">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Recipes">
+              <PropertyRef Name="addByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_In__Ingre__214BF109">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
+          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblATE_Ingredients">
+              <PropertyRef Name="Ingredient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_In__UnitO__1F63A897">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
           <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
           <ReferentialConstraint>
@@ -266,7 +325,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_Ingredien__5AB9788F">
+        <Association Name="FK__tblATE_Ingredien__2057CCD0">
           <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
           <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
           <ReferentialConstraint>
@@ -280,19 +339,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_Re__Recip__56E8E7AB">
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="1" />
+        <Association Name="FK__tblATE_Re__Recip__18B6AB08">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
           <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblRecipes">
+            <Principal Role="Recipes">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblATE_Recipes">
-              <PropertyRef Name="Recipes_id" />
+              <PropertyRef Name="Recipe_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_Re__UnitO__55009F39">
+        <Association Name="FK__tblATE_Re__UnitO__16CE6296">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
           <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -304,7 +363,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_Recipes__55F4C372">
+        <Association Name="FK__tblATE_Recipes2__17C286CF">
           <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
           <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -318,19 +377,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblBelong__Ingre__6BE40491">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
+        <Association Name="FK__tblBelong__Ingre__28ED12D1">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
           <End Role="tblBelong" Type="Self.tblBelong" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="Ingredients">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblBelong">
-              <PropertyRef Name="Ingredients_id" />
+              <PropertyRef Name="Ingredient_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblBelong__UnitO__6AEFE058">
+        <Association Name="FK__tblBelong__Recip__10216507">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="tblBelongToRecipe" Type="Self.tblBelongToRecipe" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblBelongToRecipe">
+              <PropertyRef Name="Recipe_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblBelong__UnitO__0F2D40CE">
+          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
+          <End Role="tblBelongToRecipe" Type="Self.tblBelongToRecipe" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUnitOfMeasure">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblBelongToRecipe">
+              <PropertyRef Name="UnitOfMeasure_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblBelong__UnitO__27F8EE98">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
           <End Role="tblBelong" Type="Self.tblBelong" Multiplicity="*" />
           <ReferentialConstraint>
@@ -342,31 +425,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblConsis__Ingre__671F4F74">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
+        <Association Name="FK__tblConsis__Ingre__0B5CAFEA">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
           <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="Ingredients">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblConsistOf">
-              <PropertyRef Name="Ingredients_id" />
+              <PropertyRef Name="Ingredient_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblConsis__Recip__662B2B3B">
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="1" />
+        <Association Name="FK__tblConsis__Recip__0A688BB1">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
           <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblRecipes">
+            <Principal Role="Recipes">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblConsistOf">
-              <PropertyRef Name="Recipes_id" />
+              <PropertyRef Name="Recipe_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblConsis__UnitO__681373AD">
+        <Association Name="FK__tblConsis__UnitO__0C50D423">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
           <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
           <ReferentialConstraint>
@@ -452,31 +535,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblIngred__addBy__4B7734FF">
-          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatients">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblIngredients">
-              <PropertyRef Name="addByUserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblPartOf__Categ__5F7E2DAC">
-          <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="1" />
-          <End Role="tblPartOf_Ingredients" Type="Self.tblPartOf_Ingredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblCategory">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblPartOf_Ingredients">
-              <PropertyRef Name="Category_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblPartOf__Categ__634EBE90">
+        <Association Name="FK__tblPartOf__Categ__13F1F5EB">
           <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="1" />
           <End Role="tblPartOf_Recipes" Type="Self.tblPartOf_Recipes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -488,27 +547,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblPartOf__Ingre__5E8A0973">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
-          <End Role="tblPartOf_Ingredients" Type="Self.tblPartOf_Ingredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblIngredients">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblPartOf_Ingredients">
-              <PropertyRef Name="Ingredients_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblPartOf__Recip__625A9A57">
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="1" />
+        <Association Name="FK__tblPartOf__Recip__12FDD1B2">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
           <End Role="tblPartOf_Recipes" Type="Self.tblPartOf_Recipes" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblRecipes">
+            <Principal Role="Recipes">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblPartOf_Recipes">
-              <PropertyRef Name="Recipes_id" />
+              <PropertyRef Name="Recipe_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -596,23 +643,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblRecipe__addBy__4E53A1AA">
-          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatients">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblRecipes">
-              <PropertyRef Name="addByUserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="diabeasyModelStoreContainer">
+        <EntityContainer Name="DiabeasyModelStoreContainer">
+          <EntitySet Name="Ingredients" EntityType="Self.Ingredients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartOf_Ingredients" EntityType="Self.PartOf_Ingredients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Recipes" EntityType="Self.Recipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblATE_Ingredients" EntityType="Self.tblATE_Ingredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblATE_Recipes" EntityType="Self.tblATE_Recipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblBelong" EntityType="Self.tblBelong" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblBelongToRecipe" EntityType="Self.tblBelongToRecipe" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategory" EntityType="Self.tblCategory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblConsistOf" EntityType="Self.tblConsistOf" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblDoctor" EntityType="Self.tblDoctor" Schema="dbo" store:Type="Tables" />
@@ -621,56 +660,77 @@
           <EntitySet Name="tblForum" EntityType="Self.tblForum" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblGroupType" EntityType="Self.tblGroupType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistorylog" EntityType="Self.tblHistorylog" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tblIngredients" EntityType="Self.tblIngredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblInsulinType" EntityType="Self.tblInsulinType" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tblPartOf_Ingredients" EntityType="Self.tblPartOf_Ingredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPartOf_Recipes" EntityType="Self.tblPartOf_Recipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPatientData" EntityType="Self.tblPatientData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPatients" EntityType="Self.tblPatients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPrescriptions" EntityType="Self.tblPrescriptions" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tblRecipes" EntityType="Self.tblRecipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblUnitOfMeasure" EntityType="Self.tblUnitOfMeasure" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__tblATE_In__Ingre__5BAD9CC8" Association="Self.FK__tblATE_In__Ingre__5BAD9CC8">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
+          <AssociationSet Name="FK__Ingredien__addBy__7755B73D" Association="Self.FK__Ingredien__addBy__7755B73D">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="Ingredients" EntitySet="Ingredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PartOf_In__Categ__7E02B4CC" Association="Self.FK__PartOf_In__Categ__7E02B4CC">
+            <End Role="tblCategory" EntitySet="tblCategory" />
+            <End Role="PartOf_Ingredients" EntitySet="PartOf_Ingredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PartOf_In__Ingre__7D0E9093" Association="Self.FK__PartOf_In__Ingre__7D0E9093">
+            <End Role="Ingredients" EntitySet="Ingredients" />
+            <End Role="PartOf_Ingredients" EntitySet="PartOf_Ingredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Recipes__addByUs__7A3223E8" Association="Self.FK__Recipes__addByUs__7A3223E8">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="Recipes" EntitySet="Recipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblATE_In__Ingre__214BF109" Association="Self.FK__tblATE_In__Ingre__214BF109">
+            <End Role="Ingredients" EntitySet="Ingredients" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_In__UnitO__59C55456" Association="Self.FK__tblATE_In__UnitO__59C55456">
+          <AssociationSet Name="FK__tblATE_In__UnitO__1F63A897" Association="Self.FK__tblATE_In__UnitO__1F63A897">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Ingredien__5AB9788F" Association="Self.FK__tblATE_Ingredien__5AB9788F">
+          <AssociationSet Name="FK__tblATE_Ingredien__2057CCD0" Association="Self.FK__tblATE_Ingredien__2057CCD0">
             <End Role="tblPatientData" EntitySet="tblPatientData" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Re__Recip__56E8E7AB" Association="Self.FK__tblATE_Re__Recip__56E8E7AB">
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
+          <AssociationSet Name="FK__tblATE_Re__Recip__18B6AB08" Association="Self.FK__tblATE_Re__Recip__18B6AB08">
+            <End Role="Recipes" EntitySet="Recipes" />
             <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Re__UnitO__55009F39" Association="Self.FK__tblATE_Re__UnitO__55009F39">
+          <AssociationSet Name="FK__tblATE_Re__UnitO__16CE6296" Association="Self.FK__tblATE_Re__UnitO__16CE6296">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Recipes__55F4C372" Association="Self.FK__tblATE_Recipes__55F4C372">
+          <AssociationSet Name="FK__tblATE_Recipes2__17C286CF" Association="Self.FK__tblATE_Recipes2__17C286CF">
             <End Role="tblPatientData" EntitySet="tblPatientData" />
             <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblBelong__Ingre__6BE40491" Association="Self.FK__tblBelong__Ingre__6BE40491">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
+          <AssociationSet Name="FK__tblBelong__Ingre__28ED12D1" Association="Self.FK__tblBelong__Ingre__28ED12D1">
+            <End Role="Ingredients" EntitySet="Ingredients" />
             <End Role="tblBelong" EntitySet="tblBelong" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblBelong__UnitO__6AEFE058" Association="Self.FK__tblBelong__UnitO__6AEFE058">
+          <AssociationSet Name="FK__tblBelong__Recip__10216507" Association="Self.FK__tblBelong__Recip__10216507">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="tblBelongToRecipe" EntitySet="tblBelongToRecipe" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblBelong__UnitO__0F2D40CE" Association="Self.FK__tblBelong__UnitO__0F2D40CE">
+            <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
+            <End Role="tblBelongToRecipe" EntitySet="tblBelongToRecipe" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblBelong__UnitO__27F8EE98" Association="Self.FK__tblBelong__UnitO__27F8EE98">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblBelong" EntitySet="tblBelong" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__Ingre__671F4F74" Association="Self.FK__tblConsis__Ingre__671F4F74">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
+          <AssociationSet Name="FK__tblConsis__Ingre__0B5CAFEA" Association="Self.FK__tblConsis__Ingre__0B5CAFEA">
+            <End Role="Ingredients" EntitySet="Ingredients" />
             <End Role="tblConsistOf" EntitySet="tblConsistOf" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__Recip__662B2B3B" Association="Self.FK__tblConsis__Recip__662B2B3B">
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
+          <AssociationSet Name="FK__tblConsis__Recip__0A688BB1" Association="Self.FK__tblConsis__Recip__0A688BB1">
+            <End Role="Recipes" EntitySet="Recipes" />
             <End Role="tblConsistOf" EntitySet="tblConsistOf" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__UnitO__681373AD" Association="Self.FK__tblConsis__UnitO__681373AD">
+          <AssociationSet Name="FK__tblConsis__UnitO__0C50D423" Association="Self.FK__tblConsis__UnitO__0C50D423">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblConsistOf" EntitySet="tblConsistOf" />
           </AssociationSet>
@@ -698,24 +758,12 @@
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="tblHistorylog" EntitySet="tblHistorylog" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblIngred__addBy__4B7734FF" Association="Self.FK__tblIngred__addBy__4B7734FF">
-            <End Role="tblPatients" EntitySet="tblPatients" />
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblPartOf__Categ__5F7E2DAC" Association="Self.FK__tblPartOf__Categ__5F7E2DAC">
-            <End Role="tblCategory" EntitySet="tblCategory" />
-            <End Role="tblPartOf_Ingredients" EntitySet="tblPartOf_Ingredients" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblPartOf__Categ__634EBE90" Association="Self.FK__tblPartOf__Categ__634EBE90">
+          <AssociationSet Name="FK__tblPartOf__Categ__13F1F5EB" Association="Self.FK__tblPartOf__Categ__13F1F5EB">
             <End Role="tblCategory" EntitySet="tblCategory" />
             <End Role="tblPartOf_Recipes" EntitySet="tblPartOf_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblPartOf__Ingre__5E8A0973" Association="Self.FK__tblPartOf__Ingre__5E8A0973">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-            <End Role="tblPartOf_Ingredients" EntitySet="tblPartOf_Ingredients" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblPartOf__Recip__625A9A57" Association="Self.FK__tblPartOf__Recip__625A9A57">
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
+          <AssociationSet Name="FK__tblPartOf__Recip__12FDD1B2" Association="Self.FK__tblPartOf__Recip__12FDD1B2">
+            <End Role="Recipes" EntitySet="Recipes" />
             <End Role="tblPartOf_Recipes" EntitySet="tblPartOf_Recipes" />
           </AssociationSet>
           <AssociationSet Name="FK__tblPatien__Docto__395884C4" Association="Self.FK__tblPatien__Docto__395884C4">
@@ -746,15 +794,44 @@
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblRecipe__addBy__4E53A1AA" Association="Self.FK__tblRecipe__addBy__4E53A1AA">
-            <End Role="tblPatients" EntitySet="tblPatients" />
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
-          </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="diabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="DiabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Ingredients">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="addByUserId" Type="Int32" />
+          <NavigationProperty Name="tblPatients" Relationship="Self.FK__Ingredien__addBy__7755B73D" FromRole="Ingredients" ToRole="tblPatients" />
+          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_In__Ingre__214BF109" FromRole="Ingredients" ToRole="tblATE_Ingredients" />
+          <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__Ingre__28ED12D1" FromRole="Ingredients" ToRole="tblBelong" />
+          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Ingre__0B5CAFEA" FromRole="Ingredients" ToRole="tblConsistOf" />
+          <NavigationProperty Name="tblCategory" Relationship="Self.PartOf_Ingredients" FromRole="Ingredients" ToRole="tblCategory" />
+        </EntityType>
+        <EntityType Name="Recipes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="totalCarbohydrates" Type="Double" />
+          <Property Name="totalsugars" Type="Double" />
+          <Property Name="totalWeigthInGrams" Type="Double" />
+          <Property Name="cookingMethod" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="addByUserId" Type="Int32" />
+          <NavigationProperty Name="tblPatients" Relationship="Self.FK__Recipes__addByUs__7A3223E8" FromRole="Recipes" ToRole="tblPatients" />
+          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Re__Recip__18B6AB08" FromRole="Recipes" ToRole="tblATE_Recipes" />
+          <NavigationProperty Name="tblBelongToRecipe" Relationship="Self.FK__tblBelong__Recip__10216507" FromRole="Recipes" ToRole="tblBelongToRecipe" />
+          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Recip__0A688BB1" FromRole="Recipes" ToRole="tblConsistOf" />
+          <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Recipes" FromRole="Recipes" ToRole="tblCategory" />
+        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -769,7 +846,7 @@
           <Key>
             <PropertyRef Name="Patients_id" />
             <PropertyRef Name="date_time" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Ingredient_id" />
           </Key>
           <Property Name="isFavorite" Type="Boolean" />
           <Property Name="isGood" Type="Boolean" />
@@ -777,16 +854,16 @@
           <Property Name="UnitOfMeasure_id" Type="Int32" />
           <Property Name="Patients_id" Type="Int32" Nullable="false" />
           <Property Name="date_time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Ingredients_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblIngredients" Relationship="Self.FK__tblATE_In__Ingre__5BAD9CC8" FromRole="tblATE_Ingredients" ToRole="tblIngredients" />
-          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblATE_In__UnitO__59C55456" FromRole="tblATE_Ingredients" ToRole="tblUnitOfMeasure" />
-          <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblATE_Ingredien__5AB9788F" FromRole="tblATE_Ingredients" ToRole="tblPatientData" />
+          <Property Name="Ingredient_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Ingredients" Relationship="Self.FK__tblATE_In__Ingre__214BF109" FromRole="tblATE_Ingredients" ToRole="Ingredients" />
+          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblATE_In__UnitO__1F63A897" FromRole="tblATE_Ingredients" ToRole="tblUnitOfMeasure" />
+          <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblATE_Ingredien__2057CCD0" FromRole="tblATE_Ingredients" ToRole="tblPatientData" />
         </EntityType>
         <EntityType Name="tblATE_Recipes">
           <Key>
             <PropertyRef Name="Patients_id" />
             <PropertyRef Name="date_time" />
-            <PropertyRef Name="Recipes_id" />
+            <PropertyRef Name="Recipe_id" />
           </Key>
           <Property Name="isFavorite" Type="Boolean" />
           <Property Name="isGood" Type="Boolean" />
@@ -794,23 +871,36 @@
           <Property Name="UnitOfMeasure_id" Type="Int32" />
           <Property Name="Patients_id" Type="Int32" Nullable="false" />
           <Property Name="date_time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Recipes_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblRecipes" Relationship="Self.FK__tblATE_Re__Recip__56E8E7AB" FromRole="tblATE_Recipes" ToRole="tblRecipes" />
-          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblATE_Re__UnitO__55009F39" FromRole="tblATE_Recipes" ToRole="tblUnitOfMeasure" />
-          <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblATE_Recipes__55F4C372" FromRole="tblATE_Recipes" ToRole="tblPatientData" />
+          <Property Name="Recipe_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Recipes" Relationship="Self.FK__tblATE_Re__Recip__18B6AB08" FromRole="tblATE_Recipes" ToRole="Recipes" />
+          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblATE_Re__UnitO__16CE6296" FromRole="tblATE_Recipes" ToRole="tblUnitOfMeasure" />
+          <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblATE_Recipes2__17C286CF" FromRole="tblATE_Recipes" ToRole="tblPatientData" />
         </EntityType>
         <EntityType Name="tblBelong">
           <Key>
             <PropertyRef Name="UnitOfMeasure_id" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Ingredient_id" />
           </Key>
           <Property Name="carbohydrates" Type="Double" />
           <Property Name="sugars" Type="Double" />
           <Property Name="weightInGrams" Type="Int32" />
           <Property Name="UnitOfMeasure_id" Type="Int32" Nullable="false" />
-          <Property Name="Ingredients_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblIngredients" Relationship="Self.FK__tblBelong__Ingre__6BE40491" FromRole="tblBelong" ToRole="tblIngredients" />
-          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblBelong__UnitO__6AEFE058" FromRole="tblBelong" ToRole="tblUnitOfMeasure" />
+          <Property Name="Ingredient_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Ingredients" Relationship="Self.FK__tblBelong__Ingre__28ED12D1" FromRole="tblBelong" ToRole="Ingredients" />
+          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblBelong__UnitO__27F8EE98" FromRole="tblBelong" ToRole="tblUnitOfMeasure" />
+        </EntityType>
+        <EntityType Name="tblBelongToRecipe">
+          <Key>
+            <PropertyRef Name="UnitOfMeasure_id" />
+            <PropertyRef Name="Recipe_id" />
+          </Key>
+          <Property Name="carbohydrates" Type="Int32" />
+          <Property Name="sugars" Type="Int32" />
+          <Property Name="weightInGrams" Type="Int32" />
+          <Property Name="UnitOfMeasure_id" Type="Int32" Nullable="false" />
+          <Property Name="Recipe_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Recipes" Relationship="Self.FK__tblBelong__Recip__10216507" FromRole="tblBelongToRecipe" ToRole="Recipes" />
+          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblBelong__UnitO__0F2D40CE" FromRole="tblBelongToRecipe" ToRole="tblUnitOfMeasure" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -818,22 +908,22 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="tblIngredients" Relationship="Self.tblPartOf_Ingredients" FromRole="tblCategory" ToRole="tblIngredients" />
-          <NavigationProperty Name="tblRecipes" Relationship="Self.tblPartOf_Recipes" FromRole="tblCategory" ToRole="tblRecipes" />
+          <NavigationProperty Name="Ingredients" Relationship="Self.PartOf_Ingredients" FromRole="tblCategory" ToRole="Ingredients" />
+          <NavigationProperty Name="Recipes" Relationship="Self.tblPartOf_Recipes" FromRole="tblCategory" ToRole="Recipes" />
         </EntityType>
         <EntityType Name="tblConsistOf">
           <Key>
-            <PropertyRef Name="Recipes_id" />
-            <PropertyRef Name="Ingredients_id" />
+            <PropertyRef Name="Recipe_id" />
+            <PropertyRef Name="Ingredient_id" />
             <PropertyRef Name="UnitOfMeasure_id" />
           </Key>
           <Property Name="amount" Type="Double" />
-          <Property Name="Recipes_id" Type="Int32" Nullable="false" />
-          <Property Name="Ingredients_id" Type="Int32" Nullable="false" />
+          <Property Name="Recipe_id" Type="Int32" Nullable="false" />
+          <Property Name="Ingredient_id" Type="Int32" Nullable="false" />
           <Property Name="UnitOfMeasure_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblIngredients" Relationship="Self.FK__tblConsis__Ingre__671F4F74" FromRole="tblConsistOf" ToRole="tblIngredients" />
-          <NavigationProperty Name="tblRecipes" Relationship="Self.FK__tblConsis__Recip__662B2B3B" FromRole="tblConsistOf" ToRole="tblRecipes" />
-          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblConsis__UnitO__681373AD" FromRole="tblConsistOf" ToRole="tblUnitOfMeasure" />
+          <NavigationProperty Name="Ingredients" Relationship="Self.FK__tblConsis__Ingre__0B5CAFEA" FromRole="tblConsistOf" ToRole="Ingredients" />
+          <NavigationProperty Name="Recipes" Relationship="Self.FK__tblConsis__Recip__0A688BB1" FromRole="tblConsistOf" ToRole="Recipes" />
+          <NavigationProperty Name="tblUnitOfMeasure" Relationship="Self.FK__tblConsis__UnitO__0C50D423" FromRole="tblConsistOf" ToRole="tblUnitOfMeasure" />
         </EntityType>
         <EntityType Name="tblDoctor">
           <Key>
@@ -901,20 +991,6 @@
           <Property Name="Patients_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblHistor__Patie__489AC854" FromRole="tblHistorylog" ToRole="tblPatients" />
         </EntityType>
-        <EntityType Name="tblIngredients">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="addByUserId" Type="Int32" />
-          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_In__Ingre__5BAD9CC8" FromRole="tblIngredients" ToRole="tblATE_Ingredients" />
-          <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__Ingre__6BE40491" FromRole="tblIngredients" ToRole="tblBelong" />
-          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Ingre__671F4F74" FromRole="tblIngredients" ToRole="tblConsistOf" />
-          <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblIngred__addBy__4B7734FF" FromRole="tblIngredients" ToRole="tblPatients" />
-          <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Ingredients" FromRole="tblIngredients" ToRole="tblCategory" />
-        </EntityType>
         <EntityType Name="tblInsulinType">
           <Key>
             <PropertyRef Name="id" />
@@ -937,11 +1013,11 @@
           <Property Name="value_of_ingection" Type="Double" />
           <Property Name="injection_site" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Patients_id" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_Ingredien__5AB9788F" FromRole="tblPatientData" ToRole="tblATE_Ingredients" />
-          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Recipes__55F4C372" FromRole="tblPatientData" ToRole="tblATE_Recipes" />
+          <Property Name="totalCarbs" Type="Double" />
+          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_Ingredien__2057CCD0" FromRole="tblPatientData" ToRole="tblATE_Ingredients" />
+          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Recipes2__17C286CF" FromRole="tblPatientData" ToRole="tblATE_Recipes" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPatien__Patie__3C34F16F" FromRole="tblPatientData" ToRole="tblPatients" />
           <NavigationProperty Name="tblExceptionalEvent" Relationship="Self.tblEventOf" FromRole="tblPatientData" ToRole="tblExceptionalEvent" />
-          <Property Name="totalCarbs" Type="Double" />
         </EntityType>
         <EntityType Name="tblPatients">
           <Key>
@@ -966,16 +1042,16 @@
           <Property Name="GroupType_id" Type="Int32" />
           <Property Name="Doctor_id" Type="Int32" />
           <Property Name="InsulinType_long_id" Type="Int32" />
+          <NavigationProperty Name="Ingredients" Relationship="Self.FK__Ingredien__addBy__7755B73D" FromRole="tblPatients" ToRole="Ingredients" />
+          <NavigationProperty Name="Recipes" Relationship="Self.FK__Recipes__addByUs__7A3223E8" FromRole="tblPatients" ToRole="Recipes" />
           <NavigationProperty Name="tblDoctor" Relationship="Self.FK__tblPatien__Docto__395884C4" FromRole="tblPatients" ToRole="tblDoctor" />
           <NavigationProperty Name="tblForum" Relationship="Self.FK__tblForum__Patien__3F115E1A" FromRole="tblPatients" ToRole="tblForum" />
           <NavigationProperty Name="tblGroupType" Relationship="Self.FK__tblPatien__Group__3864608B" FromRole="tblPatients" ToRole="tblGroupType" />
           <NavigationProperty Name="tblHistorylog" Relationship="Self.FK__tblHistor__Patie__489AC854" FromRole="tblPatients" ToRole="tblHistorylog" />
-          <NavigationProperty Name="tblIngredients" Relationship="Self.FK__tblIngred__addBy__4B7734FF" FromRole="tblPatients" ToRole="tblIngredients" />
           <NavigationProperty Name="tblInsulinType" Relationship="Self.FK__tblPatien__Insul__37703C52" FromRole="tblPatients" ToRole="tblInsulinType" />
           <NavigationProperty Name="tblInsulinType1" Relationship="Self.FK__tblPatien__Insul__70A8B9AE" FromRole="tblPatients" ToRole="tblInsulinType" />
           <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblPatien__Patie__3C34F16F" FromRole="tblPatients" ToRole="tblPatientData" />
           <NavigationProperty Name="tblPrescriptions" Relationship="Self.FK__tblPrescr__Patie__43D61337" FromRole="tblPatients" ToRole="tblPrescriptions" />
-          <NavigationProperty Name="tblRecipes" Relationship="Self.FK__tblRecipe__addBy__4E53A1AA" FromRole="tblPatients" ToRole="tblRecipes" />
         </EntityType>
         <EntityType Name="tblPrescriptions">
           <Key>
@@ -987,26 +1063,9 @@
           <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Patients_id" Type="Int32" />
           <Property Name="Doctor_id" Type="Int32" />
+          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblDoctor" Relationship="Self.FK__tblPrescr__Docto__44CA3770" FromRole="tblPrescriptions" ToRole="tblDoctor" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPrescr__Patie__43D61337" FromRole="tblPrescriptions" ToRole="tblPatients" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="tblRecipes">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="totalCarbohydrates" Type="Double" />
-          <Property Name="totalsugars" Type="Double" />
-          <Property Name="totalWeigthInGrams" Type="Double" />
-          <Property Name="cookingMethod" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="addByUserId" Type="Int32" />
-          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Re__Recip__56E8E7AB" FromRole="tblRecipes" ToRole="tblATE_Recipes" />
-          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Recip__662B2B3B" FromRole="tblRecipes" ToRole="tblConsistOf" />
-          <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblRecipe__addBy__4E53A1AA" FromRole="tblRecipes" ToRole="tblPatients" />
-          <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Recipes" FromRole="tblRecipes" ToRole="tblCategory" />
         </EntityType>
         <EntityType Name="tblUnitOfMeasure">
           <Key>
@@ -1015,100 +1074,161 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_In__UnitO__59C55456" FromRole="tblUnitOfMeasure" ToRole="tblATE_Ingredients" />
-          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Re__UnitO__55009F39" FromRole="tblUnitOfMeasure" ToRole="tblATE_Recipes" />
-          <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__UnitO__6AEFE058" FromRole="tblUnitOfMeasure" ToRole="tblBelong" />
-          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__UnitO__681373AD" FromRole="tblUnitOfMeasure" ToRole="tblConsistOf" />
+          <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_In__UnitO__1F63A897" FromRole="tblUnitOfMeasure" ToRole="tblATE_Ingredients" />
+          <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Re__UnitO__16CE6296" FromRole="tblUnitOfMeasure" ToRole="tblATE_Recipes" />
+          <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__UnitO__27F8EE98" FromRole="tblUnitOfMeasure" ToRole="tblBelong" />
+          <NavigationProperty Name="tblBelongToRecipe" Relationship="Self.FK__tblBelong__UnitO__0F2D40CE" FromRole="tblUnitOfMeasure" ToRole="tblBelongToRecipe" />
+          <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__UnitO__0C50D423" FromRole="tblUnitOfMeasure" ToRole="tblConsistOf" />
         </EntityType>
-        <Association Name="FK__tblATE_In__Ingre__5BAD9CC8">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
+        <Association Name="FK__Ingredien__addBy__7755B73D">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Ingredients">
+              <PropertyRef Name="addByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_In__Ingre__214BF109">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
           <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="Ingredients">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblATE_Ingredients">
-              <PropertyRef Name="Ingredients_id" />
+              <PropertyRef Name="Ingredient_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblATE_In__UnitO__59C55456">
-          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
-          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUnitOfMeasure">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblATE_Ingredients">
-              <PropertyRef Name="UnitOfMeasure_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblATE_Ingredien__5AB9788F">
-          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
-          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatientData">
-              <PropertyRef Name="Patients_id" />
-              <PropertyRef Name="date_time" />
-            </Principal>
-            <Dependent Role="tblATE_Ingredients">
-              <PropertyRef Name="Patients_id" />
-              <PropertyRef Name="date_time" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblATE_Re__Recip__56E8E7AB">
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="1" />
-          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRecipes">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblATE_Recipes">
-              <PropertyRef Name="Recipes_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblATE_Re__UnitO__55009F39">
-          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
-          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUnitOfMeasure">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblATE_Recipes">
-              <PropertyRef Name="UnitOfMeasure_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblATE_Recipes__55F4C372">
-          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
-          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatientData">
-              <PropertyRef Name="Patients_id" />
-              <PropertyRef Name="date_time" />
-            </Principal>
-            <Dependent Role="tblATE_Recipes">
-              <PropertyRef Name="Patients_id" />
-              <PropertyRef Name="date_time" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblBelong__Ingre__6BE40491">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
+        <Association Name="FK__tblBelong__Ingre__28ED12D1">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
           <End Role="tblBelong" Type="Self.tblBelong" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="Ingredients">
               <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="tblBelong">
-              <PropertyRef Name="Ingredients_id" />
+              <PropertyRef Name="Ingredient_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblBelong__UnitO__6AEFE058">
+        <Association Name="FK__tblConsis__Ingre__0B5CAFEA">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
+          <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblConsistOf">
+              <PropertyRef Name="Ingredient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Recipes__addByUs__7A3223E8">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Recipes">
+              <PropertyRef Name="addByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_Re__Recip__18B6AB08">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblATE_Recipes">
+              <PropertyRef Name="Recipe_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblBelong__Recip__10216507">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="tblBelongToRecipe" Type="Self.tblBelongToRecipe" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblBelongToRecipe">
+              <PropertyRef Name="Recipe_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblConsis__Recip__0A688BB1">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblConsistOf">
+              <PropertyRef Name="Recipe_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_In__UnitO__1F63A897">
+          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
+          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUnitOfMeasure">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblATE_Ingredients">
+              <PropertyRef Name="UnitOfMeasure_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_Ingredien__2057CCD0">
+          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
+          <End Role="tblATE_Ingredients" Type="Self.tblATE_Ingredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatientData">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Principal>
+            <Dependent Role="tblATE_Ingredients">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_Re__UnitO__16CE6296">
+          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="0..1" />
+          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblUnitOfMeasure">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblATE_Recipes">
+              <PropertyRef Name="UnitOfMeasure_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblATE_Recipes2__17C286CF">
+          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
+          <End Role="tblATE_Recipes" Type="Self.tblATE_Recipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatientData">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Principal>
+            <Dependent Role="tblATE_Recipes">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblBelong__UnitO__27F8EE98">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
           <End Role="tblBelong" Type="Self.tblBelong" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1120,31 +1240,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblConsis__Ingre__671F4F74">
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="1" />
-          <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
+        <Association Name="FK__tblBelong__UnitO__0F2D40CE">
+          <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
+          <End Role="tblBelongToRecipe" Type="Self.tblBelongToRecipe" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="tblIngredients">
+            <Principal Role="tblUnitOfMeasure">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="tblConsistOf">
-              <PropertyRef Name="Ingredients_id" />
+            <Dependent Role="tblBelongToRecipe">
+              <PropertyRef Name="UnitOfMeasure_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblConsis__Recip__662B2B3B">
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="1" />
-          <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblRecipes">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblConsistOf">
-              <PropertyRef Name="Recipes_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__tblConsis__UnitO__681373AD">
+        <Association Name="FK__tblConsis__UnitO__0C50D423">
           <End Role="tblUnitOfMeasure" Type="Self.tblUnitOfMeasure" Multiplicity="1" />
           <End Role="tblConsistOf" Type="Self.tblConsistOf" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1240,18 +1348,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblIngred__addBy__4B7734FF">
-          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatients">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblIngredients">
-              <PropertyRef Name="addByUserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__tblPatien__Insul__37703C52">
           <End Role="tblInsulinType" Type="Self.tblInsulinType" Multiplicity="0..1" />
           <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="*" />
@@ -1300,35 +1396,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tblRecipe__addBy__4E53A1AA">
-          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblPatients">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="tblRecipes">
-              <PropertyRef Name="addByUserId" />
-            </Dependent>
-          </ReferentialConstraint>
+        <Association Name="PartOf_Ingredients">
+          <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="*" />
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
         </Association>
         <Association Name="tblEventOf">
           <End Role="tblExceptionalEvent" Type="Self.tblExceptionalEvent" Multiplicity="*" />
           <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="*" />
         </Association>
-        <Association Name="tblPartOf_Ingredients">
-          <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="*" />
-          <End Role="tblIngredients" Type="Self.tblIngredients" Multiplicity="*" />
-        </Association>
         <Association Name="tblPartOf_Recipes">
           <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="*" />
-          <End Role="tblRecipes" Type="Self.tblRecipes" Multiplicity="*" />
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
         </Association>
         <EntityContainer Name="diabeasyDBContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Ingredients" EntityType="Self.Ingredients" />
+          <EntitySet Name="Recipes" EntityType="Self.Recipes" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="tblATE_Ingredients" EntityType="Self.tblATE_Ingredients" />
           <EntitySet Name="tblATE_Recipes" EntityType="Self.tblATE_Recipes" />
           <EntitySet Name="tblBelong" EntityType="Self.tblBelong" />
+          <EntitySet Name="tblBelongToRecipe" EntityType="Self.tblBelongToRecipe" />
           <EntitySet Name="tblCategory" EntityType="Self.tblCategory" />
           <EntitySet Name="tblConsistOf" EntityType="Self.tblConsistOf" />
           <EntitySet Name="tblDoctor" EntityType="Self.tblDoctor" />
@@ -1336,54 +1423,68 @@
           <EntitySet Name="tblForum" EntityType="Self.tblForum" />
           <EntitySet Name="tblGroupType" EntityType="Self.tblGroupType" />
           <EntitySet Name="tblHistorylog" EntityType="Self.tblHistorylog" />
-          <EntitySet Name="tblIngredients" EntityType="Self.tblIngredients" />
           <EntitySet Name="tblInsulinType" EntityType="Self.tblInsulinType" />
           <EntitySet Name="tblPatientData" EntityType="Self.tblPatientData" />
           <EntitySet Name="tblPatients" EntityType="Self.tblPatients" />
           <EntitySet Name="tblPrescriptions" EntityType="Self.tblPrescriptions" />
-          <EntitySet Name="tblRecipes" EntityType="Self.tblRecipes" />
           <EntitySet Name="tblUnitOfMeasure" EntityType="Self.tblUnitOfMeasure" />
-          <AssociationSet Name="FK__tblATE_In__Ingre__5BAD9CC8" Association="Self.FK__tblATE_In__Ingre__5BAD9CC8">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
+          <AssociationSet Name="FK__Ingredien__addBy__7755B73D" Association="Self.FK__Ingredien__addBy__7755B73D">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="Ingredients" EntitySet="Ingredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblATE_In__Ingre__214BF109" Association="Self.FK__tblATE_In__Ingre__214BF109">
+            <End Role="Ingredients" EntitySet="Ingredients" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_In__UnitO__59C55456" Association="Self.FK__tblATE_In__UnitO__59C55456">
+          <AssociationSet Name="FK__tblBelong__Ingre__28ED12D1" Association="Self.FK__tblBelong__Ingre__28ED12D1">
+            <End Role="Ingredients" EntitySet="Ingredients" />
+            <End Role="tblBelong" EntitySet="tblBelong" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblConsis__Ingre__0B5CAFEA" Association="Self.FK__tblConsis__Ingre__0B5CAFEA">
+            <End Role="Ingredients" EntitySet="Ingredients" />
+            <End Role="tblConsistOf" EntitySet="tblConsistOf" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Recipes__addByUs__7A3223E8" Association="Self.FK__Recipes__addByUs__7A3223E8">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="Recipes" EntitySet="Recipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblATE_Re__Recip__18B6AB08" Association="Self.FK__tblATE_Re__Recip__18B6AB08">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblBelong__Recip__10216507" Association="Self.FK__tblBelong__Recip__10216507">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="tblBelongToRecipe" EntitySet="tblBelongToRecipe" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblConsis__Recip__0A688BB1" Association="Self.FK__tblConsis__Recip__0A688BB1">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="tblConsistOf" EntitySet="tblConsistOf" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblATE_In__UnitO__1F63A897" Association="Self.FK__tblATE_In__UnitO__1F63A897">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Ingredien__5AB9788F" Association="Self.FK__tblATE_Ingredien__5AB9788F">
+          <AssociationSet Name="FK__tblATE_Ingredien__2057CCD0" Association="Self.FK__tblATE_Ingredien__2057CCD0">
             <End Role="tblPatientData" EntitySet="tblPatientData" />
             <End Role="tblATE_Ingredients" EntitySet="tblATE_Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Re__Recip__56E8E7AB" Association="Self.FK__tblATE_Re__Recip__56E8E7AB">
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
-            <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Re__UnitO__55009F39" Association="Self.FK__tblATE_Re__UnitO__55009F39">
+          <AssociationSet Name="FK__tblATE_Re__UnitO__16CE6296" Association="Self.FK__tblATE_Re__UnitO__16CE6296">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblATE_Recipes__55F4C372" Association="Self.FK__tblATE_Recipes__55F4C372">
+          <AssociationSet Name="FK__tblATE_Recipes2__17C286CF" Association="Self.FK__tblATE_Recipes2__17C286CF">
             <End Role="tblPatientData" EntitySet="tblPatientData" />
             <End Role="tblATE_Recipes" EntitySet="tblATE_Recipes" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblBelong__Ingre__6BE40491" Association="Self.FK__tblBelong__Ingre__6BE40491">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-            <End Role="tblBelong" EntitySet="tblBelong" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblBelong__UnitO__6AEFE058" Association="Self.FK__tblBelong__UnitO__6AEFE058">
+          <AssociationSet Name="FK__tblBelong__UnitO__27F8EE98" Association="Self.FK__tblBelong__UnitO__27F8EE98">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblBelong" EntitySet="tblBelong" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__Ingre__671F4F74" Association="Self.FK__tblConsis__Ingre__671F4F74">
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-            <End Role="tblConsistOf" EntitySet="tblConsistOf" />
+          <AssociationSet Name="FK__tblBelong__UnitO__0F2D40CE" Association="Self.FK__tblBelong__UnitO__0F2D40CE">
+            <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
+            <End Role="tblBelongToRecipe" EntitySet="tblBelongToRecipe" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__Recip__662B2B3B" Association="Self.FK__tblConsis__Recip__662B2B3B">
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
-            <End Role="tblConsistOf" EntitySet="tblConsistOf" />
-          </AssociationSet>
-          <AssociationSet Name="FK__tblConsis__UnitO__681373AD" Association="Self.FK__tblConsis__UnitO__681373AD">
+          <AssociationSet Name="FK__tblConsis__UnitO__0C50D423" Association="Self.FK__tblConsis__UnitO__0C50D423">
             <End Role="tblUnitOfMeasure" EntitySet="tblUnitOfMeasure" />
             <End Role="tblConsistOf" EntitySet="tblConsistOf" />
           </AssociationSet>
@@ -1415,10 +1516,6 @@
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="tblHistorylog" EntitySet="tblHistorylog" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblIngred__addBy__4B7734FF" Association="Self.FK__tblIngred__addBy__4B7734FF">
-            <End Role="tblPatients" EntitySet="tblPatients" />
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-          </AssociationSet>
           <AssociationSet Name="FK__tblPatien__Insul__37703C52" Association="Self.FK__tblPatien__Insul__37703C52">
             <End Role="tblInsulinType" EntitySet="tblInsulinType" />
             <End Role="tblPatients" EntitySet="tblPatients" />
@@ -1435,21 +1532,17 @@
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
-          <AssociationSet Name="FK__tblRecipe__addBy__4E53A1AA" Association="Self.FK__tblRecipe__addBy__4E53A1AA">
-            <End Role="tblPatients" EntitySet="tblPatients" />
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
+          <AssociationSet Name="PartOf_Ingredients" Association="Self.PartOf_Ingredients">
+            <End Role="tblCategory" EntitySet="tblCategory" />
+            <End Role="Ingredients" EntitySet="Ingredients" />
           </AssociationSet>
           <AssociationSet Name="tblEventOf" Association="Self.tblEventOf">
             <End Role="tblExceptionalEvent" EntitySet="tblExceptionalEvent" />
             <End Role="tblPatientData" EntitySet="tblPatientData" />
           </AssociationSet>
-          <AssociationSet Name="tblPartOf_Ingredients" Association="Self.tblPartOf_Ingredients">
-            <End Role="tblCategory" EntitySet="tblCategory" />
-            <End Role="tblIngredients" EntitySet="tblIngredients" />
-          </AssociationSet>
           <AssociationSet Name="tblPartOf_Recipes" Association="Self.tblPartOf_Recipes">
             <End Role="tblCategory" EntitySet="tblCategory" />
-            <End Role="tblRecipes" EntitySet="tblRecipes" />
+            <End Role="Recipes" EntitySet="Recipes" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -1457,9 +1550,33 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="diabeasyModelStoreContainer" CdmEntityContainer="diabeasyDBContext">
+        <EntityContainerMapping StorageEntityContainer="DiabeasyModelStoreContainer" CdmEntityContainer="diabeasyDBContext">
+          <EntitySetMapping Name="Ingredients">
+            <EntityTypeMapping TypeName="DiabeasyModel.Ingredients">
+              <MappingFragment StoreEntitySet="Ingredients">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="image" ColumnName="image" />
+                <ScalarProperty Name="addByUserId" ColumnName="addByUserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Recipes">
+            <EntityTypeMapping TypeName="DiabeasyModel.Recipes">
+              <MappingFragment StoreEntitySet="Recipes">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="image" ColumnName="image" />
+                <ScalarProperty Name="totalCarbohydrates" ColumnName="totalCarbohydrates" />
+                <ScalarProperty Name="totalsugars" ColumnName="totalsugars" />
+                <ScalarProperty Name="totalWeigthInGrams" ColumnName="totalWeigthInGrams" />
+                <ScalarProperty Name="cookingMethod" ColumnName="cookingMethod" />
+                <ScalarProperty Name="addByUserId" ColumnName="addByUserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="diabeasyModel.sysdiagrams">
+            <EntityTypeMapping TypeName="DiabeasyModel.sysdiagrams">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -1470,7 +1587,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblATE_Ingredients">
-            <EntityTypeMapping TypeName="diabeasyModel.tblATE_Ingredients">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblATE_Ingredients">
               <MappingFragment StoreEntitySet="tblATE_Ingredients">
                 <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
                 <ScalarProperty Name="isGood" ColumnName="isGood" />
@@ -1478,12 +1595,12 @@
                 <ScalarProperty Name="UnitOfMeasure_id" ColumnName="UnitOfMeasure_id" />
                 <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
-                <ScalarProperty Name="Ingredients_id" ColumnName="Ingredients_id" />
+                <ScalarProperty Name="Ingredient_id" ColumnName="Ingredient_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblATE_Recipes">
-            <EntityTypeMapping TypeName="diabeasyModel.tblATE_Recipes">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblATE_Recipes">
               <MappingFragment StoreEntitySet="tblATE_Recipes">
                 <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
                 <ScalarProperty Name="isGood" ColumnName="isGood" />
@@ -1491,23 +1608,34 @@
                 <ScalarProperty Name="UnitOfMeasure_id" ColumnName="UnitOfMeasure_id" />
                 <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
-                <ScalarProperty Name="Recipes_id" ColumnName="Recipes_id" />
+                <ScalarProperty Name="Recipe_id" ColumnName="Recipe_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblBelong">
-            <EntityTypeMapping TypeName="diabeasyModel.tblBelong">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblBelong">
               <MappingFragment StoreEntitySet="tblBelong">
                 <ScalarProperty Name="carbohydrates" ColumnName="carbohydrates" />
                 <ScalarProperty Name="sugars" ColumnName="sugars" />
                 <ScalarProperty Name="weightInGrams" ColumnName="weightInGrams" />
                 <ScalarProperty Name="UnitOfMeasure_id" ColumnName="UnitOfMeasure_id" />
-                <ScalarProperty Name="Ingredients_id" ColumnName="Ingredients_id" />
+                <ScalarProperty Name="Ingredient_id" ColumnName="Ingredient_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblBelongToRecipe">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblBelongToRecipe">
+              <MappingFragment StoreEntitySet="tblBelongToRecipe">
+                <ScalarProperty Name="carbohydrates" ColumnName="carbohydrates" />
+                <ScalarProperty Name="sugars" ColumnName="sugars" />
+                <ScalarProperty Name="weightInGrams" ColumnName="weightInGrams" />
+                <ScalarProperty Name="UnitOfMeasure_id" ColumnName="UnitOfMeasure_id" />
+                <ScalarProperty Name="Recipe_id" ColumnName="Recipe_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblCategory">
-            <EntityTypeMapping TypeName="diabeasyModel.tblCategory">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblCategory">
               <MappingFragment StoreEntitySet="tblCategory">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1515,17 +1643,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblConsistOf">
-            <EntityTypeMapping TypeName="diabeasyModel.tblConsistOf">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblConsistOf">
               <MappingFragment StoreEntitySet="tblConsistOf">
                 <ScalarProperty Name="amount" ColumnName="amount" />
-                <ScalarProperty Name="Recipes_id" ColumnName="Recipes_id" />
-                <ScalarProperty Name="Ingredients_id" ColumnName="Ingredients_id" />
+                <ScalarProperty Name="Recipe_id" ColumnName="Recipe_id" />
+                <ScalarProperty Name="Ingredient_id" ColumnName="Ingredient_id" />
                 <ScalarProperty Name="UnitOfMeasure_id" ColumnName="UnitOfMeasure_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblDoctor">
-            <EntityTypeMapping TypeName="diabeasyModel.tblDoctor">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblDoctor">
               <MappingFragment StoreEntitySet="tblDoctor">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email" ColumnName="email" />
@@ -1539,7 +1667,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblExceptionalEvent">
-            <EntityTypeMapping TypeName="diabeasyModel.tblExceptionalEvent">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblExceptionalEvent">
               <MappingFragment StoreEntitySet="tblExceptionalEvent">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1548,7 +1676,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblForum">
-            <EntityTypeMapping TypeName="diabeasyModel.tblForum">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblForum">
               <MappingFragment StoreEntitySet="tblForum">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
@@ -1561,7 +1689,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblGroupType">
-            <EntityTypeMapping TypeName="diabeasyModel.tblGroupType">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblGroupType">
               <MappingFragment StoreEntitySet="tblGroupType">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="min_height" ColumnName="min_height" />
@@ -1574,7 +1702,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblHistorylog">
-            <EntityTypeMapping TypeName="diabeasyModel.tblHistorylog">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblHistorylog">
               <MappingFragment StoreEntitySet="tblHistorylog">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
@@ -1584,18 +1712,8 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="tblIngredients">
-            <EntityTypeMapping TypeName="diabeasyModel.tblIngredients">
-              <MappingFragment StoreEntitySet="tblIngredients">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="image" ColumnName="image" />
-                <ScalarProperty Name="addByUserId" ColumnName="addByUserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="tblInsulinType">
-            <EntityTypeMapping TypeName="diabeasyModel.tblInsulinType">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblInsulinType">
               <MappingFragment StoreEntitySet="tblInsulinType">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1604,9 +1722,8 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPatientData">
-            <EntityTypeMapping TypeName="diabeasyModel.tblPatientData">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblPatientData">
               <MappingFragment StoreEntitySet="tblPatientData">
-                <ScalarProperty Name="totalCarbs" ColumnName="totalCarbs" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="blood_sugar_level" ColumnName="blood_sugar_level" />
                 <ScalarProperty Name="injectionType" ColumnName="injectionType" />
@@ -1614,11 +1731,12 @@
                 <ScalarProperty Name="value_of_ingection" ColumnName="value_of_ingection" />
                 <ScalarProperty Name="injection_site" ColumnName="injection_site" />
                 <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
+                <ScalarProperty Name="totalCarbs" ColumnName="totalCarbs" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPatients">
-            <EntityTypeMapping TypeName="diabeasyModel.tblPatients">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblPatients">
               <MappingFragment StoreEntitySet="tblPatients">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email" ColumnName="email" />
@@ -1643,34 +1761,20 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPrescriptions">
-            <EntityTypeMapping TypeName="diabeasyModel.tblPrescriptions">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblPrescriptions">
               <MappingFragment StoreEntitySet="tblPrescriptions">
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="subject" ColumnName="subject" />
                 <ScalarProperty Name="value" ColumnName="value" />
                 <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
                 <ScalarProperty Name="Doctor_id" ColumnName="Doctor_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tblRecipes">
-            <EntityTypeMapping TypeName="diabeasyModel.tblRecipes">
-              <MappingFragment StoreEntitySet="tblRecipes">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="image" ColumnName="image" />
-                <ScalarProperty Name="totalCarbohydrates" ColumnName="totalCarbohydrates" />
-                <ScalarProperty Name="totalsugars" ColumnName="totalsugars" />
-                <ScalarProperty Name="totalWeigthInGrams" ColumnName="totalWeigthInGrams" />
-                <ScalarProperty Name="cookingMethod" ColumnName="cookingMethod" />
-                <ScalarProperty Name="addByUserId" ColumnName="addByUserId" />
+                <ScalarProperty Name="status" ColumnName="status" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblUnitOfMeasure">
-            <EntityTypeMapping TypeName="diabeasyModel.tblUnitOfMeasure">
+            <EntityTypeMapping TypeName="DiabeasyModel.tblUnitOfMeasure">
               <MappingFragment StoreEntitySet="tblUnitOfMeasure">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1678,7 +1782,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="tblEventOf" TypeName="diabeasyModel.tblEventOf" StoreEntitySet="tblEventOf">
+          <AssociationSetMapping Name="PartOf_Ingredients" TypeName="DiabeasyModel.PartOf_Ingredients" StoreEntitySet="PartOf_Ingredients">
+            <EndProperty Name="tblCategory">
+              <ScalarProperty Name="id" ColumnName="Category_id" />
+            </EndProperty>
+            <EndProperty Name="Ingredients">
+              <ScalarProperty Name="id" ColumnName="Ingredients_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="tblEventOf" TypeName="DiabeasyModel.tblEventOf" StoreEntitySet="tblEventOf">
             <EndProperty Name="tblExceptionalEvent">
               <ScalarProperty Name="id" ColumnName="ExceptionalEvent_id" />
             </EndProperty>
@@ -1687,20 +1799,12 @@
               <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="tblPartOf_Ingredients" TypeName="diabeasyModel.tblPartOf_Ingredients" StoreEntitySet="tblPartOf_Ingredients">
+          <AssociationSetMapping Name="tblPartOf_Recipes" TypeName="DiabeasyModel.tblPartOf_Recipes" StoreEntitySet="tblPartOf_Recipes">
             <EndProperty Name="tblCategory">
               <ScalarProperty Name="id" ColumnName="Category_id" />
             </EndProperty>
-            <EndProperty Name="tblIngredients">
-              <ScalarProperty Name="id" ColumnName="Ingredients_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="tblPartOf_Recipes" TypeName="diabeasyModel.tblPartOf_Recipes" StoreEntitySet="tblPartOf_Recipes">
-            <EndProperty Name="tblCategory">
-              <ScalarProperty Name="id" ColumnName="Category_id" />
-            </EndProperty>
-            <EndProperty Name="tblRecipes">
-              <ScalarProperty Name="id" ColumnName="Recipes_id" />
+            <EndProperty Name="Recipes">
+              <ScalarProperty Name="id" ColumnName="Recipe_id" />
             </EndProperty>
           </AssociationSetMapping>
         </EntityContainerMapping>

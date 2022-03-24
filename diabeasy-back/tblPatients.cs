@@ -17,12 +17,12 @@ namespace diabeasy_back
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblPatients()
         {
+            this.Ingredients = new HashSet<Ingredients>();
+            this.Recipes = new HashSet<Recipes>();
             this.tblForum = new HashSet<tblForum>();
             this.tblHistorylog = new HashSet<tblHistorylog>();
-            this.tblIngredients = new HashSet<tblIngredients>();
             this.tblPatientData = new HashSet<tblPatientData>();
             this.tblPrescriptions = new HashSet<tblPrescriptions>();
-            this.tblRecipes = new HashSet<tblRecipes>();
         }
     
         public int id { get; set; }
@@ -45,21 +45,21 @@ namespace diabeasy_back
         public Nullable<int> Doctor_id { get; set; }
         public Nullable<int> InsulinType_long_id { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Ingredients> Ingredients { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Recipes> Recipes { get; set; }
         public virtual tblDoctor tblDoctor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblForum> tblForum { get; set; }
         public virtual tblGroupType tblGroupType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblHistorylog> tblHistorylog { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblIngredients> tblIngredients { get; set; }
         public virtual tblInsulinType tblInsulinType { get; set; }
         public virtual tblInsulinType tblInsulinType1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPatientData> tblPatientData { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPrescriptions> tblPrescriptions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblRecipes> tblRecipes { get; set; }
     }
 }

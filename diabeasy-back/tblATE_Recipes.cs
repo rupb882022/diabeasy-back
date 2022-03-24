@@ -20,9 +20,9 @@ namespace diabeasy_back
         public Nullable<int> UnitOfMeasure_id { get; set; }
         public int Patients_id { get; set; }
         public System.DateTime date_time { get; set; }
-        public int Recipes_id { get; set; }
+        public int Recipe_id { get; set; }
     
-        public virtual tblRecipes tblRecipes { get; set; }
+        public virtual Recipes Recipes { get; set; }
         public virtual tblUnitOfMeasure tblUnitOfMeasure { get; set; }
         public virtual tblPatientData tblPatientData { get; set; }
     }

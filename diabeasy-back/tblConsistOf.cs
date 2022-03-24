@@ -15,12 +15,12 @@ namespace diabeasy_back
     public partial class tblConsistOf
     {
         public Nullable<double> amount { get; set; }
-        public int Recipes_id { get; set; }
-        public int Ingredients_id { get; set; }
+        public int Recipe_id { get; set; }
+        public int Ingredient_id { get; set; }
         public int UnitOfMeasure_id { get; set; }
     
-        public virtual tblIngredients tblIngredients { get; set; }
-        public virtual tblRecipes tblRecipes { get; set; }
+        public virtual Ingredients Ingredients { get; set; }
+        public virtual Recipes Recipes { get; set; }
         public virtual tblUnitOfMeasure tblUnitOfMeasure { get; set; }
     }
 }

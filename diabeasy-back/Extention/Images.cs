@@ -29,7 +29,7 @@ namespace diabeasy_back
                         int newPatientId = patient.id + 2;
                         return start + newPatientId.ToString();
                     case "Ingredient":
-                        tblIngredients Ingredient = DB.tblIngredients.OrderByDescending(x => x.id).FirstOrDefault();
+                        Ingredients Ingredient = DB.Ingredients.OrderByDescending(x => x.id).FirstOrDefault();
                         int newIngredientId = Ingredient.id + 1;
                         return start + newIngredientId.ToString();
                     // case for ingredients and recipes.

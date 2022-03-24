@@ -12,10 +12,10 @@ namespace diabeasy_back
     using System;
     using System.Collections.Generic;
     
-    public partial class tblIngredients
+    public partial class Ingredients
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tblIngredients()
+        public Ingredients()
         {
             this.tblATE_Ingredients = new HashSet<tblATE_Ingredients>();
             this.tblBelong = new HashSet<tblBelong>();
@@ -28,13 +28,13 @@ namespace diabeasy_back
         public string image { get; set; }
         public Nullable<int> addByUserId { get; set; }
     
+        public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblATE_Ingredients> tblATE_Ingredients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblBelong> tblBelong { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblConsistOf> tblConsistOf { get; set; }
-        public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblCategory> tblCategory { get; set; }
     }
