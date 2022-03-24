@@ -291,13 +291,22 @@ namespace WebApi.Controllers
         [HttpPost]
         [Route("api/User/Prescription/addRequest")]
         public IHttpActionResult Prescription_addRequest([FromBody] tblPrescriptions obj)
-        {
-            try
-            {
+        { 
+            try{
+            DateTime d = (DateTime)obj.date_time;
+            string requestDate=d.ToString("MMM dd yyyy").Substring(0, 11);
+            int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
+                if (amount<3)
+                {
                 DB.tblPrescriptions.Add(obj);
                 DB.SaveChanges();
-
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                }
+                else
+                {
+                    return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.Forbidden, " no more then three"));
+                    //return Content(HttpStatusCode.Forbidden,"Only 3 requests per day, please try again tomorrow");
+                }
             }
             catch (Exception e)
             {
@@ -316,28 +325,6 @@ namespace WebApi.Controllers
                 DB.SaveChanges();
 
                 return Created(new Uri(Request.RequestUri.AbsoluteUri),PatientDatadata);
-            }
-            catch (Exception e)
-            {
-                logger.Fatal(e.Message);
-                return Content(HttpStatusCode.BadRequest, e.Message);
-            }
-        }
-
-        [HttpPut]
-        [Route("api/User/Prescription/{id}")]
-        public IHttpActionResult Put(int id, [FromBody] tblPrescriptions obj)
-        {
-            try
-            {
-                tblPrescriptions prescription = DB.tblPrescriptions.SingleOrDefault(x => x.id == id);
-                if (prescription != null)
-                {
-                    prescription.status = obj.status;
-                    DB.SaveChanges();
-                    return Content(HttpStatusCode.OK, new { id = prescription.id, status = prescription.status });
-                }
-                return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
             }
             catch (Exception e)
             {
