@@ -304,7 +304,7 @@ namespace WebApi.Controllers
                 }
                 else
                 {
-                    return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.Forbidden, " no more then three"));
+                    return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Only 3 requests per day, please try again tomorrow.."));
                     //return Content(HttpStatusCode.Forbidden,"Only 3 requests per day, please try again tomorrow");
                 }
             }
