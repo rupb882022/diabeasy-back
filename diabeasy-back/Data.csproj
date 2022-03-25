@@ -58,8 +58,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extention\Images.cs" />
+    <Compile Include="Extention\Ingredients.cs" />
+    <Compile Include="Extention\Recipes.cs" />
+    <Compile Include="Extention\tblCategory.cs" />
+    <Compile Include="Extention\tblDoctor.cs" />
     <Compile Include="Extention\tblForum.cs" />
     <Compile Include="Extention\tblPatients.cs" />
+    <Compile Include="Extention\tblPrescriptions.cs" />
     <Compile Include="Extention\User.cs" />
     <Compile Include="Ingredients.cs">
       <DependentUpon>Model.tt</DependentUpon>
