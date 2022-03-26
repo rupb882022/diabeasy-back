@@ -30,9 +30,12 @@ namespace diabeasy_back
                         return start + newPatientId.ToString();
                     case "Ingredient":
                         Ingredients Ingredient = DB.Ingredients.OrderByDescending(x => x.id).FirstOrDefault();
-                        int newIngredientId = Ingredient.id + 1;
+                        int newIngredientId = Ingredient.id + 2;
                         return start + newIngredientId.ToString();
-                    // case for ingredients and recipes.
+                    case "recipe":
+                        Recipes Recipe = DB.Recipes.OrderByDescending(x => x.id).FirstOrDefault();
+                        int newRecipeId = Recipe.id + 2;
+                        return start + newRecipeId.ToString();
 
                     default:
                         return start;

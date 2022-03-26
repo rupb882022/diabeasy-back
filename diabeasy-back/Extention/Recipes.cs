@@ -10,6 +10,7 @@ namespace diabeasy_back
     [MetadataType(typeof(RecipesMetaData))]
     public partial class Recipes
     {
+       
     }
 
     public class RecipesMetaData

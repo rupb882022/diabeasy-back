@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extention\Food.cs" />
     <Compile Include="Extention\Images.cs" />
     <Compile Include="Extention\Ingredients.cs" />
     <Compile Include="Extention\Recipes.cs" />

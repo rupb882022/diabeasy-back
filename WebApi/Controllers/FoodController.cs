@@ -12,6 +12,7 @@ using NLog;
 using System.Configuration;
 using System.Data.Entity.Infrastructure;
 using WebApi.DTO;
+using Newtonsoft.Json.Linq;
 
 namespace WebApi.Controllers
 {
@@ -22,7 +23,7 @@ namespace WebApi.Controllers
         static Logger logger = LogManager.GetCurrentClassLogger();
         Images image = new Images();
         User user = new User();
-
+        Food food = new Food();
         [HttpGet]
         [Route("api/Food/Category")]
         public IHttpActionResult GetCategory()
@@ -63,7 +64,7 @@ namespace WebApi.Controllers
                 {
                     query += " and I.name like @search ";
                 }
-                query += " order by I.id";
+                query += " order by I.id,C.id";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@useId", useId);
 
@@ -213,7 +214,7 @@ namespace WebApi.Controllers
                     }
 
                 }
-                //add last ingrediant in query list
+                //add last ingrediant in query listgimer
                 Recipes.Add(Recipe);
 
                 //set the category of recipes
@@ -280,15 +281,8 @@ namespace WebApi.Controllers
         {
             try
             {
-
-
-                tblUnitOfMeasureDto unit = new tblUnitOfMeasureDto()
-                {
-                    id = ingredient.unit,
-                    carbs = ingredient.carbs,
-                    suger = ingredient.suger,
-                    weightInGrams = ingredient.weightInGrams
-                };
+           
+                JArray categories = (JArray)ingredient.category;
 
                 string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("Ingredient") + ".jpg";
                 string name = user.NameToUpper((string)ingredient.name);
@@ -300,14 +294,136 @@ namespace WebApi.Controllers
                 //get the new ingredient for connection tables 
                 Ingredients newingredient = DB.Ingredients.OrderByDescending(x => x.id).FirstOrDefault();
 
-                DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredient_id = newingredient.id, carbohydrates = unit.carbs, sugars = unit.suger, weightInGrams = ingredient.weightInGrams });
-                string query = $"insert into tblPartOf_Ingredients values ({newingredient.id},{ingredient.category})";
+                DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = ingredient.unit, Ingredient_id = newingredient.id, carbohydrates = ingredient.carbs, sugars = ingredient.suger, weightInGrams = ingredient.weightInGrams });
+           
+                    Nullable<int> unit_id = food.getUnitID("grams");
+                    Nullable<double> carbs = food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.carbs);
+                    Nullable<double> sugar=0; 
+                    if(ingredient.sugar!=null)
+                    food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.sugars);
+                   
+
+                if (unit_id != null&& carbs!=null) { 
+                    DB.tblBelong.Add(new tblBelong() { UnitOfMeasure_id = (int)unit_id, Ingredient_id = newingredient.id, carbohydrates = carbs, sugars = sugar, weightInGrams =100 });
+                    }
+                
+
+                //insert into category connection
+                string query = "insert into PartOf_Ingredients values ";
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    query += $"({newingredient.id},{categories[i]}),";
+                }
+                query = query.Substring(0, query.Length - 1);
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 int res = cmd.ExecuteNonQuery();
                 if (res < 1)
                 {
                     throw new Exception("cannot insert values into tblPartOf_Ingredients");
+                }
+                DB.SaveChanges();
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Food/AddRecipe")]
+        public IHttpActionResult AddRecipe([FromBody] dynamic recpie)
+        {
+            try
+            {
+
+                JArray categories = (JArray)recpie.category;
+                string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("recipe") + ".jpg";
+                string name = user.NameToUpper((string)recpie.name);
+                JArray Ingridents = (JArray)recpie.Ingridents;
+
+                DB.Recipes.Add(new Recipes() { name = name,
+                    image = imageName,
+                    totalCarbohydrates= recpie.TotalCarbs,
+                    totalsugars= recpie.TotalSuger,
+                    totalWeigthInGrams= recpie.TotalGrams,
+                    cookingMethod=recpie.cookingMethod,
+                    addByUserId = recpie.userId });
+
+                //DB.SaveChanges();
+
+                //get the new recipe for connection tables 
+                Recipes newRecipe = DB.Recipes.OrderByDescending(x => x.id).FirstOrDefault();
+
+
+                //insert ingredient of recipe to connection table
+                for (int i = 0; i < Ingridents.Count; i++)
+                {
+                    DB.tblConsistOf.Add(new tblConsistOf()
+                    {
+                        Recipe_id = newRecipe.id,
+                        Ingredient_id = (int)recpie.Ingridents[i].id,
+                        amount =(int) recpie.Ingridents[i].amount,
+                        UnitOfMeasure_id = (int)recpie.Ingridents[i].unit
+                    });
+                }
+                //insert the details of unit
+                DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                {
+                    carbohydrates = recpie.carbs,
+                    sugars = recpie.sugars,
+                    weightInGrams = recpie.weightInGrams,
+                    Recipe_id = (int)newRecipe.id,
+                    UnitOfMeasure_id = (int)recpie.unit
+                });
+
+                //unit of recipe
+                Nullable<int> unit_id = food.getUnitID("Unit");
+                DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                {
+                    UnitOfMeasure_id = (int)unit_id,
+                    Recipe_id = newRecipe.id,
+                    carbohydrates = recpie.TotalCarbs,
+                    sugars = recpie.TotalSuger,
+                    weightInGrams = recpie.TotalGrams
+                });
+
+                 unit_id = food.getUnitID("grams");
+                Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.carbs);
+                Nullable<double> sugar = 0;
+                if (recpie.sugar != null)
+                    food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
+
+
+                if (unit_id != null && carbs != null)
+                {
+                    DB.tblBelongToRecipe.Add(new tblBelongToRecipe() {
+                        UnitOfMeasure_id = (int)unit_id, 
+                        Recipe_id = newRecipe.id,
+                        carbohydrates = carbs,
+                        sugars = sugar,
+                        weightInGrams = 100 });
+                }
+
+                //insert into category connection
+                string query = "insert into tblPartOf_Recipes values ";
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    query += $"({newRecipe.id},{categories[i]}),";
+                }
+                query=query.Substring(0, query.Length - 1);
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query, con);
+                int res = cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot insert values into tblPartOf_Recipes");
                 }
                 DB.SaveChanges();
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
