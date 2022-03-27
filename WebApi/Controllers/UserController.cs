@@ -16,7 +16,7 @@ namespace WebApi.Controllers
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
-        Images images = new Images();   
+        Images images = new Images();
         static Logger logger = LogManager.GetCurrentClassLogger();
 
 
@@ -24,7 +24,7 @@ namespace WebApi.Controllers
         [Route("api/User/Prescription/{id}")]
         public IHttpActionResult Prescription(int id)
         {
-            List<tblPrescriptionDto> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptionDto() { id=x.id, date_time = x.date_time, subject= x.subject, value= x.value ,status=x.status}).ToList();
+            List<tblPrescriptionDto> allPrescriptions = DB.tblPrescriptions.Where(x => x.Patients_id == id).OrderByDescending(x => x.date_time).Select(x => new tblPrescriptionDto() { id = x.id, date_time = x.date_time, subject = x.subject, value = x.value, status = x.status }).ToList();
             return Content(HttpStatusCode.OK, allPrescriptions);
         }
 
@@ -72,7 +72,7 @@ namespace WebApi.Controllers
                     return Content(HttpStatusCode.OK, userDetalis);
                 }
 
-                return Content(HttpStatusCode.BadRequest,"worng user details");
+                return Content(HttpStatusCode.BadRequest, "worng user details");
             }
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)
@@ -111,7 +111,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-               logger.Fatal(e.Message);
+                logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -123,7 +123,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                email = email.Replace("=",".");
+                email = email.Replace("=", ".");
                 Random rnd = new Random();
                 string code = rnd.Next(100, 1000).ToString();//generet 3 digits code
                 string userType = user.GetTypeByMail(email);
@@ -193,15 +193,15 @@ namespace WebApi.Controllers
         {
             try
             {
-            var Patients = DB.tblPatients.Where(x => x.Doctor_id == id).Select(x => new { id = x.id, firstname=x.firstname,lastname=x.lastname,profileimage=x.profileimage, select= false }).ToList();
-            return Content(HttpStatusCode.OK, Patients);
+                var Patients = DB.tblPatients.Where(x => x.Doctor_id == id).Select(x => new { id = x.id, firstname = x.firstname, lastname = x.lastname, profileimage = x.profileimage, select = false }).ToList();
+                return Content(HttpStatusCode.OK, Patients);
             }
             catch (Exception e)
             {
                 logger.Error("no patients found");
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
-           
+
 
 
         }
@@ -216,7 +216,7 @@ namespace WebApi.Controllers
                 //cheack uniqe email
                 if (!user.checkUniqeMail(obj.email, obj.weight == null))
                 {
-                    return Content(HttpStatusCode.Conflict,"the email is allready exist");
+                    return Content(HttpStatusCode.Conflict, "the email is allready exist");
                 }
 
                 //will upper first letter in first and last name
@@ -226,38 +226,38 @@ namespace WebApi.Controllers
                 //if weight exesist it is patient else doctor
                 if (obj.weight != null)
                 {
-                    Nullable<int> Doctor_id =null;
-                    if (obj.mailDoctor !=null)
+                    Nullable<int> Doctor_id = null;
+                    if (obj.mailDoctor != null)
                     {//Todo send mail to doctor+alert
-                         Doctor_id=user.checkDoctorMail(obj.mailDoctor);
+                        Doctor_id = user.checkDoctorMail(obj.mailDoctor);
                     }
 
-                    image = images.CreateNewNameOrMakeItUniqe("profilePatient")+".jpg";
+                    image = images.CreateNewNameOrMakeItUniqe("profilePatient") + ".jpg";
 
                     //todo change gender to char
                     DB.tblPatients.Add(new tblPatients()
                     {
                         email = obj.email,
                         firstname = obj.firstName,
-                        lastname = obj.lastName,   
-                        birthdate=obj.BirthDate,
+                        lastname = obj.lastName,
+                        birthdate = obj.BirthDate,
                         password = obj.password,
-                        gender=obj.gender,
-                        profileimage=image,
-                        height=obj.height,
-                        weight=obj.weight,
+                        gender = obj.gender,
+                        profileimage = image,
+                        height = obj.height,
+                        weight = obj.weight,
                         InsulinType_id = obj.InsulinType_id,
                         InsulinType_long_id = obj.InsulinType_long_id,
-                        assistant_phone =obj.phoneNumber,
-                        Doctor_id= Doctor_id,
-                    }) ;
+                        assistant_phone = obj.phoneNumber,
+                        Doctor_id = Doctor_id,
+                    });
                     //todo triger to group user type
                     DB.SaveChanges();
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                 }
                 else
                 {
-                    image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg"; 
+                    image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg";
                     //todo change gender to char
                     DB.tblDoctor.Add(new tblDoctor()
                     {
@@ -272,7 +272,7 @@ namespace WebApi.Controllers
                     DB.SaveChanges();
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
                 }
-                
+
 
             }
             //handel erorrs from DB like uniqe value, todo send messge back
@@ -291,22 +291,45 @@ namespace WebApi.Controllers
         [HttpPost]
         [Route("api/User/Prescription/addRequest")]
         public IHttpActionResult Prescription_addRequest([FromBody] tblPrescriptions obj)
-        { 
-            try{
-            DateTime d = (DateTime)obj.date_time;
-            string requestDate=d.ToString("MMM dd yyyy").Substring(0, 11);
-            int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
-                if (amount<3)
+        {
+            try
+            {
+                DateTime d = (DateTime)obj.date_time;
+                string requestDate = d.ToString("MMM dd yyyy").Substring(0, 11);
+                int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
+                if (amount < 3)
                 {
-                DB.tblPrescriptions.Add(obj);
-                DB.SaveChanges();
-                return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                    DB.tblPrescriptions.Add(obj);
+                    DB.SaveChanges();
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
                 }
                 else
                 {
                     return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Only 3 requests per day, please try again tomorrow.."));
                     //return Content(HttpStatusCode.Forbidden,"Only 3 requests per day, please try again tomorrow");
                 }
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("api/User/Prescription/{id}")]
+        public IHttpActionResult Put(int id, [FromBody] tblPrescriptions obj)
+        {
+            try
+            {
+                tblPrescriptions prescription = DB.tblPrescriptions.SingleOrDefault(x => x.id == id);
+                if (prescription != null)
+                {
+                    prescription.status = obj.status;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, new { id = prescription.id, status = prescription.status });
+                }
+                return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
             }
             catch (Exception e)
             {
@@ -324,7 +347,7 @@ namespace WebApi.Controllers
                 DB.tblPatientData.Add(PatientDatadata);
                 DB.SaveChanges();
 
-                return Created(new Uri(Request.RequestUri.AbsoluteUri),PatientDatadata);
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
             }
             catch (Exception e)
             {
