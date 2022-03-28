@@ -379,7 +379,7 @@ namespace WebApi.Controllers
                     carbohydrates = recpie.carbs,
                     sugars = recpie.sugars,
                     weightInGrams = recpie.weightInGrams,
-                    Recipe_id = (int)newRecipe.id,
+                    Recipe_id = newRecipe.id,
                     UnitOfMeasure_id = (int)recpie.unit
                 });
 
