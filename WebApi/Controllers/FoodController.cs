@@ -347,7 +347,7 @@ namespace WebApi.Controllers
                 string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("recipe") + ".jpg";
                 string name = user.NameToUpper((string)recpie.name);
                 JArray Ingridents = (JArray)recpie.Ingridents;
-
+                //add the new recipe to DB
                 DB.Recipes.Add(new Recipes() { name = name,
                     image = imageName,
                     totalCarbohydrates= recpie.TotalCarbs,
@@ -356,13 +356,14 @@ namespace WebApi.Controllers
                     cookingMethod=recpie.cookingMethod,
                     addByUserId = recpie.userId });
 
-                //DB.SaveChanges();
+                DB.SaveChanges();
 
                 //get the new recipe for connection tables 
                 Recipes newRecipe = DB.Recipes.OrderByDescending(x => x.id).FirstOrDefault();
 
 
                 //insert ingredient of recipe to connection table
+                //insert the ingridents for recipe
                 for (int i = 0; i < Ingridents.Count; i++)
                 {
                     DB.tblConsistOf.Add(new tblConsistOf()
