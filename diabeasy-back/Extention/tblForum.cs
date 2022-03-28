@@ -25,9 +25,6 @@ namespace diabeasy_back
         [Required(AllowEmptyStrings = false, ErrorMessage = "subject cannot be empty")]
         public string subject;
 
-        [MinLength(3, ErrorMessage = "must be more then 3 charts")]
-        [Display(Name = "Id Continue comment")]
-        public Nullable<int> Id_Continue_comment;
 
     }
 }
