@@ -344,9 +344,12 @@ namespace WebApi.Controllers
             {
 
                 JArray categories = (JArray)recpie.category;
+                JArray Ingridents = (JArray)recpie.Ingridents;
                 string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("recipe") + ".jpg";
                 string name = user.NameToUpper((string)recpie.name);
-                JArray Ingridents = (JArray)recpie.Ingridents;
+              
+
+                
                 //add the new recipe to DB
                 DB.Recipes.Add(new Recipes() { name = name,
                     image = imageName,
@@ -366,12 +369,14 @@ namespace WebApi.Controllers
                 //insert the ingridents for recipe
                 for (int i = 0; i < Ingridents.Count; i++)
                 {
+                    string unitName = recpie.Ingridents[i].unit;
+                    int unitId = food.getUnitID(unitName);
                     DB.tblConsistOf.Add(new tblConsistOf()
                     {
                         Recipe_id = newRecipe.id,
                         Ingredient_id = (int)recpie.Ingridents[i].id,
                         amount =(int) recpie.Ingridents[i].amount,
-                        UnitOfMeasure_id = (int)recpie.Ingridents[i].unit
+                        UnitOfMeasure_id = unitId
                     });
                 }
                 //insert the details of unit
@@ -396,7 +401,7 @@ namespace WebApi.Controllers
                 });
 
                  unit_id = food.getUnitID("grams");
-                Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.carbs);
+                Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.TotalGrams, (double)recpie.TotalCarbs);
                 Nullable<double> sugar = 0;
                 if (recpie.sugar != null)
                     food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);

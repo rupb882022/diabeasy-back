@@ -28,7 +28,7 @@ namespace diabeasy_back
                 return null;
             }
         }
-        public Nullable<int> getUnitID(string name)
+        public int getUnitID(string name)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace diabeasy_back
             catch (Exception ex)
             {
                 logger.Fatal(ex.Message);
-                return null;
+                return int.MinValue;
             }
         }
     }
