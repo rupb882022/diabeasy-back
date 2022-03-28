@@ -338,6 +338,28 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("api/User/Prescription/Delete/{id}")]
+        public IHttpActionResult Delete(int id)
+        {
+            try
+            {
+                tblPrescriptions prescription = DB.tblPrescriptions.SingleOrDefault(x => x.id == id);
+                if (prescription != null)
+                {
+                    DB.tblPrescriptions.Remove(prescription);
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, prescription);
+                }
+                return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
         [HttpPost]
         [Route("api/User/InsertData")]
         public IHttpActionResult InsertData([FromBody] tblPatientData PatientDatadata)
