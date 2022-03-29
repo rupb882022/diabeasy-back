@@ -144,6 +144,22 @@
           <Property Name="name" Type="nvarchar" MaxLength="255" />
           <Property Name="date_time" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblFavoritesIngredients">
+          <Key>
+            <PropertyRef Name="Ingredient_id" />
+            <PropertyRef Name="Patient_id" />
+          </Key>
+          <Property Name="Ingredient_id" Type="int" Nullable="false" />
+          <Property Name="Patient_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblFavoritesRecipes">
+          <Key>
+            <PropertyRef Name="Recipes_id" />
+            <PropertyRef Name="Patient_id" />
+          </Key>
+          <Property Name="Recipes_id" Type="int" Nullable="false" />
+          <Property Name="Patient_id" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="tblForum">
           <Key>
             <PropertyRef Name="id" />
@@ -487,6 +503,54 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__tblFavori__Ingre__2F9A1060">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="1" />
+          <End Role="tblFavoritesIngredients" Type="Self.tblFavoritesIngredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ingredients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblFavoritesIngredients">
+              <PropertyRef Name="Ingredient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblFavori__Patie__2CBDA3B5">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="1" />
+          <End Role="tblFavoritesRecipes" Type="Self.tblFavoritesRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblFavoritesRecipes">
+              <PropertyRef Name="Patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblFavori__Patie__308E3499">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="1" />
+          <End Role="tblFavoritesIngredients" Type="Self.tblFavoritesIngredients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatients">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblFavoritesIngredients">
+              <PropertyRef Name="Patient_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblFavori__Recip__2BC97F7C">
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="1" />
+          <End Role="tblFavoritesRecipes" Type="Self.tblFavoritesRecipes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Recipes">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblFavoritesRecipes">
+              <PropertyRef Name="Recipes_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__tblForum__Doctor__40058253">
           <End Role="tblDoctor" Type="Self.tblDoctor" Multiplicity="0..1" />
           <End Role="tblForum" Type="Self.tblForum" Multiplicity="*" />
@@ -657,6 +721,8 @@
           <EntitySet Name="tblDoctor" EntityType="Self.tblDoctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblEventOf" EntityType="Self.tblEventOf" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblExceptionalEvent" EntityType="Self.tblExceptionalEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblFavoritesIngredients" EntityType="Self.tblFavoritesIngredients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblFavoritesRecipes" EntityType="Self.tblFavoritesRecipes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblForum" EntityType="Self.tblForum" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblGroupType" EntityType="Self.tblGroupType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistorylog" EntityType="Self.tblHistorylog" Schema="dbo" store:Type="Tables" />
@@ -742,6 +808,22 @@
             <End Role="tblPatientData" EntitySet="tblPatientData" />
             <End Role="tblEventOf" EntitySet="tblEventOf" />
           </AssociationSet>
+          <AssociationSet Name="FK__tblFavori__Ingre__2F9A1060" Association="Self.FK__tblFavori__Ingre__2F9A1060">
+            <End Role="Ingredients" EntitySet="Ingredients" />
+            <End Role="tblFavoritesIngredients" EntitySet="tblFavoritesIngredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblFavori__Patie__2CBDA3B5" Association="Self.FK__tblFavori__Patie__2CBDA3B5">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="tblFavoritesRecipes" EntitySet="tblFavoritesRecipes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblFavori__Patie__308E3499" Association="Self.FK__tblFavori__Patie__308E3499">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="tblFavoritesIngredients" EntitySet="tblFavoritesIngredients" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblFavori__Recip__2BC97F7C" Association="Self.FK__tblFavori__Recip__2BC97F7C">
+            <End Role="Recipes" EntitySet="Recipes" />
+            <End Role="tblFavoritesRecipes" EntitySet="tblFavoritesRecipes" />
+          </AssociationSet>
           <AssociationSet Name="FK__tblForum__Doctor__40058253" Association="Self.FK__tblForum__Doctor__40058253">
             <End Role="tblDoctor" EntitySet="tblDoctor" />
             <End Role="tblForum" EntitySet="tblForum" />
@@ -813,6 +895,7 @@
           <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__Ingre__28ED12D1" FromRole="Ingredients" ToRole="tblBelong" />
           <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Ingre__0B5CAFEA" FromRole="Ingredients" ToRole="tblConsistOf" />
           <NavigationProperty Name="tblCategory" Relationship="Self.PartOf_Ingredients" FromRole="Ingredients" ToRole="tblCategory" />
+          <NavigationProperty Name="tblPatients1" Relationship="Self.tblFavoritesIngredients" FromRole="Ingredients" ToRole="tblPatients" />
         </EntityType>
         <EntityType Name="Recipes">
           <Key>
@@ -830,6 +913,7 @@
           <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Re__Recip__18B6AB08" FromRole="Recipes" ToRole="tblATE_Recipes" />
           <NavigationProperty Name="tblBelongToRecipe" Relationship="Self.FK__tblBelong__Recip__10216507" FromRole="Recipes" ToRole="tblBelongToRecipe" />
           <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Recip__0A688BB1" FromRole="Recipes" ToRole="tblConsistOf" />
+          <NavigationProperty Name="tblPatients1" Relationship="Self.tblFavoritesRecipes" FromRole="Recipes" ToRole="tblPatients" />
           <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Recipes" FromRole="Recipes" ToRole="tblCategory" />
         </EntityType>
         <EntityType Name="sysdiagrams">
@@ -1052,6 +1136,8 @@
           <NavigationProperty Name="tblInsulinType1" Relationship="Self.FK__tblPatien__Insul__70A8B9AE" FromRole="tblPatients" ToRole="tblInsulinType" />
           <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblPatien__Patie__3C34F16F" FromRole="tblPatients" ToRole="tblPatientData" />
           <NavigationProperty Name="tblPrescriptions" Relationship="Self.FK__tblPrescr__Patie__43D61337" FromRole="tblPatients" ToRole="tblPrescriptions" />
+          <NavigationProperty Name="Ingredients1" Relationship="Self.tblFavoritesIngredients" FromRole="tblPatients" ToRole="Ingredients" />
+          <NavigationProperty Name="Recipes1" Relationship="Self.tblFavoritesRecipes" FromRole="tblPatients" ToRole="Recipes" />
         </EntityType>
         <EntityType Name="tblPrescriptions">
           <Key>
@@ -1404,6 +1490,14 @@
           <End Role="tblExceptionalEvent" Type="Self.tblExceptionalEvent" Multiplicity="*" />
           <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="*" />
         </Association>
+        <Association Name="tblFavoritesIngredients">
+          <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="*" />
+        </Association>
+        <Association Name="tblFavoritesRecipes">
+          <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="*" />
+          <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
+        </Association>
         <Association Name="tblPartOf_Recipes">
           <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="*" />
           <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
@@ -1539,6 +1633,14 @@
           <AssociationSet Name="tblEventOf" Association="Self.tblEventOf">
             <End Role="tblExceptionalEvent" EntitySet="tblExceptionalEvent" />
             <End Role="tblPatientData" EntitySet="tblPatientData" />
+          </AssociationSet>
+          <AssociationSet Name="tblFavoritesIngredients" Association="Self.tblFavoritesIngredients">
+            <End Role="Ingredients" EntitySet="Ingredients" />
+            <End Role="tblPatients" EntitySet="tblPatients" />
+          </AssociationSet>
+          <AssociationSet Name="tblFavoritesRecipes" Association="Self.tblFavoritesRecipes">
+            <End Role="tblPatients" EntitySet="tblPatients" />
+            <End Role="Recipes" EntitySet="Recipes" />
           </AssociationSet>
           <AssociationSet Name="tblPartOf_Recipes" Association="Self.tblPartOf_Recipes">
             <End Role="tblCategory" EntitySet="tblCategory" />
@@ -1797,6 +1899,22 @@
             <EndProperty Name="tblPatientData">
               <ScalarProperty Name="date_time" ColumnName="date_time" />
               <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="tblFavoritesIngredients" TypeName="DiabeasyModel.tblFavoritesIngredients" StoreEntitySet="tblFavoritesIngredients">
+            <EndProperty Name="Ingredients">
+              <ScalarProperty Name="id" ColumnName="Ingredient_id" />
+            </EndProperty>
+            <EndProperty Name="tblPatients">
+              <ScalarProperty Name="id" ColumnName="Patient_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="tblFavoritesRecipes" TypeName="DiabeasyModel.tblFavoritesRecipes" StoreEntitySet="tblFavoritesRecipes">
+            <EndProperty Name="tblPatients">
+              <ScalarProperty Name="id" ColumnName="Patient_id" />
+            </EndProperty>
+            <EndProperty Name="Recipes">
+              <ScalarProperty Name="id" ColumnName="Recipes_id" />
             </EndProperty>
           </AssociationSetMapping>
           <AssociationSetMapping Name="tblPartOf_Recipes" TypeName="DiabeasyModel.tblPartOf_Recipes" StoreEntitySet="tblPartOf_Recipes">

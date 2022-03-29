@@ -379,11 +379,11 @@ namespace WebApi.Controllers
                         UnitOfMeasure_id = unitId
                     });
                 }
-                //insert the details of unit
+                //insert the details of selected unit
                 DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
                 {
                     carbohydrates = recpie.carbs,
-                    sugars = recpie.sugars,
+                    sugars = recpie.suger,
                     weightInGrams = recpie.weightInGrams,
                     Recipe_id = newRecipe.id,
                     UnitOfMeasure_id = (int)recpie.unit
@@ -391,32 +391,39 @@ namespace WebApi.Controllers
 
                 //unit of recipe
                 Nullable<int> unit_id = food.getUnitID("Unit");
-                DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                if (unit_id != (int)recpie.unit)
                 {
-                    UnitOfMeasure_id = (int)unit_id,
-                    Recipe_id = newRecipe.id,
-                    carbohydrates = recpie.TotalCarbs,
-                    sugars = recpie.TotalSuger,
-                    weightInGrams = recpie.TotalGrams
-                });
-
-                 unit_id = food.getUnitID("grams");
-                Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.TotalGrams, (double)recpie.TotalCarbs);
-                Nullable<double> sugar = 0;
-                if (recpie.sugar != null)
-                    food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
-
-
-                if (unit_id != null && carbs != null)
-                {
-                    DB.tblBelongToRecipe.Add(new tblBelongToRecipe() {
-                        UnitOfMeasure_id = (int)unit_id, 
+                    DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                    {
+                        UnitOfMeasure_id = (int)unit_id,
                         Recipe_id = newRecipe.id,
-                        carbohydrates = carbs,
-                        sugars = sugar,
-                        weightInGrams = 100 });
+                        carbohydrates = recpie.TotalCarbs,
+                        sugars = recpie.TotalSuger,
+                        weightInGrams = recpie.TotalGrams
+                    });
                 }
+                unit_id = food.getUnitID("grams");
 
+                if (unit_id != (int)recpie.unit)
+                {
+                    Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.carbs);
+                    Nullable<double> sugar = 0;
+                    if (recpie.sugar != null)
+                        food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
+
+
+                    if (unit_id != null && carbs != null)
+                    {
+                        DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                        {
+                            UnitOfMeasure_id = (int)unit_id,
+                            Recipe_id = newRecipe.id,
+                            carbohydrates = carbs,
+                            sugars = sugar,
+                            weightInGrams = 100
+                        });
+                    }
+                }
                 //insert into category connection
                 string query = "insert into tblPartOf_Recipes values ";
                 for (int i = 0; i < categories.Count; i++)

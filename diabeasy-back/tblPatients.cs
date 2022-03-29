@@ -23,6 +23,8 @@ namespace diabeasy_back
             this.tblHistorylog = new HashSet<tblHistorylog>();
             this.tblPatientData = new HashSet<tblPatientData>();
             this.tblPrescriptions = new HashSet<tblPrescriptions>();
+            this.Ingredients1 = new HashSet<Ingredients>();
+            this.Recipes1 = new HashSet<Recipes>();
         }
     
         public int id { get; set; }
@@ -61,5 +63,9 @@ namespace diabeasy_back
         public virtual ICollection<tblPatientData> tblPatientData { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPrescriptions> tblPrescriptions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Ingredients> Ingredients1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Recipes> Recipes1 { get; set; }
     }
 }
