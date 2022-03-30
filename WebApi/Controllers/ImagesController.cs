@@ -18,24 +18,7 @@ namespace WebApi.Controllers
     {
      diabeasyDBContext DB = new diabeasyDBContext();
         Images images = new Images();
-        //just for trying
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            try
-            {
-                List<string> s = DB.tblPatients.Select(x => x.firstname + " " + x.lastname + "  email:" + x.email).ToList();
-                //return Content(HttpStatusCode.OK,s);
-                return s;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
-
+ 
 
         [Route("api/uploadpicture")]
         public Task<HttpResponseMessage> Post()
@@ -74,14 +57,17 @@ namespace WebApi.Controllers
                             outputForNir += " ---here3" + newFileName;
 
                             //delete all files begining with the same name
-                            string[] names = Directory.GetFiles(rootPath);
-                            foreach (var fileName in names)
-                            {
-                                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
-                                {
-                                    File.Delete(fileName);
-                                }
-                            }
+                            //string[] names = Directory.GetFiles(rootPath);
+                            //foreach (var fileName in names)
+                            //{
+                            //    if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
+                            //    {
+                            //        File.Delete(fileName);
+                            //    }
+                            //}
+
+                           if(images.ImageFileExist(newFileName))
+                                File.Delete(newFileName);
 
                             //File.Move(item.LocalFileName, Path.Combine(rootPath, newFileName));
                             File.Copy(item.LocalFileName, Path.Combine(rootPath, newFileName), true);

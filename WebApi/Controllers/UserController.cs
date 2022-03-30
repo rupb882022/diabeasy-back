@@ -231,11 +231,13 @@ namespace WebApi.Controllers
                     {//Todo send mail to doctor+alert
                         Doctor_id = user.checkDoctorMail(obj.mailDoctor);
                     }
-
+                    
                     image = images.CreateNewNameOrMakeItUniqe("profilePatient") + ".jpg";
+                    if (!images.ImageFileExist(image))
+                        image = null;
 
-                    //todo change gender to char
-                    DB.tblPatients.Add(new tblPatients()
+                        //todo change gender to char
+                        DB.tblPatients.Add(new tblPatients()
                     {
                         email = obj.email,
                         firstname = obj.firstName,
@@ -258,7 +260,9 @@ namespace WebApi.Controllers
                 else
                 {
                     image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg";
-                    //todo change gender to char
+                    if (!images.ImageFileExist(image))
+                        image = null;
+
                     DB.tblDoctor.Add(new tblDoctor()
                     {
                         email = obj.email,
