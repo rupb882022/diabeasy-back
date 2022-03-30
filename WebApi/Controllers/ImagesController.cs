@@ -57,17 +57,16 @@ namespace WebApi.Controllers
                             outputForNir += " ---here3" + newFileName;
 
                             //delete all files begining with the same name
-                            //string[] names = Directory.GetFiles(rootPath);
-                            //foreach (var fileName in names)
-                            //{
-                            //    if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
-                            //    {
-                            //        File.Delete(fileName);
-                            //    }
-                            //}
+                            string[] names = Directory.GetFiles(rootPath);
+                            foreach (var fileName in names)
+                            {
+                                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
+                                {
+                                    File.Delete(fileName);
+                                }
+                            }
 
-                           if(images.ImageFileExist(newFileName))
-                                File.Delete(newFileName);
+
 
                             //File.Move(item.LocalFileName, Path.Combine(rootPath, newFileName));
                             File.Copy(item.LocalFileName, Path.Combine(rootPath, newFileName), true);
@@ -81,6 +80,7 @@ namespace WebApi.Controllers
                             Uri fileFullPath = new Uri(baseuri, VirtualPathUtility.ToAbsolute(fileRelativePath));
                             outputForNir += " ---here7" + fileFullPath.ToString();
                             savedFilePath.Add(fileFullPath.ToString());
+                            return Request.CreateResponse(HttpStatusCode.OK, images.ImageFileExist(newFileName).ToString());
                         }
                         catch (Exception ex)
                         {
@@ -88,7 +88,7 @@ namespace WebApi.Controllers
                             return Request.CreateResponse(HttpStatusCode.BadRequest, outputForNir);
                         }
                     }
-
+                 
                     return Request.CreateResponse(HttpStatusCode.Created, "nirchen " + savedFilePath[0] + "!" + provider.FileData.Count + "!" + outputForNir + ":)");
                 });
             return task;

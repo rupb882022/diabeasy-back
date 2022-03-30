@@ -233,8 +233,8 @@ namespace WebApi.Controllers
                     }
                     
                     image = images.CreateNewNameOrMakeItUniqe("profilePatient") + ".jpg";
-                    if (!images.ImageFileExist(image))
-                        image = null;
+                    //if (!images.ImageFileExist(image))
+                    //    image = null;
 
                         //todo change gender to char
                         DB.tblPatients.Add(new tblPatients()
@@ -260,8 +260,8 @@ namespace WebApi.Controllers
                 else
                 {
                     image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg";
-                    if (!images.ImageFileExist(image))
-                        image = null;
+                    //if (!images.ImageFileExist(image))
+                    //    image = null;
 
                     DB.tblDoctor.Add(new tblDoctor()
                     {
