@@ -20,6 +20,7 @@ namespace diabeasy_back
             this.tblATE_Recipes = new HashSet<tblATE_Recipes>();
             this.tblBelongToRecipe = new HashSet<tblBelongToRecipe>();
             this.tblConsistOf = new HashSet<tblConsistOf>();
+            this.tblPatients1 = new HashSet<tblPatients>();
             this.tblCategory = new HashSet<tblCategory>();
         }
     
@@ -39,6 +40,8 @@ namespace diabeasy_back
         public virtual ICollection<tblBelongToRecipe> tblBelongToRecipe { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblConsistOf> tblConsistOf { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblPatients> tblPatients1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblCategory> tblCategory { get; set; }
     }

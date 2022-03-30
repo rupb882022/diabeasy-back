@@ -14,9 +14,7 @@ namespace diabeasy_back
     }
     public class tblPrescriptionsMetaData
     {
-        [Display(Name = "Prescription date")]
-       // [DataType(DataType.DateTime)]
-        public Nullable<System.DateTime> date_time;
+       
 
         [MinLength(3, ErrorMessage = "must be more then 3 charts")]
         [Display(Name = "Prescription subject")]

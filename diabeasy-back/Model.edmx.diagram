@@ -4,24 +4,24 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f4fb42dde3734abc87e8b22543e69bee" Name="Diagram1" ZoomLevel="40">
-        <EntityTypeShape EntityType="DiabeasyModel.Ingredients" Width="1.5" PointX="8.25" PointY="16.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.Recipes" Width="1.5" PointX="11.25" PointY="15.75" IsExpanded="true" />
+      <Diagram DiagramId="cc6ff5e42ee24ddead5953a967cdebc3" Name="Diagram1">
+        <EntityTypeShape EntityType="DiabeasyModel.Ingredients" Width="1.5" PointX="8.25" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.Recipes" Width="1.5" PointX="11.25" PointY="15.625" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblATE_Ingredients" Width="1.5" PointX="10.5" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblATE_Ingredients" Width="1.5" PointX="10.5" PointY="12" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblATE_Recipes" Width="1.5" PointX="13.5" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblBelong" Width="1.5" PointX="13.5" PointY="16.375" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblBelongToRecipe" Width="1.5" PointX="13.5" PointY="20.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblCategory" Width="1.5" PointX="6" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblCategory" Width="1.5" PointX="6" PointY="10.625" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblConsistOf" Width="1.5" PointX="16.5" PointY="16.375" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblDoctor" Width="1.5" PointX="0.75" PointY="16" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblExceptionalEvent" Width="1.5" PointX="6" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblExceptionalEvent" Width="1.5" PointX="6" PointY="7.625" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblForum" Width="1.5" PointX="3" PointY="16" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblGroupType" Width="1.5" PointX="3.75" PointY="11.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblHistorylog" Width="1.5" PointX="8.25" PointY="24.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblInsulinType" Width="1.5" PointX="3.75" PointY="20.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblGroupType" Width="1.5" PointX="3.75" PointY="12.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblHistorylog" Width="1.5" PointX="8.25" PointY="24.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblInsulinType" Width="1.5" PointX="3.75" PointY="19.875" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblPatientData" Width="1.5" PointX="8.25" PointY="11.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.tblPatients" Width="1.5" PointX="6" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.tblPatients" Width="1.5" PointX="6" PointY="14" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblPrescriptions" Width="1.5" PointX="8.25" PointY="20.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblUnitOfMeasure" Width="1.5" PointX="8.25" PointY="8.125" IsExpanded="true" />
         <AssociationConnector Association="DiabeasyModel.FK__Ingredien__addBy__7755B73D" ManuallyRouted="false" />
@@ -52,6 +52,8 @@
         <AssociationConnector Association="DiabeasyModel.FK__tblPrescr__Patie__43D61337" ManuallyRouted="false" />
         <AssociationConnector Association="DiabeasyModel.PartOf_Ingredients" ManuallyRouted="false" />
         <AssociationConnector Association="DiabeasyModel.tblEventOf" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.tblFavoritesIngredients" ManuallyRouted="false" />
+        <AssociationConnector Association="DiabeasyModel.tblFavoritesRecipes" ManuallyRouted="false" />
         <AssociationConnector Association="DiabeasyModel.tblPartOf_Recipes" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>

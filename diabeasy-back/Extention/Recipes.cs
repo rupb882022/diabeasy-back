@@ -31,11 +31,6 @@ namespace diabeasy_back
         [Required]
         public Nullable<double> totalWeigthInGrams;
 
-
-        [Display(Name = "cooking Method")]
-        [Required]
-        public string cookingMethod;
-
         [Display(Name = "added by user id")]
         [Required]
         public Nullable<int> addByUserId;

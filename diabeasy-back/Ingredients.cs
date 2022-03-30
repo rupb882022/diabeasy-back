@@ -21,6 +21,7 @@ namespace diabeasy_back
             this.tblBelong = new HashSet<tblBelong>();
             this.tblConsistOf = new HashSet<tblConsistOf>();
             this.tblCategory = new HashSet<tblCategory>();
+            this.tblPatients1 = new HashSet<tblPatients>();
         }
     
         public int id { get; set; }
@@ -37,5 +38,7 @@ namespace diabeasy_back
         public virtual ICollection<tblConsistOf> tblConsistOf { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblCategory> tblCategory { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblPatients> tblPatients1 { get; set; }
     }
 }

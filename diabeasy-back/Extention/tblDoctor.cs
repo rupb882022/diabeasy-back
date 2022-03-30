@@ -18,27 +18,24 @@ namespace diabeasy_back
         [Display(Name = "Email address")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "must fill email adress")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        [RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "E-mail is not valid")]
         public string email;
 
         [Display(Name = "first name doctor")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "first name cannot be empty")]    
+        [Required(AllowEmptyStrings = false, ErrorMessage = "first name cannot be empty")]      
+        [MinLength(2, ErrorMessage = "must be 2 charts or more")]
         public string firstname;
 
         [Display(Name = "last name doctor")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "last name cannot be empty")]
+        [MinLength(2, ErrorMessage = "must be 2 charts or more")]
         public string lastname;
 
-        [Display(Name = "birthdate doctor")]
-        public Nullable<System.DateTime> birthdate;
 
         [Display(Name = "password")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "must be more then 6 charts")]
-        [MinLength(6, ErrorMessage = "must be more then 6 charts")]
-        //[RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "E-mail is not valid")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "must be 8 charts or more")]
+        [MinLength(8, ErrorMessage = "must be 8 charts or more")]
         public string password;
-
-        [Display(Name = "gender")]
-        public string gender;
         
 
     }
