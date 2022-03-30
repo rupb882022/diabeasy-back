@@ -17,14 +17,16 @@ namespace diabeasy_back
     {
         [Display(Name = "first name patient")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "first name cannot be empty")]
+        [MinLength(2, ErrorMessage = "must be 2 charts or more")]
         public string firstname;
 
         [Display(Name = "last name patient")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "last name cannot be empty")]
+        [MinLength(2, ErrorMessage = "must be 2 charts or more")]
         public string lastname;
 
         [Display(Name = "height")]
-        [Range(100,250,ErrorMessage ="please enter a your height in CM between 100-250")]
+        [Range(10,250,ErrorMessage ="please enter a your height in CM between 100-250")]
         public Nullable<double> height;
 
         [Display(Name = "weight")]
@@ -32,22 +34,17 @@ namespace diabeasy_back
         public Nullable<double> weight;
 
         [Display(Name = "password")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "must be more then 6 charts")]
-       // [StringLength(20)]
-        [MinLength(6,ErrorMessage = "must be more then 6 charts")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "must be more then 7 charts")]
+        [MinLength(8,ErrorMessage = "must be more then 7 charts")]
         public string password;
 
         [Display(Name = "Email address")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "must fill email adress")]
+        [RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "E-mail is not valid")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string email;
 
-        [Required(AllowEmptyStrings = true)]
-        [Phone(ErrorMessage = "not a valid phone number")]
-        public Nullable<int> assistant_phone;
-
-        [Display(Name = "birthdate patient")]
-        public Nullable<System.DateTime> birthdate;
+ 
 
 
     }
