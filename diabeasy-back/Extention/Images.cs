@@ -52,13 +52,19 @@ namespace diabeasy_back
         {
             string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
             string[] names = Directory.GetFiles(rootPath);
+            logger.Fatal("1");
+
             foreach (var fileName in names)
             {
                 if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(Name)) != -1)
                 {
+                    logger.Fatal("2");
+
                     return true;
                 }
             }
+            logger.Fatal("3");
+
             return false;
 
         }
