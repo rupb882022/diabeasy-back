@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using NLog;
 using System.Web;
+using System.Collections.Generic;
 
 namespace diabeasy_back
 {
@@ -48,33 +49,22 @@ namespace diabeasy_back
 
 
         }
-        public bool ImageFileExist(string Name)
+        public string ImageFileExist(string Name, string rootPath)
         {
-            string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
+            
             string[] names = Directory.GetFiles(rootPath);
-            logger.Fatal("1");
-
+            logger.Fatal("start ImageFileExist function");
             foreach (var fileName in names)
             {
+                logger.Fatal("name: " + fileName);
                 if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(Name)) != -1)
                 {
-<<<<<<< HEAD
-                
-                    return true;
+                    logger.Fatal("its in if: " + fileName);
+                    return fileName;
                 }
             }
-         
-=======
-                    logger.Fatal("2");
-
-                    return true;
-                }
-            }
-            logger.Fatal("3");
-
->>>>>>> 60abdc8d87d164af2c06aabd7c8358820f0ef2a2
-            return false;
-
+            logger.Fatal("end of function");
+            return null;
         }
     }
 }
