@@ -93,21 +93,19 @@ namespace diabeasy_back
             }
    
         }
-        public bool checkUniqeMail(string email,bool isDoctor)
+        public bool checkUniqeMail(string email)
         {
             try
             {
-                if (isDoctor)
+                tblPatients p = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
+                if (p == null)
                 {
-                   tblDoctor d= DB.tblDoctor.Where(x => x.email == email).SingleOrDefault();
+                    tblDoctor d = DB.tblDoctor.Where(x => x.email == email).SingleOrDefault();
                     return d == null;
                 }
-                else
-                {
-                    tblPatients p = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
-                    return p == null;
+                return false;
 
-                }
+                
 
             }
             catch (Exception ex)
