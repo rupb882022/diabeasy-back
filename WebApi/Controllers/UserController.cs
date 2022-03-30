@@ -214,7 +214,7 @@ namespace WebApi.Controllers
             {
                 string image = "";
                 //cheack uniqe email
-                if (!user.checkUniqeMail(obj.email, obj.weight == null))
+                if (!user.checkUniqeMail(obj.email))
                 {
                     return Content(HttpStatusCode.Conflict, "the email is allready exist");
                 }
