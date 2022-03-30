@@ -56,11 +56,11 @@ namespace diabeasy_back
             {
                 if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(Name)) != -1)
                 {
-                    logger.Fatal("same image");
+                
                     return true;
                 }
             }
-            logger.Fatal("not same image");
+         
             return false;
 
         }

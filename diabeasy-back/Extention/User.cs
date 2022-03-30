@@ -31,7 +31,7 @@ namespace diabeasy_back
             client.Credentials = basicCredential1;
 
 
-            //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+            //SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
             //{
             //    Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
             //    EnableSsl = true

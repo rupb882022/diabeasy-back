@@ -471,8 +471,8 @@ namespace WebApi.Controllers
             {
                 string query;
                
-                    if ((int)obj.user_id % 2 == 0)
-                        query = $"insert into tblFavoritesRecipes values(,{(int)obj.Rcipe_id}{(int)obj.user_id})";
+                    if (obj.Rcipe_id != null)
+                    query = $"insert into tblFavoritesRecipes values(,{(int)obj.Rcipe_id}{(int)obj.user_id})";
                     else
                         query = $"insert into tblFavoritesIngredients values({(int)obj.Ingredient_id},{(int)obj.user_id})";
 
@@ -504,9 +504,9 @@ namespace WebApi.Controllers
                 string query;
              
                     if (obj.Rcipe_id != null)
-                        query = $"delete from tblFavoritesRecipes where  where Recipes_id={obj.Rcipe_id} and Patient_id={obj.user_id}";
+                        query = $"delete from tblFavoritesRecipes where Recipes_id={obj.Rcipe_id} and Patient_id={obj.user_id}";
                     else
-                        query = $"delete from tblFavoritesIngredients where  where Ingredient_id={obj.Ingredient_id} and Patient_id={obj.user_id}";
+                        query = $"delete from tblFavoritesIngredients where Ingredient_id={obj.Ingredient_id} and Patient_id={obj.user_id}";
                 
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
