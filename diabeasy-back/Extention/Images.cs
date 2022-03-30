@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using NLog;
+using System.Web;
 
 namespace diabeasy_back
 {
@@ -47,6 +46,20 @@ namespace diabeasy_back
                 return null;
             }
 
+
+        }
+        public bool ImageFileExist(string Name)
+        {
+            string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
+            string[] names = Directory.GetFiles(rootPath);
+            foreach (var fileName in names)
+            {
+                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(Name)) != -1)
+                {
+                    return true;
+                }
+            }
+            return false;
 
         }
     }
