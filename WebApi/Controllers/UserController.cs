@@ -9,6 +9,7 @@ using System.Web.Http;
 using WebApi.DTO;
 using System.Data.Entity.Infrastructure;
 using NLog;
+using System.Web;
 
 namespace WebApi.Controllers
 {
@@ -213,6 +214,7 @@ namespace WebApi.Controllers
             try
             {
                 string image = "";
+                string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
                 //cheack uniqe email
                 if (!user.checkUniqeMail(obj.email))
                 {
@@ -233,16 +235,12 @@ namespace WebApi.Controllers
                     }
                     
                     image = images.CreateNewNameOrMakeItUniqe("profilePatient") + ".jpg";
-<<<<<<< HEAD
-                    if (!images.ImageFileExist(image))
+
+                    if (images.ImageFileExist(image, rootPath) == null)
                         image = null;
                      
-=======
-                    //if (!images.ImageFileExist(image))
-                    //    image = null;
 
->>>>>>> 599e3abe908db6df066769158646ef68f580d4c4
-                        //todo change gender to char
+                   
                         DB.tblPatients.Add(new tblPatients()
                     {
                         email = obj.email,
@@ -266,8 +264,9 @@ namespace WebApi.Controllers
                 else
                 {
                     image = images.CreateNewNameOrMakeItUniqe("profileDoctor") + ".jpg";
-                    //if (!images.ImageFileExist(image))
-                    //    image = null;
+                    if (images.ImageFileExist(image, rootPath) == null)
+                        image = null;
+
 
                     DB.tblDoctor.Add(new tblDoctor()
                     {

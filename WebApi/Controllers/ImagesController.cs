@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Cors;
 using diabeasy_back;
+using NLog;
 
 namespace WebApi.Controllers
 {
@@ -18,7 +19,7 @@ namespace WebApi.Controllers
     {
      diabeasyDBContext DB = new diabeasyDBContext();
         Images images = new Images();
- 
+        static Logger logger = LogManager.GetCurrentClassLogger();
 
         [Route("api/uploadpicture")]
         public Task<HttpResponseMessage> Post()
@@ -57,16 +58,13 @@ namespace WebApi.Controllers
                             outputForNir += " ---here3" + newFileName;
 
                             //delete all files begining with the same name
-                            string[] names = Directory.GetFiles(rootPath);
-                            foreach (var fileName in names)
+                           string fileName = images.ImageFileExist(newFileName, rootPath);
+                            if (fileName != null)
                             {
-                                if (Path.GetFileNameWithoutExtension(fileName).IndexOf(Path.GetFileNameWithoutExtension(newFileName)) != -1)
-                                {
-                                    File.Delete(fileName);
-                                }
+                                File.Delete(fileName);
                             }
-
-
+                              
+                            
 
                             //File.Move(item.LocalFileName, Path.Combine(rootPath, newFileName));
                             File.Copy(item.LocalFileName, Path.Combine(rootPath, newFileName), true);
@@ -80,11 +78,14 @@ namespace WebApi.Controllers
                             Uri fileFullPath = new Uri(baseuri, VirtualPathUtility.ToAbsolute(fileRelativePath));
                             outputForNir += " ---here7" + fileFullPath.ToString();
                             savedFilePath.Add(fileFullPath.ToString());
-                            return Request.CreateResponse(HttpStatusCode.OK, images.ImageFileExist(newFileName).ToString());
+
+                           
                         }
                         catch (Exception ex)
                         {
                             outputForNir += " ---excption=" + ex.Message;
+                            logger.Fatal(outputForNir);
+                            logger.Fatal(ex.InnerException);
                             return Request.CreateResponse(HttpStatusCode.BadRequest, outputForNir);
                         }
                     }

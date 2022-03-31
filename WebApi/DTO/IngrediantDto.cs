@@ -11,6 +11,7 @@ namespace WebApi.DTO
         public string name;
         public string image;
         public string addByUserId;
+        public bool favorit = false;
         public List<tblCategoryDto> category=new List<tblCategoryDto>();
         public List<tblUnitOfMeasureDto> UnitOfMeasure=new List<tblUnitOfMeasureDto>();
     }

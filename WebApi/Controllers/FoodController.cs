@@ -118,6 +118,7 @@ namespace WebApi.Controllers
                     if ((int)dt.Rows[i]["favorit"] != 0 && (i==0|| (int)dt.Rows[i]["favorit"]!= (int)dt.Rows[i-1]["favorit"]))
                     {
                         ingrediant.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
+                        ingrediant.favorit = true;
                     }
                 }
                 //add last ingrediant in query list
@@ -140,25 +141,28 @@ namespace WebApi.Controllers
         {
             try
             {
+                string recipe_ids = "";
                 string query = @"select R.*,CF.Ingredient_id,I.name as Ingredients_name,i.image as Ingredients_image, amount,UM.id as Ingredient_MeasureId,UM.name as Ingredient_MeasureName,UM2.id as recipe_Unit_id,UM2.name as recipe_Unit_name,BTR.carbohydrates,BTR.sugars,BTR.weightInGrams
+                                 , case WHEN  FI.Recipes_id is not null then FI.Recipes_id else 0 END as favorit
                                 from Recipes R 
                                 inner join tblConsistOf CF on R.id=CF.Recipe_id
 								inner join Ingredients I on I.id=CF.Ingredient_id
                                 inner join tblUnitOfMeasure UM on CF.UnitOfMeasure_id=UM.id
                                 inner join tblBelongToRecipe BTR on BTR.Recipe_id=R.id 
 								inner join  tblUnitOfMeasure UM2 on UM2.id=BTR.UnitOfMeasure_id
+	                            left join (select Recipes_id from tblFavoritesRecipes where Patient_id=@useId) FI on FI.Recipes_id=R.id 
                                 where (R.addByUserId is null or R.addByUserId= @useId) ";
 
                 if (foodName != "all")
                 {
-                    query += " and I.name like @search ";
+                    query += " and ( R.name like @foodName or I.name like @foodName or cookingMethod like @foodName ) ";
                 }
                 query += " order by R.id,recipe_Unit_id";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@useId", useId);
 
                 if (foodName != "all")
-                { adpter.SelectCommand.Parameters.AddWithValue("@search", "%" + foodName + "%"); }
+                { adpter.SelectCommand.Parameters.AddWithValue("@foodName", "%" + foodName + "%"); }
 
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblRecipes");
@@ -171,6 +175,7 @@ namespace WebApi.Controllers
                     if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                     {
                         Recipes.Add(Recipe);
+                        recipe_ids += $"{dt.Rows[i]["id"]},";
                     }
 
                     if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
@@ -217,10 +222,15 @@ namespace WebApi.Controllers
                         };
                         Recipe.Ingrediants.Add(ingrediant);
                     }
-
+                    if ((int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
+                    {
+                        Recipe.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
+                        Recipe.favorit = true;
+                    }
                 }
                 //add last ingrediant in query listgimer
                 Recipes.Add(Recipe);
+                recipe_ids += Recipe.id;
 
                 //set the category of recipes
                 query = @"select R.id,C.id as categoryID,C.name as categoryName
@@ -230,7 +240,7 @@ namespace WebApi.Controllers
 
                 if (foodName != "all")
                 {
-                    query += " and I.name like @search ";
+                    query += $" and R.id in ({recipe_ids}) ";
                 }
                 query += " order by R.id";
 
