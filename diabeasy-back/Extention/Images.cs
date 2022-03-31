@@ -69,15 +69,12 @@ namespace diabeasy_back
         {
             try
             {
-                logger.Debug("start of function saveImageNameInDB name=" + name);
 
                 int id = int.Parse(string.Concat(name.ToArray().Reverse().TakeWhile(char.IsNumber).Reverse()));
-                logger.Debug("id=" + id);
                 string pattern = @"\d+$";
                 string replacement = "";
                 Regex rgx = new Regex(pattern);
                 string result = rgx.Replace(name, replacement);
-                logger.Debug("result=" + result);
 
                 switch (result)
                 {
@@ -87,9 +84,7 @@ namespace diabeasy_back
                         if (D != null)
                         {
                             D.profileimage = name + ".jpg";
-                            logger.Debug("name=" + name + ".jpg");
                         }
-                        logger.Debug("D=" + D);
                         break;
 
                     case "profilePatient":
@@ -117,7 +112,7 @@ namespace diabeasy_back
                         break;
                 }
                 DB.SaveChanges();
-                logger.Debug("saveChanges");
+             
             }
             catch (Exception ex)
             {

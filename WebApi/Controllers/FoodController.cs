@@ -13,6 +13,7 @@ using System.Configuration;
 using System.Data.Entity.Infrastructure;
 using WebApi.DTO;
 using Newtonsoft.Json.Linq;
+using System.Web;
 
 namespace WebApi.Controllers
 {
@@ -298,12 +299,19 @@ namespace WebApi.Controllers
             {
 
                 JArray categories = (JArray)ingredient.category;
+                string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
 
-                string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("Ingredient") + ".jpg";
+                string imageName = image.CreateNewNameOrMakeItUniqe("Ingredient") + ".jpg";
                 string name = user.NameToUpper((string)ingredient.name);
 
+
+                if (image.ImageFileExist(imageName, rootPath) == null)
+                    imageName = null;
+                else
+                    imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + imageName;
+
                 DB.Ingredients.Add(new Ingredients() { name = name, image = imageName, addByUserId = ingredient.userId });
-                //check better way todo
+             
                 DB.SaveChanges();
 
                 //get the new ingredient for connection tables 
@@ -361,9 +369,14 @@ namespace WebApi.Controllers
 
                 JArray categories = (JArray)recpie.category;
                 JArray Ingridents = (JArray)recpie.Ingridents;
-                string imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + image.CreateNewNameOrMakeItUniqe("recipe") + ".jpg";
+                string rootPath = HttpContext.Current.Server.MapPath("~/uploadFiles");
+                string imageName = image.CreateNewNameOrMakeItUniqe("recipe") + ".jpg";
                 string name = user.NameToUpper((string)recpie.name);
 
+                if (image.ImageFileExist(imageName, rootPath) == null)
+                    imageName = null;
+                else
+                    imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + imageName;
 
 
                 //add the new recipe to DB
@@ -536,6 +549,118 @@ namespace WebApi.Controllers
             {
                 con.Close();
             }
+        }
+        [HttpDelete]
+        [Route("api/Food/deleteIngredient/{id}")]
+        public IHttpActionResult deleteIngredient(int id)
+        {
+            try
+            {
+                string query= @" delete from PartOf_Ingredients where Ingredients_id=@id
+
+                                 delete from tblBelong where Ingredient_id =@id
+
+                                 delete from tblFavoritesIngredients where Ingredient_id = @id
+
+                                 delete from Ingredients where id = @id";
+
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                int res = cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot delete " + query);
+                }
+                return Content(HttpStatusCode.OK, id+" was deleted");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        [HttpDelete]
+        [Route("api/Food/deleteRecipe/{id}")]
+        public IHttpActionResult deleteRecipe(int id)
+        {
+            try
+            {
+                string query = @" 
+								delete from tblConsistOf where Recipe_id=@id
+								delete from tblBelongToRecipe where Recipe_id=@id
+								delete from tblFavoritesRecipes where Recipes_id=@id
+								delete from tblPartOf_Recipes where Recipe_id=@id
+								delete from Recipes where id=@id";
+
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                int res = cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot delete " + query);
+                }
+                return Content(HttpStatusCode.OK, id + " was deleted");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        [HttpPost]
+        [Route("api/Food/addunit")]
+        public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit,int foodID)
+        {
+            try
+            {
+                if (foodID % 2 == 0)
+                {
+                    DB.tblBelongToRecipe.Add(new tblBelongToRecipe()
+                    {
+                        carbohydrates = unit.carbs,
+                        sugars = unit.suger,
+                        weightInGrams =int.Parse(unit.weightInGrams.ToString()),
+                        UnitOfMeasure_id = unit.id,
+                        Recipe_id = foodID
+
+                    });
+                
+                }
+                else
+                {
+                    DB.tblBelong.Add(new tblBelong()
+                    {
+                        Ingredient_id = foodID,
+                        UnitOfMeasure_id = unit.id,
+                        carbohydrates = unit.carbs,
+                        sugars = unit.suger,
+                        weightInGrams = int.Parse(unit.weightInGrams.ToString())
+                    });
+                }
+
+                DB.SaveChanges();
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), unit);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+         
         }
     }
 }
