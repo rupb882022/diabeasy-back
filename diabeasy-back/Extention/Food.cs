@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,27 @@ namespace diabeasy_back
             {
                 logger.Fatal(ex.Message);
                 return int.MinValue;
+            }
+        }
+        public async Task<HttpResponseMessage> search_by_name_api(string foodName)
+        {
+            var httpClient = HttpClientFactory.Create();
+            string url = "https://api.spoonacular.com/food/ingredients/search?query="+foodName+"&apiKey=c2f5f275954a42edaf91a07cb28f3343";
+            try
+            {
+            var data=await httpClient.GetStringAsync(url);
+            string i = "";
+            //if (data.StatusCode==System.Net.HttpStatusCode.OK)
+            //{
+            //    return data;
+            //}
+            return null;
+
+            }
+            catch (Exception ex)
+            {
+                logger.Fatal(ex.Message);
+                return null;
             }
         }
     }

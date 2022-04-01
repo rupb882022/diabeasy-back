@@ -116,7 +116,7 @@ namespace WebApi.Controllers
                         ingrediant.UnitOfMeasure.Add(Unit);
                     }
 
-                    if ((int)dt.Rows[i]["favorit"] != 0 && (i==0|| (int)dt.Rows[i]["favorit"]!= (int)dt.Rows[i-1]["favorit"]))
+                    if ((int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
                     {
                         ingrediant.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
                         ingrediant.favorit = true;
@@ -311,7 +311,7 @@ namespace WebApi.Controllers
                     imageName = "http://proj.ruppin.ac.il/bgroup88/prod/uploadFiles/" + imageName;
 
                 DB.Ingredients.Add(new Ingredients() { name = name, image = imageName, addByUserId = ingredient.userId });
-             
+
                 DB.SaveChanges();
 
                 //get the new ingredient for connection tables 
@@ -493,11 +493,11 @@ namespace WebApi.Controllers
             try
             {
                 string query;
-               
-                    if (obj.Rcipe_id != null)
+
+                if (obj.Rcipe_id != null)
                     query = $"insert into tblFavoritesRecipes values(,{(int)obj.Rcipe_id}{(int)obj.user_id})";
-                    else
-                        query = $"insert into tblFavoritesIngredients values({(int)obj.Ingredient_id},{(int)obj.user_id})";
+                else
+                    query = $"insert into tblFavoritesIngredients values({(int)obj.Ingredient_id},{(int)obj.user_id})";
 
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -525,12 +525,12 @@ namespace WebApi.Controllers
             try
             {
                 string query;
-             
-                    if (obj.Rcipe_id != null)
-                        query = $"delete from tblFavoritesRecipes where Recipes_id={obj.Rcipe_id} and Patient_id={obj.user_id}";
-                    else
-                        query = $"delete from tblFavoritesIngredients where Ingredient_id={obj.Ingredient_id} and Patient_id={obj.user_id}";
-                
+
+                if (obj.Rcipe_id != null)
+                    query = $"delete from tblFavoritesRecipes where Recipes_id={obj.Rcipe_id} and Patient_id={obj.user_id}";
+                else
+                    query = $"delete from tblFavoritesIngredients where Ingredient_id={obj.Ingredient_id} and Patient_id={obj.user_id}";
+
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 int res = cmd.ExecuteNonQuery();
@@ -556,7 +556,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query= @" delete from PartOf_Ingredients where Ingredients_id=@id
+                string query = @" delete from PartOf_Ingredients where Ingredients_id=@id
 
                                  delete from tblBelong where Ingredient_id =@id
 
@@ -574,7 +574,7 @@ namespace WebApi.Controllers
                 {
                     throw new Exception("cannot delete " + query);
                 }
-                return Content(HttpStatusCode.OK, id+" was deleted");
+                return Content(HttpStatusCode.OK, id + " was deleted");
             }
             catch (Exception e)
             {
@@ -623,7 +623,7 @@ namespace WebApi.Controllers
         }
         [HttpPost]
         [Route("api/Food/addunit")]
-        public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit,int foodID)
+        public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit, int foodID)
         {
             try
             {
@@ -633,12 +633,12 @@ namespace WebApi.Controllers
                     {
                         carbohydrates = unit.carbs,
                         sugars = unit.suger,
-                        weightInGrams =int.Parse(unit.weightInGrams.ToString()),
+                        weightInGrams = int.Parse(unit.weightInGrams.ToString()),
                         UnitOfMeasure_id = unit.id,
                         Recipe_id = foodID
 
                     });
-                
+
                 }
                 else
                 {
@@ -660,7 +660,28 @@ namespace WebApi.Controllers
                 logger.Fatal(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
-         
+
+        }
+
+        [HttpGet]
+        [Route("api/Food/test/{foodName}")]
+        public IHttpActionResult test(string foodName)
+        {
+            try
+            {
+                var res =  food.search_by_name_api(foodName);
+
+                if (res!=null)
+                {
+                    return Content(HttpStatusCode.OK, res);
+                }
+                return Content(HttpStatusCode.BadRequest, res);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
         }
     }
 }
