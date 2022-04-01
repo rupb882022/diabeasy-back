@@ -51,12 +51,11 @@ namespace diabeasy_back
             string url = "https://api.spoonacular.com/food/ingredients/search?query="+foodName+"&apiKey=c2f5f275954a42edaf91a07cb28f3343";
             try
             {
-            var data=await httpClient.GetStringAsync(url);
-            string i = "";
-            //if (data.StatusCode==System.Net.HttpStatusCode.OK)
-            //{
-            //    return data;
-            //}
+            HttpResponseMessage data=await httpClient.GetAsync(url);
+            if (data.StatusCode==System.Net.HttpStatusCode.OK)
+            {
+                return data;
+            }
             return null;
 
             }
