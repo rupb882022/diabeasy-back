@@ -202,10 +202,53 @@ namespace WebApi.Controllers
                 logger.Error("no patients found");
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
-
-
-
         }
+
+       
+          [HttpGet]
+        [Route("api/User/GetdataForGraphs/{id}")]
+        public IHttpActionResult GetDataForGraphs(int id)
+        {
+            try
+            {
+                DateTime monthAgo = DateTime.Now.AddDays(-30);
+                List<tblPatientData> pd = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time >= monthAgo).ToList();
+                logger.Fatal("the dates", pd);
+                int[] val = new int[] {0,0,0,0,0};
+           
+                foreach (var item in pd)
+                {
+                    if (item.blood_sugar_level>=240)
+                    {
+                        val[0]++;
+                    }
+                    else if ( item.blood_sugar_level>=181)
+                    {
+                        val[1]++;
+                    }
+                    else if ( item.blood_sugar_level >= 75)
+                    {
+                        val[2]++;
+                    }
+                    else if ( item.blood_sugar_level >= 60)
+                    {
+                        val[3]++;
+                    }
+                    else
+                    {
+                        val[4]++;
+                    }
+                }
+
+                return Content(HttpStatusCode.OK, val);
+            }
+            catch (Exception e)
+            {
+                logger.Error("no patients found");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
 
         [HttpPost]
         [Route("api/User/RegisterUser")]
