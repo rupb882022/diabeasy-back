@@ -10,6 +10,10 @@ using WebApi.DTO;
 using System.Data.Entity.Infrastructure;
 using NLog;
 using System.Web;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using Newtonsoft.Json;
 
 namespace WebApi.Controllers
 {
@@ -18,6 +22,7 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
         Images images = new Images();
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
 
 
@@ -204,49 +209,87 @@ namespace WebApi.Controllers
             }
         }
 
-       
-          [HttpGet]
+
+        [HttpGet]
         [Route("api/User/GetdataForGraphs/{id}")]
         public IHttpActionResult GetDataForGraphs(int id)
         {
             try
             {
-                DateTime monthAgo = DateTime.Now.AddDays(-30);
-                List<tblPatientData> pd = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time >= monthAgo).ToList();
-                logger.Fatal("the dates", pd);
-                int[] val = new int[] {0,0,0,0,0};
-           
-                foreach (var item in pd)
-                {
-                    if (item.blood_sugar_level>=240)
-                    {
-                        val[0]++;
-                    }
-                    else if ( item.blood_sugar_level>=181)
-                    {
-                        val[1]++;
-                    }
-                    else if ( item.blood_sugar_level >= 75)
-                    {
-                        val[2]++;
-                    }
-                    else if ( item.blood_sugar_level >= 60)
-                    {
-                        val[3]++;
-                    }
-                    else
-                    {
-                        val[4]++;
-                    }
-                }
+                string query = @"select MONTH(date_time) as 'month',AVG(blood_sugar_level) as averge,
+								SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as '>240',
+								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as '180-240',
+								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as '75-180',
+								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as '60-75',
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as '<60'
+								 from tblPatientData
+								 where Patients_id=@id and year(date_time)=year(GETDATE())
+								 group by MONTH(date_time)
+								 union
+								 (select 30 as 'month', AVG(blood_sugar_level),
+								 SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as '>240',
+								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as '180-240',
+								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as '75-180',
+								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as '60-75',
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as '<60'
+								from tblPatientData
+							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)";
 
-                return Content(HttpStatusCode.OK, val);
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "DataForGraphs");
+                DataTable dt = ds.Tables["DataForGraphs"];
+                string JSONresult = JsonConvert.SerializeObject(dt);
+                JSONresult = JSONresult.Replace("\\", "").Replace("\"", "");
+                return Content(HttpStatusCode.OK, JSONresult);
             }
             catch (Exception e)
             {
                 logger.Error("no patients found");
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
+
+
+            //try
+            //{
+            //    DateTime monthAgo = DateTime.Now.AddDays(-30);
+            //    List<tblPatientData> pd = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time >= monthAgo).ToList();
+
+            //    int[] val = new int[] { 0, 0, 0, 0, 0 };
+
+            //    foreach (var item in pd)
+            //    {
+            //        if (item.blood_sugar_level >= 240)
+            //        {
+            //            val[0]++;
+            //        }
+            //        else if (item.blood_sugar_level >= 181)
+            //        {
+            //            val[1]++;
+            //        }
+            //        else if (item.blood_sugar_level >= 75)
+            //        {
+            //            val[2]++;
+            //        }
+            //        else if (item.blood_sugar_level >= 60)
+            //        {
+            //            val[3]++;
+            //        }
+            //        else
+            //        {
+            //            val[4]++;
+            //        }
+            //    }
+
+            //    return Content(HttpStatusCode.OK, val);
+            //}
+            //catch (Exception e)
+            //{
+            //    logger.Error("no patients found");
+            //    return Content(HttpStatusCode.BadRequest, e.Message);
+            //}
         }
 
 
@@ -276,15 +319,15 @@ namespace WebApi.Controllers
                     {//Todo send mail to doctor+alert
                         Doctor_id = user.checkDoctorMail(obj.mailDoctor);
                     }
-                    
+
                     image = images.CreateNewNameOrMakeItUniqe("profilePatient") + ".jpg";
 
                     if (images.ImageFileExist(image, rootPath) == null)
                         image = null;
-                     
 
-                   
-                        DB.tblPatients.Add(new tblPatients()
+
+
+                    DB.tblPatients.Add(new tblPatients()
                     {
                         email = obj.email,
                         firstname = obj.firstName,
