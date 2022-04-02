@@ -217,21 +217,21 @@ namespace WebApi.Controllers
             try
             {
                 string query = @"select MONTH(date_time) as 'month',AVG(blood_sugar_level) as averge,
-								SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as '>240',
-								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as '180-240',
-								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as '75-180',
-								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as '60-75',
-								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as '<60'
+								SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as 'upTo240',
+								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
+								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
+								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
 								 from tblPatientData
 								 where Patients_id=@id and year(date_time)=year(GETDATE())
 								 group by MONTH(date_time)
 								 union
 								 (select 30 as 'month', AVG(blood_sugar_level),
-								 SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as '>240',
-								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as '180-240',
-								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as '75-180',
-								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as '60-75',
-								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as '<60'
+								 SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as 'upTo240',
+								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
+								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
+								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
 								from tblPatientData
 							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)";
 
@@ -241,8 +241,22 @@ namespace WebApi.Controllers
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "DataForGraphs");
                 DataTable dt = ds.Tables["DataForGraphs"];
-                string JSONresult = JsonConvert.SerializeObject(dt);
-                JSONresult = JSONresult.Replace("\\", "").Replace("\"", "");
+                List<GrapsDto> JSONresult = new List<GrapsDto>();
+                //string JSONresult = JsonConvert.SerializeObject(dt);
+                //JSONresult = JSONresult.Replace("\\", "").Replace("\"", "");
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    JSONresult.Add(new GrapsDto()
+                    {
+                        month = (int)dt.Rows[i]["month"],
+                        averge = (int)dt.Rows[i]["averge"],
+                        upTo240 = dt.Rows[i]["upTo240"].ToString(),
+                        upTo180 = dt.Rows[i]["upTo180"].ToString(),
+                        upTo75 = dt.Rows[i]["upTo75"].ToString(),
+                        upTo60 = dt.Rows[i]["upTo60"].ToString(),
+                        upTo0 = dt.Rows[i]["upTo0"].ToString(),
+                    });
+                }
                 return Content(HttpStatusCode.OK, JSONresult);
             }
             catch (Exception e)

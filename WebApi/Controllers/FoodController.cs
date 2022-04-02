@@ -622,7 +622,7 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        [Route("api/Food/addunit")]
+        [Route("api/Food/addunit/{foodID}")]
         public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit,int foodID)
         {
             try
@@ -636,7 +636,6 @@ namespace WebApi.Controllers
                         weightInGrams =int.Parse(unit.weightInGrams.ToString()),
                         UnitOfMeasure_id = unit.id,
                         Recipe_id = foodID
-
                     });
                 
                 }
