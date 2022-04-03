@@ -187,6 +187,7 @@
     <Compile Include="DTO\tblFavoritesDto.cs" />
     <Compile Include="DTO\tblForumDto.cs" />
     <Compile Include="DTO\tblInsulinTypeDto.cs" />
+    <Compile Include="DTO\tblPatientDataDto.cs" />
     <Compile Include="DTO\tblPrescriptionDto.cs" />
     <Compile Include="DTO\tblRecipesDto.cs" />
     <Compile Include="DTO\tblUnitOfMeasureDto.cs" />

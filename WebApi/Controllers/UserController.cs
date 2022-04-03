@@ -305,6 +305,29 @@ namespace WebApi.Controllers
             //    return Content(HttpStatusCode.BadRequest, e.Message);
             //}
         }
+        [HttpGet]
+        [Route("api/User/GetdataForTable/{id}")]
+        public IHttpActionResult GetdataForTable(int id)
+        {
+
+            try
+            {
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id).Select(x => new tblPatientDataDto(){ date_time =x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x=>x.date_time).Take(15).ToList();
+
+                return Content(HttpStatusCode.OK, tableData);
+            }
+            catch (Exception e)
+            {
+                logger.Error("do not found ");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
+
+
+
+
+
 
 
         [HttpPost]
