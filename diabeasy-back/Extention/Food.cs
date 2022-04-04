@@ -137,7 +137,7 @@ namespace diabeasy_back
                 client.Dispose();
             }
         }
-        bool insertFoodByApiToDB(string foodByAPi)
+        void insertFoodByApiToDB(string foodByAPi)
         {
             try
             {
@@ -215,7 +215,10 @@ namespace diabeasy_back
             {
                 logger.Fatal(ex.Message);
             }
-            return false;
+            finally
+            {
+                con.Close();
+            }
         }
         int getCategoryId(string name)
         {
