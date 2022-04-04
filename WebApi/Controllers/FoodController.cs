@@ -51,6 +51,7 @@ namespace WebApi.Controllers
         {
             try
             {
+
                 string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
                                 case WHEN  FI.Ingredient_id is not null then FI.Ingredient_id else 0 END as favorit
 								from Ingredients I
@@ -705,12 +706,13 @@ namespace WebApi.Controllers
             try
             {
                 var res =  food.search_by_name_api(foodName);
+                
 
                 if (res!=null)
                 {
-                    return Content(HttpStatusCode.OK, res);
+                    return Content(HttpStatusCode.OK, res.Result);
                 }
-                return Content(HttpStatusCode.BadRequest, res);
+                return Content(HttpStatusCode.BadRequest, "cannot find "+ foodName);
             }
             catch (Exception e)
             {
