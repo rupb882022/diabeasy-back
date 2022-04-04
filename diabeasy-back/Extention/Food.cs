@@ -101,7 +101,7 @@ namespace diabeasy_back
             {
                 string id = foodObject.id;
                 string urlParameters = $"?apiKey=c2f5f275954a42edaf91a07cb28f3343&unit=grams&amount=100";
-                client.BaseAddress = new Uri("https://api.spoonacular.com/food/ingredients/"+id+"/information");
+                client.BaseAddress = new Uri("https://api.spoonacular.com/food/ingredients/" + id + "/information");
 
                 // Add an Accept header for JSON format.
                 client.DefaultRequestHeaders.Accept.Add(
@@ -142,19 +142,19 @@ namespace diabeasy_back
             try
             {
                 dynamic Foodjson = JsonConvert.DeserializeObject(foodByAPi);
-               
+
                 //crete new Ingredient in DB
                 DB.Ingredients.Add(new Ingredients()
                 {
-                  name=Foodjson.name,
+                    name = Foodjson.name,
                     image = Foodjson.image,
-                    addByUserId=3,
-                    
+                    addByUserId = 3,
+
                 });
                 DB.SaveChanges();
 
                 //get the new Ingredient
-                Ingredients newIngredient=DB.Ingredients.OrderByDescending(x=>x.id).First();
+                Ingredients newIngredient = DB.Ingredients.OrderByDescending(x => x.id).First();
                 //get Ingredient detailes
                 double carbs = 0, suger = 0;
                 int unit_id = getUnitID(Foodjson.unit.ToString());
@@ -180,10 +180,19 @@ namespace diabeasy_back
                     weightInGrams = 100
                 });
                 //check if category exist
-                
+
                 JArray categoryName = (JArray)Foodjson.categoryPath;
-                string query="";
-                int categoryId = getCategoryId(categoryName[0].ToString());
+                string query = "";
+                int categoryId = 0;
+                if (categoryName.Count > 0)
+                {
+                    categoryId = getCategoryId(categoryName[0].ToString());
+                }
+                else
+                {
+                    categoryId = getCategoryId("general");
+                }
+
                 if (categoryId > 0)
                 {
                     query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryId})";
@@ -192,6 +201,7 @@ namespace diabeasy_back
                 {
                     query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryName[0]})";
                 }
+
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 int res = cmd.ExecuteNonQuery();
@@ -212,7 +222,7 @@ namespace diabeasy_back
             try
             {
                 tblCategory c = DB.tblCategory.Where(x => x.name == name).SingleOrDefault();
-                return c!=null?c.id:0;
+                return c != null ? c.id : 0;
             }
             catch (Exception ex)
             {
