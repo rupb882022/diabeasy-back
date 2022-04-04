@@ -51,6 +51,19 @@ namespace WebApi.Controllers
         {
             try
             {
+                //check if getIngredient exist when user search getIngredient
+                if (foodName != "all")
+                {
+                    Ingredients I = DB.Ingredients.Where(x=>x.name.Contains(foodName)&&(x.addByUserId==null||x.addByUserId== useId)).FirstOrDefault();
+                    if (I == null)
+                    {
+                        var res = food.search_by_name_api(foodName);
+                        if (res.Result == null)
+                        {
+                            throw new Exception("cannot find " + foodName + "in api reqest");
+                        }
+                    }
+                }
 
                 string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
                                 case WHEN  FI.Ingredient_id is not null then FI.Ingredient_id else 0 END as favorit
@@ -78,7 +91,7 @@ namespace WebApi.Controllers
                 DataTable dt = ds.Tables["Ingredients"];
                 List<IngrediantDto> ingrediants = new List<IngrediantDto>();
                 IngrediantDto ingrediant = new IngrediantDto();
-                //if (dt.Rows.Count > 0) { 
+              
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
@@ -124,44 +137,7 @@ namespace WebApi.Controllers
                 }
                 //add last ingrediant in query list
                 ingrediants.Add(ingrediant);
-                //}
-                //else
-                //{
-                //    dynamic res =  food.search_by_name_api(foodName);
-              
-                //    double carbs=0,suger=0;
-                //    if (res != null)
-                //    {
-                //        for (int i = 0; i < res.nutrition.nutrients.length; i++)
-                //        {
-                //            if (res.nutrition.nutrients[i].name== "Carbohydrates")
-                //            {
-                //                carbs = double.Parse(res.nutrition.nutrients[i].amount);
-                //            }
-                //            if (res.nutrition.nutrients[i].name== "Sugar")
-                //            {
-                //                suger = double.Parse(res.nutrition.nutrients[i].amount);
-                //            }
-                //        }
-                //    }
-                //    ingrediant=new IngrediantDto()
-                //    {
-                //        name=foodName,
-                //        image= res.image
-                //    };
-                //    ingrediant.UnitOfMeasure.Add(new tblUnitOfMeasureDto()
-                //    {
-                //        name = res.unitLong,
-                //        carbs = carbs,
-                //        suger = suger,
-                //        weightInGrams = int.Parse(res.nutrition.weightPerServing.amount)
-                //    });
-                //    ingrediant.category.Add(new tblCategoryDto()
-                //    {
-                //        id = 0,
-                //        name = res.categoryPath[0]
-                //    });
-                //}
+           
 
                 return Content(HttpStatusCode.OK, ingrediants);
             }
