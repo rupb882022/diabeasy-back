@@ -74,7 +74,7 @@ namespace diabeasy_back
                     string responseBody = await response.Content.ReadAsStringAsync();
                     dynamic json = JsonConvert.DeserializeObject(responseBody);
                     var firstFood = json.results[0];
-                    return get_Food_information_api(firstFood);
+                    return await get_Food_information_api(firstFood);
                 }
                 else
                 {
@@ -100,6 +100,7 @@ namespace diabeasy_back
             try
             {
                 string id = foodObject.id;
+                int DBres;
                 string urlParameters = $"?apiKey=c2f5f275954a42edaf91a07cb28f3343&unit=grams&amount=100";
                 client.BaseAddress = new Uri("https://api.spoonacular.com/food/ingredients/" + id + "/information");
 
@@ -116,7 +117,7 @@ namespace diabeasy_back
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (responseBody != null)
                     {
-                        insertFoodByApiToDB(responseBody);
+                        DBres= await insertFoodByApiToDB(responseBody);
                     }
                     dynamic Foodjson = JsonConvert.DeserializeObject(responseBody);
                     return Foodjson;
@@ -137,7 +138,7 @@ namespace diabeasy_back
                 client.Dispose();
             }
         }
-        void insertFoodByApiToDB(string foodByAPi)
+        Task<int> insertFoodByApiToDB(string foodByAPi)
         {
             try
             {
@@ -147,8 +148,8 @@ namespace diabeasy_back
                 DB.Ingredients.Add(new Ingredients()
                 {
                     name = Foodjson.name,
-                    image = imagePath+Foodjson.image,
-                    api_id= Foodjson.id
+                    image = imagePath + Foodjson.image,
+                    api_id = Foodjson.id
                 });
                 DB.SaveChanges();
 
@@ -181,43 +182,62 @@ namespace diabeasy_back
                 //check if category exist
 
                 JArray categoryName = (JArray)Foodjson.categoryPath;
-                string query = "";
+
+                string query = $"insert into PartOf_Ingredients values ";
                 int categoryId = 0;
                 if (categoryName.Count > 0)
                 {
-                    categoryId = getCategoryId(categoryName[0].ToString());
-                    if (categoryId == 0)
+                    logger.Debug(categoryName);
+                    List<tblCategory> DBcaegories = DB.tblCategory.Select(x => new tblCategory { id = x.id, name = x.name }).ToList();
+                    //add new category from api
+                    for (int i = 0; i < categoryName.Count; i++)
                     {
-                        //add new category from api
-                        DB.tblCategory.Add(new tblCategory()
+                        for (int z = 0; z < DBcaegories.Count; z++)
                         {
-                            name = categoryName[0].ToString(),
-                        });
-                        DB.SaveChanges();
-                            categoryId= getCategoryId(categoryName[0].ToString());
+                            if (DBcaegories[z].name.Contains(categoryName[i].ToString()))
+                            {
+                                logger.Debug(DBcaegories[z]);
+                                query += $"({newIngredient.id},{DBcaegories[z]}),";
+                            }
+                        }
+
                     }
+                    query = query.Substring(0, query.Length - 1);
                 }
                 else
                 {
                     categoryId = getCategoryId("general");
+                    query += $"({newIngredient.id},{categoryId})";
                 }
-          
-              
 
-                query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryId})";
+                //if (categoryId == 0)
+                //{
+                //    //add new category from api
+                //    DB.tblCategory.Add(new tblCategory()
+                //    {
+                //        name = categoryName[0].ToString(),
+                //    });
+                //    DB.SaveChanges();
+                //        categoryId= getCategoryId(categoryName[0].ToString());
+                //}
+
+
 
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
-                int res = cmd.ExecuteNonQuery();
-                if (res < 1)
+                Task<int> res = Task.FromResult(cmd.ExecuteNonQuery());
+                if (res.Result < 1)
                 {
                     throw new Exception("cannot insert values into tblPartOf_Ingredients");
                 }
                 DB.SaveChanges();
+                return res;
             }
             catch (Exception ex)
             {
+               
                 logger.Fatal(ex.Message);
+                return null;
             }
             finally
             {
