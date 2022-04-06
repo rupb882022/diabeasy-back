@@ -216,24 +216,26 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query = @"select MONTH(date_time) as 'month',AVG(blood_sugar_level) as averge,
+                string query = @"select *
+						         from(select MONTH(date_time) as 'month',YEAR(date_time)as 'year',AVG(blood_sugar_level) as averge,
 								SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as 'upTo240',
 								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
 								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
 								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
 								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
 								 from tblPatientData
-								 where Patients_id=@id and year(date_time)=year(GETDATE())
-								 group by MONTH(date_time)
+								 where Patients_id=@id
+								 group by MONTH(date_time),YEAR(date_time)
 								 union
-								 (select 30 as 'month', AVG(blood_sugar_level),
+								 select '30' as 'month',YEAR(getDate())as 'year', AVG(blood_sugar_level),
 								 SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as 'upTo240',
 								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
 								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
 								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
 								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
 								from tblPatientData
-							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)";
+							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)as data
+								order by 'year','month'";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
