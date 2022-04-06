@@ -675,26 +675,26 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpGet]
-        [Route("api/Food/test/{foodName}")]
-        public IHttpActionResult test(string foodName)
-        {
-            try
-            {
-                var res =  food.search_by_name_api(foodName);
+        //[HttpGet]
+        //[Route("api/Food/test/{foodName}")]
+        //public IHttpActionResult test(string foodName)
+        //{
+        //    try
+        //    {
+        //        var res =  food.search_by_name_api(foodName);
                 
 
-                if (res!=null)
-                {
-                    return Content(HttpStatusCode.OK, res.Result);
-                }
-                return Content(HttpStatusCode.BadRequest, "cannot find "+ foodName);
-            }
-            catch (Exception e)
-            {
-                logger.Fatal(e.Message);
-                return Content(HttpStatusCode.BadRequest, e.Message);
-            }
-        }
+        //        if (res!=null)
+        //        {
+        //            return Content(HttpStatusCode.OK, res.Result);
+        //        }
+        //        return Content(HttpStatusCode.BadRequest, "cannot find "+ foodName);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logger.Fatal(e.Message);
+        //        return Content(HttpStatusCode.BadRequest, e.Message);
+        //    }
+        //}
     }
 }

@@ -148,8 +148,7 @@ namespace diabeasy_back
                 {
                     name = Foodjson.name,
                     image = imagePath+Foodjson.image,
-                    addByUserId = 3,
-
+                    api_id= Foodjson.id
                 });
                 DB.SaveChanges();
 
