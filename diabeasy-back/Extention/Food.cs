@@ -142,12 +142,12 @@ namespace diabeasy_back
             try
             {
                 dynamic Foodjson = JsonConvert.DeserializeObject(foodByAPi);
-
+                string imagePath = "https://spoonacular.com/cdn/ingredients_100x100/";
                 //crete new Ingredient in DB
                 DB.Ingredients.Add(new Ingredients()
                 {
                     name = Foodjson.name,
-                    image = Foodjson.image,
+                    image = imagePath+Foodjson.image,
                     addByUserId = 3,
 
                 });
