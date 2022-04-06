@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
 
+
 namespace diabeasy_back
 {
     public class Food
@@ -188,26 +189,32 @@ namespace diabeasy_back
                 if (categoryName.Count > 0)
                 {
                     logger.Debug(categoryName);
-                    List<tblCategory> DBcaegories = DB.tblCategory.Select(x => new tblCategory { id = x.id, name = x.name }).ToList();
-                    //add new category from api
+                    var DBcaegories = DB.tblCategory.Select(c => new { id = c.id, name = c.name }).ToList();
+                    //add all new categories from api
                     for (int i = 0; i < categoryName.Count; i++)
                     {
                         for (int z = 0; z < DBcaegories.Count; z++)
                         {
-                            if (DBcaegories[z].name.Contains(categoryName[i].ToString()))
+                            string name = DBcaegories[z].name.ToLower();
+                            if (name.Contains(categoryName[i].ToString()))
                             {
-                                logger.Debug(DBcaegories[z]);
-                                query += $"({newIngredient.id},{DBcaegories[z]}),";
+                                logger.Debug(DBcaegories[z].ToString());
+                                categoryId = DBcaegories[z].id;
+                                query += $"({newIngredient.id},{categoryId}),";
                             }
                         }
 
                     }
-                    query = query.Substring(0, query.Length - 1);
+                    
                 }
-                else
+                if (categoryId == 0)
                 {
                     categoryId = getCategoryId("general");
                     query += $"({newIngredient.id},{categoryId})";
+                }
+                else
+                {
+                    query = query.Substring(0, query.Length - 1);
                 }
 
                 //if (categoryId == 0)
