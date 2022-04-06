@@ -187,19 +187,13 @@ namespace diabeasy_back
                 {
                     categoryId = getCategoryId(categoryName[0].ToString());
                 }
-                else
+          
+                if (categoryId == 0)
                 {
                     categoryId = getCategoryId("general");
                 }
 
-                if (categoryId > 0)
-                {
-                    query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryId})";
-                }
-                else
-                {
-                    query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryName[0]})";
-                }
+                query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryId})";
 
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
