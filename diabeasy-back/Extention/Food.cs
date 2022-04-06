@@ -186,12 +186,23 @@ namespace diabeasy_back
                 if (categoryName.Count > 0)
                 {
                     categoryId = getCategoryId(categoryName[0].ToString());
+                    if (categoryId == 0)
+                    {
+                        //add new category from api
+                        DB.tblCategory.Add(new tblCategory()
+                        {
+                            name = categoryName[0].ToString(),
+                        });
+                        DB.SaveChanges();
+                            categoryId= getCategoryId(categoryName[0].ToString());
+                    }
                 }
-          
-                if (categoryId == 0)
+                else
                 {
                     categoryId = getCategoryId("general");
                 }
+          
+              
 
                 query = $"insert into PartOf_Ingredients values ({newIngredient.id},{categoryId})";
 

@@ -47,7 +47,7 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         [Route("api/Food/getIngredients/{foodName}/{useId}")]
-        public IHttpActionResult GetIngredients(string foodName, int useId)
+        public async IHttpActionResult GetIngredients(string foodName, int useId)
         {
             try
             {
