@@ -18,8 +18,5 @@ namespace diabeasy_back
         [Required(AllowEmptyStrings = false, ErrorMessage = "can not be an empty ingredient name")]
         public string name;
 
-        [Display(Name = "added by user id")]
-        [Required]
-        public Nullable<int> addByUserId;
     }
 }

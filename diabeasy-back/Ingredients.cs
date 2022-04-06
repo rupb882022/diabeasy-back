@@ -28,6 +28,7 @@ namespace diabeasy_back
         public string name { get; set; }
         public string image { get; set; }
         public Nullable<int> addByUserId { get; set; }
+        public Nullable<int> api_id { get; set; }
     
         public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

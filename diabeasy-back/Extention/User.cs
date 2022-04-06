@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,19 +17,19 @@ namespace diabeasy_back
 
         public bool SendMial(string mail, string subject, string Body)
         {
-            string from = "diabeasyapp@gmail.com"; //From address    
-            MailMessage message = new MailMessage(from, mail);
-            message.Subject = subject;
-            message.Body = Body;
-            message.BodyEncoding = Encoding.UTF8;
-            message.IsBodyHtml = true;
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
-            client.UseDefaultCredentials = false;
-            System.Net.NetworkCredential basicCredential1 = new
-            System.Net.NetworkCredential("diabeasyapp", "talgalidan");
-            client.EnableSsl = true;
-            client.UseDefaultCredentials = false;
-            client.Credentials = basicCredential1;
+            //string from = "diabeasyapp@gmail.com"; //From address    
+            //MailMessage message = new MailMessage(from, mail);
+            //message.Subject = subject;
+            //message.Body = Body;
+            //message.BodyEncoding = Encoding.UTF8;
+            //message.IsBodyHtml = true;
+            //SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
+            //client.UseDefaultCredentials = false;
+            //System.Net.NetworkCredential basicCredential1 = new
+            //System.Net.NetworkCredential("diabeasyapp", "talgalidan");
+            //client.EnableSsl = true;
+            //client.UseDefaultCredentials = false;
+            //client.Credentials = basicCredential1;
 
 
             //SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
@@ -41,12 +42,21 @@ namespace diabeasy_back
 
             try
             {
-                client.Send(message);
+                //client.Send(message);
+                SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+                {
+                    Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
+                    EnableSsl = true
+                };
+                client.Send("diabeasyapp@gmail.com", mail, subject, Body);
+                //Console.WriteLine("Sent");
+                //Console.ReadLine();
+
                 return true;
             }
             catch (Exception ex)
             {
-                logger.Fatal("the " + message + " was not send "+ ex.Message+ "\ninner Exception: " + ex.InnerException );
+                logger.Fatal("the " + subject + " was not send " + ex.Message + "\ninner Exception: " + ex.InnerException);
                 return false;
             }
 
@@ -88,10 +98,10 @@ namespace diabeasy_back
             catch (Exception ex)
             {
 
-                logger.Fatal("do not found doctor in DB "+ex.Message);
+                logger.Fatal("do not found doctor in DB " + ex.Message);
                 return null;
             }
-   
+
         }
         public bool checkUniqeMail(string email)
         {
@@ -105,7 +115,7 @@ namespace diabeasy_back
                 }
                 return false;
 
-                
+
 
             }
             catch (Exception ex)
