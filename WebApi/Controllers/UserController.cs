@@ -297,8 +297,8 @@ namespace WebApi.Controllers
             try
             {
                 DateTime d = toDate;
-                d.AddDays(1);
-                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time>fromDate && x.date_time < d).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
+                DateTime ToDateEnd=  d.AddDays(1);
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time>fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
 
                 return Content(HttpStatusCode.OK, tableData);
             }
