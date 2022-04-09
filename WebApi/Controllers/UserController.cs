@@ -270,14 +270,35 @@ namespace WebApi.Controllers
 
  
         }
+        //[HttpGet]
+        //[Route("api/User/GetdataForTable/{id}")]
+        //public IHttpActionResult GetdataForTable(int id)
+        //{
+
+        //    try
+        //    {
+        //        var tableData = DB.tblPatientData.Where(x => x.Patients_id == id).Select(x => new tblPatientDataDto(){ date_time =x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x=>x.date_time).Take(15).ToList();
+
+        //        return Content(HttpStatusCode.OK, tableData);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logger.Error("do not found ");
+        //        return Content(HttpStatusCode.BadRequest, e.Message);
+        //    }
+
+        //}
+
         [HttpGet]
-        [Route("api/User/GetdataForTable/{id}")]
-        public IHttpActionResult GetdataForTable(int id)
+        [Route("api/User/GetdataForTable/{id}/{fromDate}/{toDate}")]
+        public IHttpActionResult GetdataForTable(int id, DateTime fromDate, DateTime toDate)
         {
 
             try
             {
-                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id).Select(x => new tblPatientDataDto(){ date_time =x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x=>x.date_time).Take(15).ToList();
+                DateTime d = toDate;
+                d.AddDays(1);
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time>fromDate && x.date_time < d).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
 
                 return Content(HttpStatusCode.OK, tableData);
             }
@@ -288,8 +309,6 @@ namespace WebApi.Controllers
             }
 
         }
-
-
 
 
 
