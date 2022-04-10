@@ -15,8 +15,32 @@ namespace diabeasy_back
         static Logger logger = LogManager.GetCurrentClassLogger();
 
 
-        public bool SendMial(string mail, string subject, string Body)
+        public bool SendMial(string Email, string subject, string Body)
         {
+
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                mail.From = new MailAddress("rupi652022@gmail.com");
+                mail.To.Add(Email);
+                mail.Subject = subject;
+                //mail.Body = "שלום" + Environment.NewLine +
+                //"הסיסמא הזמנית הינה:  " + UserRandomPassword + Environment.NewLine +
+                //"ניתן להחליף סיסמא בלינק הבא" + Environment.NewLine + "http://proj.ruppin.ac.il/igroup65/test2/B/proj1/Login_v1/SetNewPass.html";
+                mail.Body=Body;
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("diabeasyapp", "talgalidan");
+                SmtpServer.EnableSsl = true;
+                SmtpServer.Send(mail);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Fatal("the " + subject + " was not send " + ex.Message + "\ninner Exception: " + ex.InnerException);
+                return false;
+            }
+
             //string from = "diabeasyapp@gmail.com"; //From address    
             //MailMessage message = new MailMessage(from, mail);
             //message.Subject = subject;
@@ -40,25 +64,29 @@ namespace diabeasy_back
             //client.Send("diabeasyapp@gmail.com", "idanlavee10@gmail.com", "test", "testbody");
 
 
-            try
-            {
-                //client.Send(message);
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
-                    EnableSsl = true
-                };
-                client.Send("diabeasyapp@gmail.com", mail, subject, Body);
-                //Console.WriteLine("Sent");
-                //Console.ReadLine();
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                logger.Fatal("the " + subject + " was not send " + ex.Message + "\ninner Exception: " + ex.InnerException);
-                return false;
-            }
+
+
+
+            //try
+            //{
+            //    //client.Send(message);
+            //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+            //    {
+            //        Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
+            //        EnableSsl = true
+            //    };
+            //    client.Send("diabeasyapp@gmail.com", mail, subject, Body);
+            //    //Console.WriteLine("Sent");
+            //    //Console.ReadLine();
+
+            //    return true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Fatal("the " + subject + " was not send " + ex.Message + "\ninner Exception: " + ex.InnerException);
+            //    return false;
+            //}
 
         }
         public string GetTypeByMail(string mail)
