@@ -43,10 +43,11 @@ namespace WebApi.Controllers
             try
             {
                 tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
-                if (patient != null)
-                {
-                    assisant_phone = patient.assistant_phone.ToString();
-                }
+                if (patient == null|| patient.assistant_phone==null)
+                    throw new Exception("patient assitent phone is null");
+
+                assisant_phone = patient.assistant_phone.ToString();
+               
 
                 return Content(HttpStatusCode.OK, assisant_phone);
             }
