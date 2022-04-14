@@ -43,10 +43,11 @@ namespace WebApi.Controllers
             try
             {
                 tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
-                if (patient != null)
-                {
-                    assisant_phone = patient.assistant_phone.ToString();
-                }
+                if (patient == null || patient.assistant_phone == null)
+                    throw new Exception("patient assitent phone is null");
+
+                assisant_phone = patient.assistant_phone.ToString();
+
 
                 return Content(HttpStatusCode.OK, assisant_phone);
             }
@@ -248,18 +249,30 @@ namespace WebApi.Controllers
                 //JSONresult = JSONresult.Replace("\\", "").Replace("\"", "");
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    JSONresult.Add(new GrapsDto()
+                    if (dt.Rows[i]["averge"].GetType() ==0.GetType())
                     {
-                        month = (int)dt.Rows[i]["month"],
-                        averge = (int)dt.Rows[i]["averge"],
-                        upTo240 = dt.Rows[i]["upTo240"].ToString(),
-                        upTo180 = dt.Rows[i]["upTo180"].ToString(),
-                        upTo75 = dt.Rows[i]["upTo75"].ToString(),
-                        upTo60 = dt.Rows[i]["upTo60"].ToString(),
-                        upTo0 = dt.Rows[i]["upTo0"].ToString(),
-                    });
+                        JSONresult.Add(new GrapsDto()
+                        {
+                            month = (int)dt.Rows[i]["month"],
+                            averge = (int)dt.Rows[i]["averge"],
+                            upTo240 = dt.Rows[i]["upTo240"].ToString(),
+                            upTo180 = dt.Rows[i]["upTo180"].ToString(),
+                            upTo75 = dt.Rows[i]["upTo75"].ToString(),
+                            upTo60 = dt.Rows[i]["upTo60"].ToString(),
+                            upTo0 = dt.Rows[i]["upTo0"].ToString(),
+                        });
+                    }
                 }
-                return Content(HttpStatusCode.OK, JSONresult);
+                query = @"select(46.7 + AVG(blood_sugar_level)) / 28.7 as a1c
+                            from tblPatientData
+                        where Patients_id = @id and DATEDIFF(day, date_time, GETDATE())< 90";
+                adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+
+                adpter.Fill(ds, "a1c");
+                dt = ds.Tables["a1c"];
+                var res = new { data = JSONresult, a1c = dt.Rows[0]["a1c"] };
+                return Content(HttpStatusCode.OK, res);
             }
             catch (Exception e)
             {
@@ -268,16 +281,20 @@ namespace WebApi.Controllers
             }
 
 
- 
+
         }
+
+
         [HttpGet]
-        [Route("api/User/GetdataForTable/{id}")]
-        public IHttpActionResult GetdataForTable(int id)
+        [Route("api/User/GetdataForTable/{id}/{fromDate}/{toDate}")]
+        public IHttpActionResult GetdataForTable(int id, DateTime fromDate, DateTime toDate)
         {
 
             try
             {
-                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id).Select(x => new tblPatientDataDto(){ date_time =x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x=>x.date_time).Take(15).ToList();
+                DateTime d = toDate;
+                DateTime ToDateEnd = d.AddDays(1);
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time > fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
 
                 return Content(HttpStatusCode.OK, tableData);
             }
@@ -288,8 +305,6 @@ namespace WebApi.Controllers
             }
 
         }
-
-
 
 
 

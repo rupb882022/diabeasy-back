@@ -339,7 +339,7 @@ namespace WebApi.Controllers
                 Nullable<double> carbs = food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.carbs);
                 Nullable<double> sugar = 0;
                 if (ingredient.sugar != null)
-                    food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.sugars);
+                    sugar=food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.sugars);
 
 
                 if (unit_id != null && carbs != null)
@@ -457,7 +457,7 @@ namespace WebApi.Controllers
                     Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.carbs);
                     Nullable<double> sugar = 0;
                     if (recpie.sugar != null)
-                        food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
+                        sugar= food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
 
 
                     if (unit_id != null && carbs != null)
