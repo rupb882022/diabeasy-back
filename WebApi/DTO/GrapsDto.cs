@@ -8,7 +8,7 @@ namespace WebApi.DTO
     public class GrapsDto
     {
         public int month;
-        public int averge;
+        public Nullable<int> averge=null;
         public string upTo240;
         public string upTo180;
         public string upTo75;
