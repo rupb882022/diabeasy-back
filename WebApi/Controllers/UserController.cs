@@ -455,6 +455,41 @@ namespace WebApi.Controllers
             }
         }
 
+
+        [HttpPut]
+        [Route("api/User/GetdataForTable/put")]
+        public IHttpActionResult Put([FromBody] tblPatientData obj)
+        {
+            try
+            {
+                // DateTime t = Convert.ToDateTime(obj.date_time.ToString().Replace("!", ":"));
+                DateTime t = Convert.ToDateTime(obj.date_time);
+                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time ==t ); 
+                
+                if (data != null)
+                {
+                    data.Patients_id = obj.Patients_id;
+                    data.date_time = obj.date_time;
+                    data.blood_sugar_level = obj.blood_sugar_level;
+                    data.injectionType = obj.injectionType;
+                    data.value_of_ingection = obj.value_of_ingection;
+                    data.totalCarbs = obj.totalCarbs;
+                    data.injection_site = obj.injection_site;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, data.date_time );
+                }
+                return Content(HttpStatusCode.NotFound, "time=" + data.date_time + "of patient data is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+
+
+
         [HttpDelete]
         [Route("api/User/Prescription/Delete/{id}")]
         public IHttpActionResult Delete(int id)
