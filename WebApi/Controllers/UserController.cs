@@ -464,8 +464,9 @@ namespace WebApi.Controllers
             {
                 // DateTime t = Convert.ToDateTime(obj.date_time.ToString().Replace("!", ":"));
                 DateTime t = Convert.ToDateTime(obj.date_time);
-                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time ==t ); 
-                
+                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time ==t );
+                logger.Fatal(data);
+
                 if (data != null)
                 {
                     data.Patients_id = obj.Patients_id;
@@ -521,7 +522,6 @@ namespace WebApi.Controllers
             {
                 DateTime t = Convert.ToDateTime(time.ToString().Replace("!", ":"));
                 tblPatientData p = DB.tblPatientData.SingleOrDefault(x => x.date_time == t);
-                logger.Fatal(time);
                 if (p != null)
                 {
                     DB.tblPatientData.Remove(p);
