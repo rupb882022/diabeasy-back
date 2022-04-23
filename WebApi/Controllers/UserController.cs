@@ -449,7 +449,7 @@ namespace WebApi.Controllers
 
 
         [HttpPut]
-        [Route("api/User/GetdataForTable/put")]
+        [Route("api/User/updateTableRow")]
         public IHttpActionResult Put([FromBody] tblPatientData obj)
         {
             try
@@ -507,7 +507,7 @@ namespace WebApi.Controllers
 
 
         [HttpDelete]
-        [Route("api/User/GetdataForTable/Delete/{time}")]
+        [Route("api/User/deleteTableRow/{time}")]
         public IHttpActionResult Delete(string time)
         {
             try
