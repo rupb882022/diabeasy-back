@@ -43,11 +43,11 @@ namespace WebApi.Controllers
             try
             {
                 tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
-                if (patient == null || patient.assistant_phone == null)
+                if (patient == null|| patient.assistant_phone==null)
                     throw new Exception("patient assitent phone is null");
 
                 assisant_phone = patient.assistant_phone.ToString();
-
+               
 
                 return Content(HttpStatusCode.OK, assisant_phone);
             }
@@ -249,30 +249,18 @@ namespace WebApi.Controllers
                 //JSONresult = JSONresult.Replace("\\", "").Replace("\"", "");
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    if (dt.Rows[i]["averge"].GetType() ==0.GetType())
+                    JSONresult.Add(new GrapsDto()
                     {
-                        JSONresult.Add(new GrapsDto()
-                        {
-                            month = (int)dt.Rows[i]["month"],
-                            averge = (int)dt.Rows[i]["averge"],
-                            upTo240 = dt.Rows[i]["upTo240"].ToString(),
-                            upTo180 = dt.Rows[i]["upTo180"].ToString(),
-                            upTo75 = dt.Rows[i]["upTo75"].ToString(),
-                            upTo60 = dt.Rows[i]["upTo60"].ToString(),
-                            upTo0 = dt.Rows[i]["upTo0"].ToString(),
-                        });
-                    }
+                        month = (int)dt.Rows[i]["month"],
+                        averge = (int)dt.Rows[i]["averge"],
+                        upTo240 = dt.Rows[i]["upTo240"].ToString(),
+                        upTo180 = dt.Rows[i]["upTo180"].ToString(),
+                        upTo75 = dt.Rows[i]["upTo75"].ToString(),
+                        upTo60 = dt.Rows[i]["upTo60"].ToString(),
+                        upTo0 = dt.Rows[i]["upTo0"].ToString(),
+                    });
                 }
-                query = @"select(46.7 + AVG(blood_sugar_level)) / 28.7 as a1c
-                            from tblPatientData
-                        where Patients_id = @id and DATEDIFF(day, date_time, GETDATE())< 90";
-                adpter = new SqlDataAdapter(query, con);
-                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
-
-                adpter.Fill(ds, "a1c");
-                dt = ds.Tables["a1c"];
-                var res = new { data = JSONresult, a1c = dt.Rows[0]["a1c"] };
-                return Content(HttpStatusCode.OK, res);
+                return Content(HttpStatusCode.OK, JSONresult);
             }
             catch (Exception e)
             {
@@ -281,9 +269,26 @@ namespace WebApi.Controllers
             }
 
 
-
+ 
         }
+        //[HttpGet]
+        //[Route("api/User/GetdataForTable/{id}")]
+        //public IHttpActionResult GetdataForTable(int id)
+        //{
 
+        //    try
+        //    {
+        //        var tableData = DB.tblPatientData.Where(x => x.Patients_id == id).Select(x => new tblPatientDataDto(){ date_time =x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x=>x.date_time).Take(15).ToList();
+
+        //        return Content(HttpStatusCode.OK, tableData);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logger.Error("do not found ");
+        //        return Content(HttpStatusCode.BadRequest, e.Message);
+        //    }
+
+        //}
 
         [HttpGet]
         [Route("api/User/GetdataForTable/{id}/{fromDate}/{toDate}")]
@@ -293,8 +298,8 @@ namespace WebApi.Controllers
             try
             {
                 DateTime d = toDate;
-                DateTime ToDateEnd = d.AddDays(1);
-                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time > fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
+                DateTime ToDateEnd=  d.AddDays(1);
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time>fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
 
                 return Content(HttpStatusCode.OK, tableData);
             }
@@ -450,6 +455,42 @@ namespace WebApi.Controllers
             }
         }
 
+
+        [HttpPut]
+        [Route("api/User/GetdataForTable/put")]
+        public IHttpActionResult Put([FromBody] tblPatientData obj)
+        {
+            try
+            {
+                // DateTime t = Convert.ToDateTime(obj.date_time.ToString().Replace("!", ":"));
+                DateTime t = Convert.ToDateTime(obj.date_time);
+                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time ==t );
+                logger.Fatal(data);
+
+                if (data != null)
+                {
+                    data.Patients_id = obj.Patients_id;
+                    data.date_time = obj.date_time;
+                    data.blood_sugar_level = obj.blood_sugar_level;
+                    data.injectionType = obj.injectionType;
+                    data.value_of_ingection = obj.value_of_ingection;
+                    data.totalCarbs = obj.totalCarbs;
+                    data.injection_site = obj.injection_site;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, data.date_time );
+                }
+                return Content(HttpStatusCode.NotFound, "time=" + data.date_time + "of patient data is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+
+
+
         [HttpDelete]
         [Route("api/User/Prescription/Delete/{id}")]
         public IHttpActionResult Delete(int id)
@@ -471,6 +512,31 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
+
+        [HttpDelete]
+        [Route("api/User/GetdataForTable/Delete/{time}")]
+        public IHttpActionResult Delete(string time)
+        {
+            try
+            {
+                DateTime t = Convert.ToDateTime(time.ToString().Replace("!", ":"));
+                tblPatientData p = DB.tblPatientData.SingleOrDefault(x => x.date_time == t);
+                if (p != null)
+                {
+                    DB.tblPatientData.Remove(p);
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, p);
+                }
+                return Content(HttpStatusCode.NotFound, "time=" + time + "of patient data is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
 
         [HttpPost]
         [Route("api/User/InsertData")]
