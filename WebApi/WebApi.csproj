@@ -180,6 +180,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="DTO\AteDto.cs" />
     <Compile Include="DTO\GrapsDto.cs" />
     <Compile Include="DTO\IngrediantDto.cs" />
     <Compile Include="DTO\IngredientsForRecipeDto.cs" />
