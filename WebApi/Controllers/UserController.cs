@@ -22,6 +22,7 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         User user = new User();
         Images images = new Images();
+        Food food = new Food();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -43,11 +44,11 @@ namespace WebApi.Controllers
             try
             {
                 tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
-                if (patient == null|| patient.assistant_phone==null)
+                if (patient == null || patient.assistant_phone == null)
                     throw new Exception("patient assitent phone is null");
 
                 assisant_phone = patient.assistant_phone.ToString();
-               
+
 
                 return Content(HttpStatusCode.OK, assisant_phone);
             }
@@ -290,8 +291,8 @@ namespace WebApi.Controllers
             try
             {
                 DateTime d = toDate;
-                DateTime ToDateEnd=  d.AddDays(1);
-                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time>fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
+                DateTime ToDateEnd = d.AddDays(1);
+                var tableData = DB.tblPatientData.Where(x => x.Patients_id == id && x.date_time > fromDate && x.date_time < ToDateEnd).Select(x => new tblPatientDataDto() { date_time = x.date_time, blood_sugar_level = x.blood_sugar_level, value_of_ingection = (double)x.value_of_ingection, totalCarbs = (double)x.totalCarbs, injection_site = x.injection_site }).OrderByDescending(x => x.date_time).ToList();
 
                 return Content(HttpStatusCode.OK, tableData);
             }
@@ -456,7 +457,7 @@ namespace WebApi.Controllers
             {
                 // DateTime t = Convert.ToDateTime(obj.date_time.ToString().Replace("!", ":"));
                 DateTime t = Convert.ToDateTime(obj.date_time);
-                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time ==t );
+                tblPatientData data = DB.tblPatientData.SingleOrDefault(x => x.date_time == t);
                 logger.Fatal(data);
 
                 if (data != null)
@@ -469,7 +470,7 @@ namespace WebApi.Controllers
                     data.totalCarbs = obj.totalCarbs;
                     data.injection_site = obj.injection_site;
                     DB.SaveChanges();
-                    return Content(HttpStatusCode.OK, data.date_time );
+                    return Content(HttpStatusCode.OK, data.date_time);
                 }
                 return Content(HttpStatusCode.NotFound, "time=" + data.date_time + "of patient data is not found");
             }
@@ -532,11 +533,50 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("api/User/InsertData")]
-        public IHttpActionResult InsertData([FromBody] tblPatientData PatientDatadata)
+        public IHttpActionResult InsertData([FromBody] tblPatientDataDto PatientDatadata)
         {
             try
             {
-                DB.tblPatientData.Add(PatientDatadata);
+                //case that user add food details
+                if (PatientDatadata.food.Count>0)
+                {
+                    for (int i = 0; i < PatientDatadata.food.Count; i++)
+                    {
+                        if ((int)PatientDatadata.food[i].foodId % 2 == 0) { 
+                        DB.tblATE_Recipes.Add(new tblATE_Recipes()
+                        {
+                            Patients_id = (int)PatientDatadata.Patients_id,
+                            date_time = PatientDatadata.date_time,
+                            Recipe_id = (int)PatientDatadata.food[i].foodId,
+                            amount = PatientDatadata.food[i].amount,
+                            UnitOfMeasure_id = food.getUnitID(PatientDatadata.food[i].unitName)
+                        });
+                        }
+                        else
+                        {
+                            DB.tblATE_Ingredients.Add(new tblATE_Ingredients()
+                            {
+                                Patients_id = (int)PatientDatadata.Patients_id,
+                                date_time = PatientDatadata.date_time,
+                                Ingredient_id = (int)PatientDatadata.food[i].foodId,
+                                amount = PatientDatadata.food[i].amount,
+                                UnitOfMeasure_id = food.getUnitID(PatientDatadata.food[i].unitName)
+                            });
+                        }
+                    }
+                }
+
+                tblPatientData p = new tblPatientData()
+                {
+                    date_time = PatientDatadata.date_time,
+                    blood_sugar_level = PatientDatadata.blood_sugar_level,
+                    totalCarbs = PatientDatadata.totalCarbs,
+                    injectionType = PatientDatadata.injectionType,
+                    injection_site= PatientDatadata.injection_site,
+                    value_of_ingection = PatientDatadata.value_of_ingection,
+                    Patients_id = (int)PatientDatadata.Patients_id,
+                };
+                DB.tblPatientData.Add(p);
                 DB.SaveChanges();
 
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
