@@ -425,6 +425,32 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+        [HttpPost]
+        [Route("api/User/addToken/{id}")]
+        public IHttpActionResult user_addToken(int id, [FromBody] tblPatients obj)
+        {
+            try
+            {
+                tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == id);
+                if (p != null)
+                {
+                    //  DB.tblPrescriptions.Add(obj);
+                    p.pushtoken = obj.pushtoken;
+                    DB.SaveChanges();
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                }
+                else
+                {
+                    return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Not found"));
+                    //return Content(HttpStatusCode.Forbidden,"Only 3 requests per day, please try again tomorrow");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
 
         [HttpPut]
         [Route("api/User/Prescription/{id}")]
