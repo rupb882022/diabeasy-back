@@ -46,6 +46,7 @@ namespace diabeasy_back
         public Nullable<int> GroupType_id { get; set; }
         public Nullable<int> Doctor_id { get; set; }
         public Nullable<int> InsulinType_long_id { get; set; }
+        public string pushtoken { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Ingredients> Ingredients { get; set; }

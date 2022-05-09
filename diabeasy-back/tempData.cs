@@ -10,10 +10,16 @@
 namespace diabeasy_back
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class sp_helpdiagramdefinition_Result
+    public partial class tempData
     {
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int ID { get; set; }
+        public string weekday { get; set; }
+        public string dayTime { get; set; }
+        public Nullable<int> blood_sugar_level { get; set; }
+        public Nullable<double> value_of_ingection { get; set; }
+        public Nullable<double> totalCarbs { get; set; }
+        public Nullable<bool> good { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DiabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DiabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Ingredients">
           <Key>
             <PropertyRef Name="id" />
@@ -249,6 +249,7 @@
           <Property Name="GroupType_id" Type="int" />
           <Property Name="Doctor_id" Type="int" />
           <Property Name="InsulinType_long_id" Type="int" />
+          <Property Name="pushtoken" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="tblPrescriptions">
           <Key>
@@ -269,6 +270,18 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="nvarchar" MaxLength="255" />
           <Property Name="image" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="tempData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="weekday" Type="nvarchar" MaxLength="50" />
+          <Property Name="dayTime" Type="nvarchar" MaxLength="50" />
+          <Property Name="blood_sugar_level" Type="int" />
+          <Property Name="value_of_ingection" Type="float" />
+          <Property Name="totalCarbs" Type="float" />
+          <Property Name="good" Type="bit" />
         </EntityType>
         <Association Name="FK__Ingredien__addBy__7755B73D">
           <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
@@ -708,37 +721,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
-        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
-        </Function>
-        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="DiabeasyModelStoreContainer">
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PartOf_Ingredients" EntityType="Self.PartOf_Ingredients" Schema="dbo" store:Type="Tables" />
@@ -764,6 +746,7 @@
           <EntitySet Name="tblPatients" EntityType="Self.tblPatients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPrescriptions" EntityType="Self.tblPrescriptions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblUnitOfMeasure" EntityType="Self.tblUnitOfMeasure" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tempData" EntityType="Self.tempData" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Ingredien__addBy__7755B73D" Association="Self.FK__Ingredien__addBy__7755B73D">
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="Ingredients" EntitySet="Ingredients" />
@@ -909,7 +892,8 @@
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DiabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -921,13 +905,13 @@
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="addByUserId" Type="Int32" />
+          <Property Name="api_id" Type="Int32" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__Ingredien__addBy__7755B73D" FromRole="Ingredients" ToRole="tblPatients" />
           <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_In__Ingre__214BF109" FromRole="Ingredients" ToRole="tblATE_Ingredients" />
           <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__Ingre__28ED12D1" FromRole="Ingredients" ToRole="tblBelong" />
           <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__Ingre__0B5CAFEA" FromRole="Ingredients" ToRole="tblConsistOf" />
           <NavigationProperty Name="tblCategory" Relationship="Self.PartOf_Ingredients" FromRole="Ingredients" ToRole="tblCategory" />
           <NavigationProperty Name="tblPatients1" Relationship="Self.tblFavoritesIngredients" FromRole="Ingredients" ToRole="tblPatients" />
-          <Property Name="api_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Recipes">
           <Key>
@@ -948,7 +932,7 @@
           <NavigationProperty Name="tblPatients1" Relationship="Self.tblFavoritesRecipes" FromRole="Recipes" ToRole="tblPatients" />
           <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Recipes" FromRole="Recipes" ToRole="tblCategory" />
         </EntityType>
-        <EntityType Name="g">
+        <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
           </Key>
@@ -1158,6 +1142,7 @@
           <Property Name="GroupType_id" Type="Int32" />
           <Property Name="Doctor_id" Type="Int32" />
           <Property Name="InsulinType_long_id" Type="Int32" />
+          <Property Name="pushtoken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Ingredients" Relationship="Self.FK__Ingredien__addBy__7755B73D" FromRole="tblPatients" ToRole="Ingredients" />
           <NavigationProperty Name="Recipes" Relationship="Self.FK__Recipes__addByUs__7A3223E8" FromRole="tblPatients" ToRole="Recipes" />
           <NavigationProperty Name="tblDoctor" Relationship="Self.FK__tblPatien__Docto__395884C4" FromRole="tblPatients" ToRole="tblDoctor" />
@@ -1197,6 +1182,18 @@
           <NavigationProperty Name="tblBelong" Relationship="Self.FK__tblBelong__UnitO__27F8EE98" FromRole="tblUnitOfMeasure" ToRole="tblBelong" />
           <NavigationProperty Name="tblBelongToRecipe" Relationship="Self.FK__tblBelong__UnitO__0F2D40CE" FromRole="tblUnitOfMeasure" ToRole="tblBelongToRecipe" />
           <NavigationProperty Name="tblConsistOf" Relationship="Self.FK__tblConsis__UnitO__0C50D423" FromRole="tblUnitOfMeasure" ToRole="tblConsistOf" />
+        </EntityType>
+        <EntityType Name="tempData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="weekday" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="dayTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="blood_sugar_level" Type="Int32" />
+          <Property Name="value_of_ingection" Type="Double" />
+          <Property Name="totalCarbs" Type="Double" />
+          <Property Name="good" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Ingredien__addBy__7755B73D">
           <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="0..1" />
@@ -1537,7 +1534,7 @@
         <EntityContainer Name="diabeasyDBContext" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" />
           <EntitySet Name="Recipes" EntityType="Self.Recipes" />
-          <EntitySet Name="sysdiagrams" EntityType="DiabeasyModel.g" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="tblATE_Ingredients" EntityType="Self.tblATE_Ingredients" />
           <EntitySet Name="tblATE_Recipes" EntityType="Self.tblATE_Recipes" />
           <EntitySet Name="tblBelong" EntityType="Self.tblBelong" />
@@ -1554,6 +1551,7 @@
           <EntitySet Name="tblPatients" EntityType="Self.tblPatients" />
           <EntitySet Name="tblPrescriptions" EntityType="Self.tblPrescriptions" />
           <EntitySet Name="tblUnitOfMeasure" EntityType="Self.tblUnitOfMeasure" />
+          <EntitySet Name="tempData" EntityType="Self.tempData" />
           <AssociationSet Name="FK__Ingredien__addBy__7755B73D" Association="Self.FK__Ingredien__addBy__7755B73D">
             <End Role="tblPatients" EntitySet="tblPatients" />
             <End Role="Ingredients" EntitySet="Ingredients" />
@@ -1678,48 +1676,7 @@
             <End Role="tblCategory" EntitySet="tblCategory" />
             <End Role="Recipes" EntitySet="Recipes" />
           </AssociationSet>
-          <FunctionImport Name="sp_alterdiagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="version" Mode="In" Type="Int32" />
-            <Parameter Name="definition" Mode="In" Type="Binary" />
-          </FunctionImport>
-          <FunctionImport Name="sp_creatediagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="version" Mode="In" Type="Int32" />
-            <Parameter Name="definition" Mode="In" Type="Binary" />
-          </FunctionImport>
-          <FunctionImport Name="sp_dropdiagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(DiabeasyModel.sp_helpdiagramdefinition_Result)">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(DiabeasyModel.sp_helpdiagrams_Result)">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="sp_renamediagram">
-            <Parameter Name="diagramname" Mode="In" Type="String" />
-            <Parameter Name="owner_id" Mode="In" Type="Int32" />
-            <Parameter Name="new_diagramname" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
-        <ComplexType Name="sp_helpdiagramdefinition_Result">
-          <Property Type="Int32" Name="version" Nullable="true" />
-          <Property Type="Binary" Name="definition" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="sp_helpdiagrams_Result">
-          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
-          <Property Type="Int32" Name="ID" Nullable="false" />
-          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
-          <Property Type="Int32" Name="OwnerID" Nullable="false" />
-        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1729,11 +1686,11 @@
           <EntitySetMapping Name="Ingredients">
             <EntityTypeMapping TypeName="DiabeasyModel.Ingredients">
               <MappingFragment StoreEntitySet="Ingredients">
-                <ScalarProperty Name="api_id" ColumnName="api_id" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="image" ColumnName="image" />
                 <ScalarProperty Name="addByUserId" ColumnName="addByUserId" />
+                <ScalarProperty Name="api_id" ColumnName="api_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1752,7 +1709,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="DiabeasyModel.g">
+            <EntityTypeMapping TypeName="DiabeasyModel.sysdiagrams">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -1933,6 +1890,7 @@
                 <ScalarProperty Name="GroupType_id" ColumnName="GroupType_id" />
                 <ScalarProperty Name="Doctor_id" ColumnName="Doctor_id" />
                 <ScalarProperty Name="InsulinType_long_id" ColumnName="InsulinType_long_id" />
+                <ScalarProperty Name="pushtoken" ColumnName="pushtoken" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1955,6 +1913,19 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="image" ColumnName="image" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tempData">
+            <EntityTypeMapping TypeName="DiabeasyModel.tempData">
+              <MappingFragment StoreEntitySet="tempData">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="weekday" ColumnName="weekday" />
+                <ScalarProperty Name="dayTime" ColumnName="dayTime" />
+                <ScalarProperty Name="blood_sugar_level" ColumnName="blood_sugar_level" />
+                <ScalarProperty Name="value_of_ingection" ColumnName="value_of_ingection" />
+                <ScalarProperty Name="totalCarbs" ColumnName="totalCarbs" />
+                <ScalarProperty Name="good" ColumnName="good" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1999,30 +1970,6 @@
               <ScalarProperty Name="id" ColumnName="Recipe_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="DiabeasyModel.Store.sp_alterdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="DiabeasyModel.Store.sp_creatediagram" />
-          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="DiabeasyModel.Store.sp_dropdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="DiabeasyModel.Store.sp_helpdiagramdefinition">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="DiabeasyModel.sp_helpdiagramdefinition_Result">
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="DiabeasyModel.Store.sp_helpdiagrams">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="DiabeasyModel.sp_helpdiagrams_Result">
-                <ScalarProperty Name="Database" ColumnName="Database" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Owner" ColumnName="Owner" />
-                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="DiabeasyModel.Store.sp_renamediagram" />
-          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="DiabeasyModel.Store.sp_upgraddiagrams" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
