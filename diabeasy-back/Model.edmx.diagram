@@ -7,7 +7,7 @@
       <Diagram DiagramId="cc6ff5e42ee24ddead5953a967cdebc3" Name="Diagram1">
         <EntityTypeShape EntityType="DiabeasyModel.Ingredients" Width="1.5" PointX="8.25" PointY="16" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.Recipes" Width="1.5" PointX="11.25" PointY="15.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="DiabeasyModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DiabeasyModel.g" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblATE_Ingredients" Width="1.5" PointX="10.5" PointY="12" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblATE_Recipes" Width="1.5" PointX="13.5" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DiabeasyModel.tblBelong" Width="1.5" PointX="13.5" PointY="16.375" IsExpanded="true" />

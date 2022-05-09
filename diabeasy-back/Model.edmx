@@ -948,7 +948,7 @@
           <NavigationProperty Name="tblPatients1" Relationship="Self.tblFavoritesRecipes" FromRole="Recipes" ToRole="tblPatients" />
           <NavigationProperty Name="tblCategory" Relationship="Self.tblPartOf_Recipes" FromRole="Recipes" ToRole="tblCategory" />
         </EntityType>
-        <EntityType Name="sysdiagrams">
+        <EntityType Name="g">
           <Key>
             <PropertyRef Name="diagram_id" />
           </Key>
@@ -1537,7 +1537,7 @@
         <EntityContainer Name="diabeasyDBContext" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" />
           <EntitySet Name="Recipes" EntityType="Self.Recipes" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="sysdiagrams" EntityType="DiabeasyModel.g" />
           <EntitySet Name="tblATE_Ingredients" EntityType="Self.tblATE_Ingredients" />
           <EntitySet Name="tblATE_Recipes" EntityType="Self.tblATE_Recipes" />
           <EntitySet Name="tblBelong" EntityType="Self.tblBelong" />
@@ -1752,7 +1752,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="DiabeasyModel.sysdiagrams">
+            <EntityTypeMapping TypeName="DiabeasyModel.g">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
