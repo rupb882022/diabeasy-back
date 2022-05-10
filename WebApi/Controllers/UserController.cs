@@ -434,7 +434,7 @@ namespace WebApi.Controllers
                 tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == id);
                 if (p != null)
                 {
-                    //  DB.tblPrescriptions.Add(obj);
+                    logger.Fatal(obj);
                     p.pushtoken = obj.pushtoken;
                     DB.SaveChanges();
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
