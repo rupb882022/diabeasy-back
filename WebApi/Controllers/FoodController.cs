@@ -47,14 +47,14 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         [Route("api/Food/getIngredients/{foodName}/{useId}")]
-        public  IHttpActionResult GetIngredients(string foodName, int useId)
+        public IHttpActionResult GetIngredients(string foodName, int useId)
         {
             try
             {
                 //check if getIngredient exist when user search getIngredient
                 if (foodName != "all")
                 {
-                    Ingredients I = DB.Ingredients.Where(x=>x.name.Contains(foodName)&&(x.addByUserId==null||x.addByUserId== useId)).FirstOrDefault();
+                    Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
                     if (I == null)
                     {
                         var res = food.search_by_name_api(foodName);
@@ -92,7 +92,7 @@ namespace WebApi.Controllers
                 List<IngrediantDto> ingrediants = new List<IngrediantDto>();
                 IngrediantDto ingrediant = new IngrediantDto();
 
-              
+
 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
@@ -140,7 +140,7 @@ namespace WebApi.Controllers
                 //add last ingrediant in query list
                 ingrediants.Add(ingrediant);
 
-           
+
 
                 return Content(HttpStatusCode.OK, ingrediants);
             }
@@ -290,6 +290,50 @@ namespace WebApi.Controllers
         }
 
 
+        [HttpGet]
+        [Route("api/Food/hipoRecomendtion")]
+        public IHttpActionResult hipoRecomendtion(int userId)
+        {
+            try
+            {
+                string query = @"
+                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name,ate.name,amount,ate.image
+                    from tblPatientData pd 
+                    inner join (
+                        select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+                        union
+                        select Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Recipes AR 
+                        inner join Recipes R on R.id=AR.Recipe_id
+                        ) as Ate on pd.Patients_id=ate.Patients_id and pd.date_time=ate.date_time
+                        inner join tblUnitOfMeasure UM on um.id=ate.UnitOfMeasure_id
+                        inner join (
+                            select pd2.date_time,ROW_NUMBER() over(order by date_time) as num
+                            from tblPatientData pd2
+                            where Patients_id=@id ) as number on number.date_time=ate.date_time
+                       inner join( 
+                                select pd3.date_time,blood_sugar_level,ROW_NUMBER() over(order by date_time) as num
+                                from tblPatientData pd3
+                                where Patients_id=@id ) pd3 on pd3.num=number.num+1
+                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
+                    and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )";
+
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", userId);
+
+
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "tblHipoReccomend");
+                DataTable dt = ds.Tables["tblHipoReccomend"];
+                return Content(HttpStatusCode.OK, dt);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
 
         [HttpGet]
         [Route("api/Food/getUnitOfMeasure")]
@@ -339,7 +383,7 @@ namespace WebApi.Controllers
                 Nullable<double> carbs = food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.carbs);
                 Nullable<double> sugar = 0;
                 if (ingredient.sugar != null)
-                    sugar=food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.sugars);
+                    sugar = food.calc100Grams((int)ingredient.unit, (int)ingredient.weightInGrams, (double)ingredient.sugars);
 
 
                 if (unit_id != null && carbs != null)
@@ -457,7 +501,7 @@ namespace WebApi.Controllers
                     Nullable<double> carbs = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.carbs);
                     Nullable<double> sugar = 0;
                     if (recpie.sugar != null)
-                        sugar= food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
+                        sugar = food.calc100Grams((int)recpie.unit, (int)recpie.weightInGrams, (double)recpie.sugars);
 
 
                     if (unit_id != null && carbs != null)
@@ -639,7 +683,7 @@ namespace WebApi.Controllers
         }
         [HttpPost]
         [Route("api/Food/addunit/{foodID}")]
-        public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit,int foodID)
+        public IHttpActionResult addunit([FromBody] tblUnitOfMeasureDto unit, int foodID)
         {
             try
             {
@@ -685,7 +729,7 @@ namespace WebApi.Controllers
         //    try
         //    {
         //        var res =  food.search_by_name_api(foodName);
-                
+
 
         //        if (res!=null)
         //        {
