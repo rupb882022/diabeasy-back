@@ -29,7 +29,7 @@ namespace diabeasy_back
                     return  int.Parse(obj.Doctor_id.ToString());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 logger.Fatal(ex.Message);

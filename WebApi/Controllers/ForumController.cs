@@ -121,7 +121,8 @@ namespace WebApi.Controllers
                         active = true,
                         getting_user_id = tblForum.writtenBy(tf),
                         sendding_user_id = writtenBy,
-                        content = "forum-comment"
+                        content = "forum-comment",
+                        date_time = new DateTime()
                     };
                     DB.alert.Add(newAlert);
                 }
@@ -137,7 +138,8 @@ namespace WebApi.Controllers
                                     active = true,
                                     getting_user_id = id,
                                     sendding_user_id = writtenBy,
-                                    content = "forum-subject"
+                                    content = "forum-subject",
+                                    date_time = new DateTime()
                                 };
                                 DB.alert.Add(newAlert);
                         }

@@ -407,8 +407,19 @@ namespace WebApi.Controllers
                 DateTime d = (DateTime)obj.date_time;
                 string requestDate = d.ToString("MMM dd yyyy").Substring(0, 11);
                 int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
-                if (amount < 3)
+                if (amount <= 3)
                 {
+
+                    alert alert = new alert()
+                    {
+                        active = true,
+                        getting_user_id = obj.Doctor_id,
+                        sendding_user_id = obj.Patients_id,
+                        content = "addRequest",
+                        date_time=new DateTime()
+                    };
+
+
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
