@@ -39,7 +39,6 @@ namespace WebApi.Controllers
                 body = pnd.body,
                 badge = pnd.badge,
                 sound= "default",
-                ttl=20,
                 data = pnd.data//new { name = "nir", grade = 100 }
             };
 
@@ -91,7 +90,7 @@ namespace WebApi.Controllers
                 title = "form local Server",
                 body = "body from local Server",
                 badge = 7,
-                data = new { name = "nir", grade = 100, seconds = DateTime.Now.Second }
+                //data = new { name = "nir", grade = 100, seconds = DateTime.Now.Second }
             };
 
             string postData = new JavaScriptSerializer().Serialize(objectToSend);
@@ -135,8 +134,6 @@ namespace WebApi.Controllers
         public string title { get; set; }
         public string body { get; set; }
         public int badge { get; set; }
-        public int ttl { get; set; }
-
         public Data data { get; set; }
     }
 
