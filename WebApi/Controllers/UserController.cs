@@ -36,6 +36,38 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/User/alert/{id}")]
+        public IHttpActionResult getAlert(int id)
+        {
+            try
+            {
+                string query = @"select *
+                                from alert a inner join (
+                                select id,profileimage,firstname+' '+lastname as 'name'
+                                from tblPatients
+                                union
+                                select id,profileimage,firstname+' '+lastname as 'name'
+                                from tblDoctor
+                                )as users on a.sendding_user_id=users.id
+                                where getting_user_id=@id";
+
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "alerts");
+                DataTable dt = ds.Tables["alerts"];
+               return Content(HttpStatusCode.OK, dt);
+            }
+            catch (Exception e)
+            {
+
+                logger.Error("getAlerte");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+          
+        }
+
+        [HttpGet]
         [Route("api/User/assistant_phone/{id}")]
         public IHttpActionResult assistant_phone(int id)
         {
