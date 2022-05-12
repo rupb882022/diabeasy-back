@@ -291,13 +291,13 @@ namespace WebApi.Controllers
 
 
         [HttpGet]
-        [Route("api/Food/hipoRecomendtion")]
+        [Route("api/Food/hipoRecomendtion/{userId}")]
         public IHttpActionResult hipoRecomendtion(int userId)
         {
             try
             {
                 string query = @"
-                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name,ate.name,amount,ate.image
+                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name,ate.name,amount,ate.image,pd3.blood_sugar_level
                     from tblPatientData pd 
                     inner join (
                         select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image

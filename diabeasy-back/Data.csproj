@@ -64,6 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="alert.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="Extention\Food.cs" />
     <Compile Include="Extention\Images.cs" />
     <Compile Include="Extention\Ingredients.cs" />

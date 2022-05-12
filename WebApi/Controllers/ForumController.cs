@@ -107,7 +107,43 @@ namespace WebApi.Controllers
         {
             try
             {
-               
+                int writtenBy = 0,sendding_id=0;
+                alert newAlert;
+                writtenBy = tblForum.writtenBy(obj);
+            
+
+                if (obj.Id_Continue_comment != null)
+                {
+                    tblForum tf= DB.tblForum.Where(x => x.id == obj.Id_Continue_comment).SingleOrDefault();
+                        sendding_id = tblForum.writtenBy(obj);
+                    newAlert = new alert()
+                    {
+                        active = true,
+                        getting_user_id = tblForum.writtenBy(tf),
+                        sendding_user_id = writtenBy,
+                        content = "forum-comment"
+                    };
+                    DB.alert.Add(newAlert);
+                }
+                else
+                {
+                    List<tblForum>TB= DB.tblForum.Where(x => x.subject == obj.subject).OrderByDescending(z=>z.Patients_id).ToList();
+                    for (int i = 0; i < TB.Count; i++)
+                    {
+                        int id = tblForum.writtenBy(TB[i]); 
+                            if (writtenBy!=id&&( i == 0|| id != tblForum.writtenBy(TB[i-1]))) {
+                                newAlert = new alert()
+                                {
+                                    active = true,
+                                    getting_user_id = id,
+                                    sendding_user_id = writtenBy,
+                                    content = "forum-subject"
+                                };
+                                DB.alert.Add(newAlert);
+                        }
+                    }
+                }
+        
                         DB.tblForum.Add(obj);
                         DB.SaveChanges();
                         return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
