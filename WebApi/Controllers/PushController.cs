@@ -12,6 +12,7 @@ using System.Web.Http.Cors;
 using diabeasy_back;
 using NLog;
 using System.Web.Script.Serialization;
+using System.Timers;
 
 
 namespace WebApi.Controllers
@@ -22,28 +23,51 @@ namespace WebApi.Controllers
     {
      diabeasyDBContext DB = new diabeasyDBContext();
      static Logger logger = LogManager.GetCurrentClassLogger();
+     private static Timer aTimer;
+      public static object objectToSend;
 
 
         [Route("api/sendpushnotification")]
-        public string Post([FromBody] PushNotData pnd)
+        public string SendPushNotification([FromBody] PushNotData pnd)
         {
-            // Create a request using a URL that can receive a post.   
-            WebRequest request = WebRequest.Create("https://exp.host/--/api/v2/push/send");
-            // Set the Method property of the request to POST.  
-            request.Method = "POST";
-            // Create POST data and convert it to a byte array.  
-            var objectToSend = new
+            try
+            {
+            int seconds = pnd.ttl;
+            aTimer = new Timer();
+            aTimer.Interval= seconds<=0?1000:seconds*1000; // Interval must be greater then 0; Default => 1 sec;
+            aTimer.Elapsed += OnTimedEvent;
+            objectToSend = new
             {
                 to = pnd.to,
                 title = pnd.title,
                 body = pnd.body,
                 badge = pnd.badge,
-                sound= "default",
-                data = pnd.data//new { name = "nir", grade = 100 }
+                sound = "default",
+                data = pnd.data         //new { name = "nir", grade = 100 }
             };
+            aTimer.Enabled = true;
 
+
+        //    aTimer.Stop();
+            // return "success:) - " + responseFromServer + ", " + returnStatus;
+            return $"success:) the message will send in {seconds} seconds";
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error catched in SendPushNotification function");
+                return e.Message;
+            }
+        }
+        private static void OnTimedEvent(Object o, ElapsedEventArgs e)
+        {
+
+            // Create a request using a URL that can receive a post.   
+            WebRequest request = WebRequest.Create("https://exp.host/--/api/v2/push/send");
+            // Set the Method property of the request to POST.  
+            request.Method = "POST";
+            // Create POST data and convert it to a byte array.  
+            
             string postData = new JavaScriptSerializer().Serialize(objectToSend);
-
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             // Set the ContentType property of the WebRequest.  
             request.ContentType = "application/json";
@@ -72,8 +96,8 @@ namespace WebApi.Controllers
             reader.Close();
             dataStream.Close();
             response.Close();
+            aTimer.Enabled = false;
 
-            return "success:) - " + responseFromServer + ", " + returnStatus;
         }
 
         [Route("api/sendpushnotificationFromLocal")]
@@ -89,7 +113,7 @@ namespace WebApi.Controllers
                 to = "ExponentPushToken[I8PGiZHdZMMnFcg_USV5r_]",
                 title = "form local Server",
                 body = "body from local Server",
-                badge = 7,
+                badge = 75,
                 //data = new { name = "nir", grade = 100, seconds = DateTime.Now.Second }
             };
 
@@ -124,7 +148,7 @@ namespace WebApi.Controllers
             dataStream.Close();
             response.Close();
 
-            return "success:) --- " + responseFromServer + ", " + returnStatus;
+            return "success:) --- " + responseFromServer + ",-- " + returnStatus;
         }
     }
 
@@ -134,14 +158,15 @@ namespace WebApi.Controllers
         public string title { get; set; }
         public string body { get; set; }
         public int badge { get; set; }
+        public int ttl { get; set; }
         public Data data { get; set; }
     }
 
     public class Data
     {
         public string to { get; set; }
-       // public string title { get; set; }
-     //   public string body { get; set; }
+        public string title { get; set; }
+        public string status { get; set; }
     }
 
 }
