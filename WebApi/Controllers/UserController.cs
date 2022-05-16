@@ -92,6 +92,34 @@ namespace WebApi.Controllers
 
         }
 
+        [HttpPost]
+        [Route("api/User/assistant_phone/{id}/{number}")]
+        public IHttpActionResult AddNewEmergancyPhone(int id, string number)
+        {
+           // string assisant_phone = "";
+
+            try
+            {
+                tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
+                if (patient != null)
+                {
+                    patient.assistant_phone =int.Parse( number);
+                    DB.SaveChanges();
+                return Content(HttpStatusCode.OK, number );
+                }
+                return Content(HttpStatusCode.NotFound, "not found");
+
+            }
+            catch (Exception e)
+            {
+                logger.Error("do not found assistant_phone");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
+
+
+
         [HttpGet]
         [Route("api/User/userDetails/{email}/{password}")]
         public IHttpActionResult userDetails(string email, string password)
