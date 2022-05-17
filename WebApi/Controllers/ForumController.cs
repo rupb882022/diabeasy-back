@@ -110,8 +110,8 @@ namespace WebApi.Controllers
                 int writtenBy = 0,sendding_id=0;
                 alert newAlert;
                 writtenBy = tblForum.writtenBy(obj);
-            
 
+               
                 if (obj.Id_Continue_comment != null)
                 {
                     tblForum tf= DB.tblForum.Where(x => x.id == obj.Id_Continue_comment).SingleOrDefault();
@@ -122,7 +122,7 @@ namespace WebApi.Controllers
                         getting_user_id = tblForum.writtenBy(tf),
                         sendding_user_id = writtenBy,
                         content = "forum-comment",
-                        date_time = new DateTime()
+                        date_time = obj.date_time
                     };
                     DB.alert.Add(newAlert);
                 }
@@ -139,7 +139,7 @@ namespace WebApi.Controllers
                                     getting_user_id = id,
                                     sendding_user_id = writtenBy,
                                     content = "forum-subject",
-                                    date_time = new DateTime()
+                                    date_time = obj.date_time
                                 };
                                 DB.alert.Add(newAlert);
                         }
