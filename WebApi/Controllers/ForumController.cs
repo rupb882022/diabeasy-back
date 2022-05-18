@@ -148,7 +148,7 @@ namespace WebApi.Controllers
         
                         DB.tblForum.Add(obj);
                         DB.SaveChanges();
-                        return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+                        return Created(new Uri(Request.RequestUri.AbsoluteUri), "created");
             }
             catch (Exception e)
             {

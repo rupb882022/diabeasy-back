@@ -29,9 +29,13 @@ namespace diabeasy_back
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
                 smtp.Credentials = new System.Net.NetworkCredential("diabeasyapp@gmail.com", "talgalidan");
-                logger.Debug("check point2222");
                 smtp.Send(mail);
                 return true;
+
+
+
+
+
 
 
 
@@ -39,13 +43,13 @@ namespace diabeasy_back
                 //string to = Email;
                 //string subject = Subject;
                 //string body = Body;
-                //using (MailMessage mm = new MailMessage("rupi652022@gmail.com", Email))
+                //using (MailMessage mm = new MailMessage("diabeasyapp@gmail.com", Email))
                 //{
                 //    mm.Subject = Subject;
                 //    mm.Body = Body;
 
                 //    mm.IsBodyHtml = false;
-                //    logger.Debug(mm.Body+"===============>cheak");
+                //    logger.Debug(mm.Body + "===============>cheak");
                 //    mm.To.Add(Email);
                 //    SmtpClient smtp = new SmtpClient();
                 //    smtp.Host = "smtp.gmail.com";
@@ -122,25 +126,7 @@ namespace diabeasy_back
 
 
 
-            //try
-            //{
-            //    //client.Send(message);
-            //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
-            //    {
-            //        Credentials = new NetworkCredential("diabeasyapp@gmail.com", "talgalidan"),
-            //        EnableSsl = true
-            //    };
-            //    client.Send("diabeasyapp@gmail.com", mail, subject, Body);
-            //    //Console.WriteLine("Sent");
-            //    //Console.ReadLine();
-
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Fatal("the " + subject + " was not send " + ex.Message + "\ninner Exception: " + ex.InnerException);
-            //    return false;
-            //}
+     
 
         }
         public string GetTypeByMail(string mail)
