@@ -516,10 +516,22 @@ namespace WebApi.Controllers
                         date_time = new DateTime()
                     };
 
+                    PushNotData push = new PushNotData()
+                    {
 
+
+                        to = "ExponentPushToken[2S01zuIBNraplwZePN2Leh]",
+                        title = "DiabeasyApp",
+                        body = "Boker Tov! Hezrakta hayom??? ",
+                        badge = 0,
+                        ttl = 1,
+                    };
+                    //  push.data.to = "ExponentPushToken[2S01zuIBNraplwZePN2Leh]";
+                    
+                    string p= PushController.SendPushNotification(push);
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
-                    return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri),p+ "  --OKKK");
                 }
                 else
                 {

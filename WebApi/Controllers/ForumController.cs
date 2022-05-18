@@ -21,7 +21,7 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
-
+        
         [HttpGet]
         [Route("api/Forum")]
         public IHttpActionResult GetAllCommentsDetails()
@@ -111,11 +111,11 @@ namespace WebApi.Controllers
                 alert newAlert;
                 writtenBy = tblForum.writtenBy(obj);
 
-               
+
                 if (obj.Id_Continue_comment != null)
                 {
-                    tblForum tf= DB.tblForum.Where(x => x.id == obj.Id_Continue_comment).SingleOrDefault();
-                        sendding_id = tblForum.writtenBy(obj);
+                    tblForum tf = DB.tblForum.Where(x => x.id == obj.Id_Continue_comment).SingleOrDefault();
+                    sendding_id = tblForum.writtenBy(obj);
                     newAlert = new alert()
                     {
                         active = true,
