@@ -41,7 +41,15 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query = @"select *
+                string query = @"select *,case when DATEDIFF(HOUR,date_time,GETDATE())<24 then DATEDIFF(HOUR,date_time,GETDATE())
+                                    when DATEDIFF(HOUR,date_time,GETDATE())<(24*7) then convert (int,DATEDIFF(HOUR,date_time,GETDATE()))/24
+                                    when DATEDIFF(HOUR,date_time,GETDATE())<(24*7*4) then convert (int,DATEDIFF(HOUR,date_time,GETDATE()))/24/7
+                                    else convert (int,DATEDIFF(HOUR,date_time,GETDATE()))/24/30 end 'daysLeft',
+
+                                   case when DATEDIFF(HOUR,date_time,GETDATE())<24 then 'Hours'
+                                   when DATEDIFF(HOUR,date_time,GETDATE())<(24*7) then 'Days'
+                                   when DATEDIFF(HOUR,date_time,GETDATE())<(24*7*4) then 'Weeks'
+                                    else 'Mounts' end 'daysLeftName'
                                 from alert a inner join (
                                 select id,profileimage,firstname+' '+lastname as 'name'
                                 from tblPatients
