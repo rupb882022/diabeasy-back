@@ -65,7 +65,7 @@ namespace WebApi.Controllers
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "alerts");
                 DataTable dt = ds.Tables["alerts"];
-               return Content(HttpStatusCode.OK, dt);
+                return Content(HttpStatusCode.OK, dt);
             }
             catch (Exception e)
             {
@@ -73,7 +73,35 @@ namespace WebApi.Controllers
                 logger.Error("getAlerte");
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
-          
+
+        }
+
+        [HttpGet]
+        [Route("api/User/readAlert/{id}")]
+        public IHttpActionResult readAlert(int id)
+        {
+            try
+            {
+              alert a=DB.alert.Where(x => x.id == id).SingleOrDefault();
+                if (a != null)
+                {
+                    a.active = false;
+                    DB.SaveChanges();
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                }
+                else
+                {
+                    throw new Exception("cannot find alert id");
+                }
+              
+
+            }
+            catch (Exception e)
+            {
+
+                logger.Error("delete alert "+ e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
         }
 
         [HttpGet]
@@ -105,16 +133,16 @@ namespace WebApi.Controllers
         [Route("api/User/assistant_phone/{id}/{number}")]
         public IHttpActionResult AddNewEmergancyPhone(int id, string number)
         {
-           // string assisant_phone = "";
+            // string assisant_phone = "";
 
             try
             {
                 tblPatients patient = DB.tblPatients.Where(x => x.id == id).SingleOrDefault();
                 if (patient != null)
                 {
-                    patient.assistant_phone =int.Parse( number);
+                    patient.assistant_phone = int.Parse(number);
                     DB.SaveChanges();
-                return Content(HttpStatusCode.OK, number );
+                    return Content(HttpStatusCode.OK, number);
                 }
                 return Content(HttpStatusCode.NotFound, "not found");
 
@@ -485,7 +513,7 @@ namespace WebApi.Controllers
                         getting_user_id = obj.Doctor_id,
                         sendding_user_id = obj.Patients_id,
                         content = "addRequest",
-                        date_time=new DateTime()
+                        date_time = new DateTime()
                     };
 
 
@@ -644,19 +672,20 @@ namespace WebApi.Controllers
             try
             {
                 //case that user add food details
-                if (PatientDatadata.food.Count>0)
+                if (PatientDatadata.food.Count > 0)
                 {
                     for (int i = 0; i < PatientDatadata.food.Count; i++)
                     {
-                        if ((int)PatientDatadata.food[i].foodId % 2 == 0) { 
-                        DB.tblATE_Recipes.Add(new tblATE_Recipes()
+                        if ((int)PatientDatadata.food[i].foodId % 2 == 0)
                         {
-                            Patients_id = (int)PatientDatadata.Patients_id,
-                            date_time = PatientDatadata.date_time,
-                            Recipe_id = (int)PatientDatadata.food[i].foodId,
-                            amount = PatientDatadata.food[i].amount,
-                            UnitOfMeasure_id = food.getUnitID(PatientDatadata.food[i].unitName)
-                        });
+                            DB.tblATE_Recipes.Add(new tblATE_Recipes()
+                            {
+                                Patients_id = (int)PatientDatadata.Patients_id,
+                                date_time = PatientDatadata.date_time,
+                                Recipe_id = (int)PatientDatadata.food[i].foodId,
+                                amount = PatientDatadata.food[i].amount,
+                                UnitOfMeasure_id = food.getUnitID(PatientDatadata.food[i].unitName)
+                            });
                         }
                         else
                         {
@@ -678,7 +707,7 @@ namespace WebApi.Controllers
                     blood_sugar_level = PatientDatadata.blood_sugar_level,
                     totalCarbs = PatientDatadata.totalCarbs,
                     injectionType = PatientDatadata.injectionType,
-                    injection_site= PatientDatadata.injection_site,
+                    injection_site = PatientDatadata.injection_site,
                     value_of_ingection = PatientDatadata.value_of_ingection,
                     Patients_id = (int)PatientDatadata.Patients_id,
                 };
