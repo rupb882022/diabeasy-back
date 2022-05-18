@@ -59,7 +59,7 @@ namespace WebApi.Controllers
                                 from tblDoctor
                                 )as users on a.sendding_user_id=users.id
                                 where getting_user_id=@id
-                                order by active, date_time desc";
+                                order by active desc, date_time desc";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
