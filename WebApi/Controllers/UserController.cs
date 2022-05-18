@@ -57,7 +57,8 @@ namespace WebApi.Controllers
                                 select id,profileimage,firstname+' '+lastname as 'name'
                                 from tblDoctor
                                 )as users on a.sendding_user_id=users.id
-                                where getting_user_id=@id";
+                                where getting_user_id=@id
+                                order by date_time desc";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
