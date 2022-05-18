@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -58,7 +59,7 @@ namespace WebApi.Controllers
                                 from tblDoctor
                                 )as users on a.sendding_user_id=users.id
                                 where getting_user_id=@id
-                                order by date_time desc";
+                                order by active, date_time desc";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
@@ -734,5 +735,29 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
+
+        //[HttpGet]
+        //[Route("api/User/test")]
+        //public async Task<bool> test()
+        //{
+
+
+        //    try
+        //    {
+
+        //        await user.PushNotification(0);
+
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        return false;
+        //    }
+
+        //}
+
+
     }
 }
