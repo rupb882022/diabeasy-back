@@ -28,7 +28,7 @@ namespace WebApi.Controllers
 
 
         [Route("api/sendpushnotification")]
-        public string SendPushNotification([FromBody] PushNotData pnd)
+        public static string SendPushNotification([FromBody] PushNotData pnd)
         {
             try
             {
