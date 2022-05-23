@@ -317,7 +317,8 @@ namespace WebApi.Controllers
                                 from tblPatientData pd3
                                 where Patients_id=@id ) pd3 on pd3.num=number.num+1
                     where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
-                    and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )";
+                    and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
+                    order by pd.date_time desc";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", userId);
