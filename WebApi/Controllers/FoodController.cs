@@ -54,7 +54,8 @@ namespace WebApi.Controllers
                 //check if getIngredient exist when user search getIngredient
                 if (foodName != "all")
                 {
-                    Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
+                    Ingredients I = null;
+                    //Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
                     if (I == null)
                     {
                         var res = food.search_by_name_api(foodName);
@@ -65,7 +66,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-                string query = @"select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
+                string query = @"distinct select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
                                 case WHEN  FI.Ingredient_id is not null then FI.Ingredient_id else 0 END as favorit
 								from Ingredients I
 								 inner join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
@@ -556,7 +557,7 @@ namespace WebApi.Controllers
                 string query;
 
                 if (obj.Rcipe_id != null)
-                    query = $"insert into tblFavoritesRecipes values(,{(int)obj.Rcipe_id}{(int)obj.user_id})";
+                    query = $"insert into tblFavoritesRecipes values(,{(int)obj.Rcipe_id},{(int)obj.user_id})";
                 else
                     query = $"insert into tblFavoritesIngredients values({(int)obj.Ingredient_id},{(int)obj.user_id})";
 

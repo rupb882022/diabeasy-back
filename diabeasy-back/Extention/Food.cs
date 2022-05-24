@@ -74,6 +74,24 @@ namespace diabeasy_back
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
                     dynamic json = JsonConvert.DeserializeObject(responseBody);
+
+                    dynamic resulte = JsonConvert.DeserializeObject(json.results.ToString());
+                    if (resulte.Count == 0)
+                    {
+                        logger.Debug("no resulte for "+ name);
+                        return null;
+                    }
+
+
+                    logger.Debug(json.results);
+                    if (resulte.Count > 1)
+                    {
+                        for (int i = 1; i < resulte.Count; i++)
+                        {
+                            await get_Food_information_api(resulte[i]);
+                        }
+
+                    }
                     var firstFood = json.results[0];
                     return await get_Food_information_api(firstFood);
                 }
@@ -146,11 +164,20 @@ namespace diabeasy_back
             {
                 dynamic Foodjson = JsonConvert.DeserializeObject(foodByAPi);
                 string imagePath = "https://spoonacular.com/cdn/ingredients_100x100/";
+
+                if(Foodjson.image!= "no.jpg")
+                {
+                    imagePath += Foodjson.image;
+                }
+                else
+                {
+                    imagePath = "";
+                }
                 //crete new Ingredient in DB
                 DB.Ingredients.Add(new Ingredients()
                 {
                     name = Foodjson.name,
-                    image = imagePath + Foodjson.image,
+                    image = imagePath ,
                     api_id = Foodjson.id
                 });
                 DB.SaveChanges();

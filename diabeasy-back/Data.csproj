@@ -124,6 +124,9 @@
     <Compile Include="tblDoctor.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="tblEventOf.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="tblExceptionalEvent.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>

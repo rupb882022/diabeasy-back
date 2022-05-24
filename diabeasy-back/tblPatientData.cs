@@ -19,7 +19,7 @@ namespace diabeasy_back
         {
             this.tblATE_Ingredients = new HashSet<tblATE_Ingredients>();
             this.tblATE_Recipes = new HashSet<tblATE_Recipes>();
-            this.tblExceptionalEvent = new HashSet<tblExceptionalEvent>();
+            this.tblEventOf = new HashSet<tblEventOf>();
         }
     
         public System.DateTime date_time { get; set; }
@@ -35,8 +35,8 @@ namespace diabeasy_back
         public virtual ICollection<tblATE_Ingredients> tblATE_Ingredients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblATE_Recipes> tblATE_Recipes { get; set; }
-        public virtual tblPatients tblPatients { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblExceptionalEvent> tblExceptionalEvent { get; set; }
+        public virtual ICollection<tblEventOf> tblEventOf { get; set; }
+        public virtual tblPatients tblPatients { get; set; }
     }
 }

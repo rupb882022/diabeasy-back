@@ -17,7 +17,7 @@ namespace diabeasy_back
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tblExceptionalEvent()
         {
-            this.tblPatientData = new HashSet<tblPatientData>();
+            this.tblEventOf = new HashSet<tblEventOf>();
         }
     
         public int id { get; set; }
@@ -25,6 +25,6 @@ namespace diabeasy_back
         public Nullable<System.DateTime> date_time { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblPatientData> tblPatientData { get; set; }
+        public virtual ICollection<tblEventOf> tblEventOf { get; set; }
     }
 }

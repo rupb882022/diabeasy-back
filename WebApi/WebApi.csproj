@@ -187,6 +187,7 @@
     <Compile Include="DTO\IngrediantDto.cs" />
     <Compile Include="DTO\IngredientsForRecipeDto.cs" />
     <Compile Include="DTO\tblCategoryDto.cs" />
+    <Compile Include="DTO\tblExceptionalEventDto.cs" />
     <Compile Include="DTO\tblFavoritesDto.cs" />
     <Compile Include="DTO\tblForumDto.cs" />
     <Compile Include="DTO\tblInsulinTypeDto.cs" />

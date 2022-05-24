@@ -339,7 +339,7 @@ namespace WebApi.Controllers
 								order by 'year','month'";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
-                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
 
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "DataForGraphs");
@@ -403,6 +403,23 @@ namespace WebApi.Controllers
         }
 
 
+        [HttpGet]
+        [Route("api/User/Get_all_ExceptionalEvent")]
+        public IHttpActionResult Get_all_ExceptionalEvent()
+        {
+
+            try
+            {
+               List<tblExceptionalEventDto> E=DB.tblExceptionalEvent.Select(x=>new tblExceptionalEventDto() {id= x.id,name=x.name,date=x.date_time }).ToList();
+                return Content(HttpStatusCode.OK, E);
+            }
+            catch (Exception e)
+            {
+                logger.Error("do not found ");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
 
 
 
@@ -724,6 +741,21 @@ namespace WebApi.Controllers
                     value_of_ingection = PatientDatadata.value_of_ingection,
                     Patients_id = (int)PatientDatadata.Patients_id,
                 };
+                if (PatientDatadata.ExceptionalEvent != null&& PatientDatadata.ExceptionalEvent.Count>0)
+                {
+                
+                    for (int i = 0; i < PatientDatadata.ExceptionalEvent.Count; i++)
+                    {
+                        DB.tblEventOf.Add(new tblEventOf()
+                        {
+                            Patients_id = (int)PatientDatadata.Patients_id,
+                            date_time = PatientDatadata.date_time,
+                            ExceptionalEvent_id = (int)PatientDatadata.ExceptionalEvent[i],
+                            Email="1"
+                        });
+                    }
+                }
+
                 DB.tblPatientData.Add(p);
                 DB.SaveChanges();
 
@@ -732,7 +764,7 @@ namespace WebApi.Controllers
             catch (Exception e)
             {
                 logger.Fatal(e.Message);
-                return Content(HttpStatusCode.BadRequest, e.Message);
+                return Content(HttpStatusCode.BadRequest, e.InnerException);
             }
         }
 

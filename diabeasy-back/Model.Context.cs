@@ -25,6 +25,7 @@ namespace diabeasy_back
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<alert> alert { get; set; }
         public virtual DbSet<Ingredients> Ingredients { get; set; }
         public virtual DbSet<Recipes> Recipes { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
@@ -35,6 +36,7 @@ namespace diabeasy_back
         public virtual DbSet<tblCategory> tblCategory { get; set; }
         public virtual DbSet<tblConsistOf> tblConsistOf { get; set; }
         public virtual DbSet<tblDoctor> tblDoctor { get; set; }
+        public virtual DbSet<tblEventOf> tblEventOf { get; set; }
         public virtual DbSet<tblExceptionalEvent> tblExceptionalEvent { get; set; }
         public virtual DbSet<tblForum> tblForum { get; set; }
         public virtual DbSet<tblGroupType> tblGroupType { get; set; }
@@ -45,6 +47,5 @@ namespace diabeasy_back
         public virtual DbSet<tblPrescriptions> tblPrescriptions { get; set; }
         public virtual DbSet<tblUnitOfMeasure> tblUnitOfMeasure { get; set; }
         public virtual DbSet<tempData> tempData { get; set; }
-        public virtual DbSet<alert> alert { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DiabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="alert">
           <Key>
             <PropertyRef Name="id" />
@@ -147,6 +147,7 @@
           <Property Name="Patients_id" Type="int" Nullable="false" />
           <Property Name="date_time" Type="datetime" Nullable="false" />
           <Property Name="ExceptionalEvent_id" Type="int" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="1" />
         </EntityType>
         <EntityType Name="tblExceptionalEvent">
           <Key>
@@ -732,7 +733,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="DiabeasyModelStoreContainer">
+        <EntityContainer Name="diabeasyModelStoreContainer">
           <EntitySet Name="alert" EntityType="Self.alert" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PartOf_Ingredients" EntityType="Self.PartOf_Ingredients" Schema="dbo" store:Type="Tables" />
@@ -904,10 +905,22 @@
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="DiabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="diabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="alert">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="getting_user_id" Type="Int32" />
+          <Property Name="sendding_user_id" Type="Int32" />
+          <Property Name="content" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="date_time" Type="DateTime" Precision="3" />
+          <Property Name="active" Type="Boolean" />
+        </EntityType>
         <EntityType Name="Ingredients">
           <Key>
             <PropertyRef Name="id" />
@@ -1052,6 +1065,19 @@
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPatien__Docto__395884C4" FromRole="tblDoctor" ToRole="tblPatients" />
           <NavigationProperty Name="tblPrescriptions" Relationship="Self.FK__tblPrescr__Docto__44CA3770" FromRole="tblDoctor" ToRole="tblPrescriptions" />
         </EntityType>
+        <EntityType Name="tblEventOf">
+          <Key>
+            <PropertyRef Name="Patients_id" />
+            <PropertyRef Name="date_time" />
+            <PropertyRef Name="ExceptionalEvent_id" />
+          </Key>
+          <Property Name="Patients_id" Type="Int32" Nullable="false" />
+          <Property Name="date_time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ExceptionalEvent_id" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblExceptionalEvent" Relationship="Self.FK__tblEventO__Excep__6FB49575" FromRole="tblEventOf" ToRole="tblExceptionalEvent" />
+          <NavigationProperty Name="tblPatientData" Relationship="Self.FK__tblEventOf__6EC0713C" FromRole="tblEventOf" ToRole="tblPatientData" />
+        </EntityType>
         <EntityType Name="tblExceptionalEvent">
           <Key>
             <PropertyRef Name="id" />
@@ -1059,7 +1085,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="date_time" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="tblPatientData" Relationship="Self.tblEventOf" FromRole="tblExceptionalEvent" ToRole="tblPatientData" />
+          <NavigationProperty Name="tblEventOf" Relationship="Self.FK__tblEventO__Excep__6FB49575" FromRole="tblExceptionalEvent" ToRole="tblEventOf" />
         </EntityType>
         <EntityType Name="tblForum">
           <Key>
@@ -1127,8 +1153,8 @@
           <Property Name="totalCarbs" Type="Double" />
           <NavigationProperty Name="tblATE_Ingredients" Relationship="Self.FK__tblATE_Ingredien__2057CCD0" FromRole="tblPatientData" ToRole="tblATE_Ingredients" />
           <NavigationProperty Name="tblATE_Recipes" Relationship="Self.FK__tblATE_Recipes2__17C286CF" FromRole="tblPatientData" ToRole="tblATE_Recipes" />
+          <NavigationProperty Name="tblEventOf" Relationship="Self.FK__tblEventOf__6EC0713C" FromRole="tblPatientData" ToRole="tblEventOf" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPatien__Patie__3C34F16F" FromRole="tblPatientData" ToRole="tblPatients" />
-          <NavigationProperty Name="tblExceptionalEvent" Relationship="Self.tblEventOf" FromRole="tblPatientData" ToRole="tblExceptionalEvent" />
         </EntityType>
         <EntityType Name="tblPatients">
           <Key>
@@ -1426,6 +1452,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__tblEventO__Excep__6FB49575">
+          <End Role="tblExceptionalEvent" Type="Self.tblExceptionalEvent" Multiplicity="1" />
+          <End Role="tblEventOf" Type="Self.tblEventOf" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblExceptionalEvent">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tblEventOf">
+              <PropertyRef Name="ExceptionalEvent_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tblEventOf__6EC0713C">
+          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="1" />
+          <End Role="tblEventOf" Type="Self.tblEventOf" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPatientData">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Principal>
+            <Dependent Role="tblEventOf">
+              <PropertyRef Name="Patients_id" />
+              <PropertyRef Name="date_time" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__tblForum__Id_Con__40F9A68C">
           <End Role="tblForum" Type="Self.tblForum" Multiplicity="0..1" />
           <End Role="tblForum1" Type="Self.tblForum" Multiplicity="*" />
@@ -1526,10 +1578,6 @@
           <End Role="tblCategory" Type="Self.tblCategory" Multiplicity="*" />
           <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
         </Association>
-        <Association Name="tblEventOf">
-          <End Role="tblExceptionalEvent" Type="Self.tblExceptionalEvent" Multiplicity="*" />
-          <End Role="tblPatientData" Type="Self.tblPatientData" Multiplicity="*" />
-        </Association>
         <Association Name="tblFavoritesIngredients">
           <End Role="Ingredients" Type="Self.Ingredients" Multiplicity="*" />
           <End Role="tblPatients" Type="Self.tblPatients" Multiplicity="*" />
@@ -1543,6 +1591,7 @@
           <End Role="Recipes" Type="Self.Recipes" Multiplicity="*" />
         </Association>
         <EntityContainer Name="diabeasyDBContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="alert" EntityType="Self.alert" />
           <EntitySet Name="Ingredients" EntityType="Self.Ingredients" />
           <EntitySet Name="Recipes" EntityType="Self.Recipes" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
@@ -1553,6 +1602,7 @@
           <EntitySet Name="tblCategory" EntityType="Self.tblCategory" />
           <EntitySet Name="tblConsistOf" EntityType="Self.tblConsistOf" />
           <EntitySet Name="tblDoctor" EntityType="Self.tblDoctor" />
+          <EntitySet Name="tblEventOf" EntityType="Self.tblEventOf" />
           <EntitySet Name="tblExceptionalEvent" EntityType="Self.tblExceptionalEvent" />
           <EntitySet Name="tblForum" EntityType="Self.tblForum" />
           <EntitySet Name="tblGroupType" EntityType="Self.tblGroupType" />
@@ -1635,6 +1685,14 @@
             <End Role="tblDoctor" EntitySet="tblDoctor" />
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
+          <AssociationSet Name="FK__tblEventO__Excep__6FB49575" Association="Self.FK__tblEventO__Excep__6FB49575">
+            <End Role="tblExceptionalEvent" EntitySet="tblExceptionalEvent" />
+            <End Role="tblEventOf" EntitySet="tblEventOf" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tblEventOf__6EC0713C" Association="Self.FK__tblEventOf__6EC0713C">
+            <End Role="tblPatientData" EntitySet="tblPatientData" />
+            <End Role="tblEventOf" EntitySet="tblEventOf" />
+          </AssociationSet>
           <AssociationSet Name="FK__tblForum__Id_Con__40F9A68C" Association="Self.FK__tblForum__Id_Con__40F9A68C">
             <End Role="tblForum" EntitySet="tblForum" />
             <End Role="tblForum1" EntitySet="tblForum" />
@@ -1671,10 +1729,6 @@
             <End Role="tblCategory" EntitySet="tblCategory" />
             <End Role="Ingredients" EntitySet="Ingredients" />
           </AssociationSet>
-          <AssociationSet Name="tblEventOf" Association="Self.tblEventOf">
-            <End Role="tblExceptionalEvent" EntitySet="tblExceptionalEvent" />
-            <End Role="tblPatientData" EntitySet="tblPatientData" />
-          </AssociationSet>
           <AssociationSet Name="tblFavoritesIngredients" Association="Self.tblFavoritesIngredients">
             <End Role="Ingredients" EntitySet="Ingredients" />
             <End Role="tblPatients" EntitySet="tblPatients" />
@@ -1687,27 +1741,27 @@
             <End Role="tblCategory" EntitySet="tblCategory" />
             <End Role="Recipes" EntitySet="Recipes" />
           </AssociationSet>
-          <EntitySet Name="alert" EntityType="DiabeasyModel.alert" />
         </EntityContainer>
-        <EntityType Name="alert">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="getting_user_id" Type="Int32" />
-          <Property Name="sendding_user_id" Type="Int32" />
-          <Property Name="content" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="date_time" Type="DateTime" Precision="3" />
-          <Property Name="active" Type="Boolean" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DiabeasyModelStoreContainer" CdmEntityContainer="diabeasyDBContext">
+        <EntityContainerMapping StorageEntityContainer="diabeasyModelStoreContainer" CdmEntityContainer="diabeasyDBContext">
+          <EntitySetMapping Name="alert">
+            <EntityTypeMapping TypeName="diabeasyModel.alert">
+              <MappingFragment StoreEntitySet="alert">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="getting_user_id" ColumnName="getting_user_id" />
+                <ScalarProperty Name="sendding_user_id" ColumnName="sendding_user_id" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="date_time" ColumnName="date_time" />
+                <ScalarProperty Name="active" ColumnName="active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Ingredients">
-            <EntityTypeMapping TypeName="DiabeasyModel.Ingredients">
+            <EntityTypeMapping TypeName="diabeasyModel.Ingredients">
               <MappingFragment StoreEntitySet="Ingredients">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1718,7 +1772,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Recipes">
-            <EntityTypeMapping TypeName="DiabeasyModel.Recipes">
+            <EntityTypeMapping TypeName="diabeasyModel.Recipes">
               <MappingFragment StoreEntitySet="Recipes">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1732,7 +1786,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="DiabeasyModel.sysdiagrams">
+            <EntityTypeMapping TypeName="diabeasyModel.sysdiagrams">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -1743,7 +1797,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblATE_Ingredients">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblATE_Ingredients">
+            <EntityTypeMapping TypeName="diabeasyModel.tblATE_Ingredients">
               <MappingFragment StoreEntitySet="tblATE_Ingredients">
                 <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
                 <ScalarProperty Name="isGood" ColumnName="isGood" />
@@ -1756,7 +1810,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblATE_Recipes">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblATE_Recipes">
+            <EntityTypeMapping TypeName="diabeasyModel.tblATE_Recipes">
               <MappingFragment StoreEntitySet="tblATE_Recipes">
                 <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
                 <ScalarProperty Name="isGood" ColumnName="isGood" />
@@ -1769,7 +1823,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblBelong">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblBelong">
+            <EntityTypeMapping TypeName="diabeasyModel.tblBelong">
               <MappingFragment StoreEntitySet="tblBelong">
                 <ScalarProperty Name="carbohydrates" ColumnName="carbohydrates" />
                 <ScalarProperty Name="sugars" ColumnName="sugars" />
@@ -1780,7 +1834,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblBelongToRecipe">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblBelongToRecipe">
+            <EntityTypeMapping TypeName="diabeasyModel.tblBelongToRecipe">
               <MappingFragment StoreEntitySet="tblBelongToRecipe">
                 <ScalarProperty Name="carbohydrates" ColumnName="carbohydrates" />
                 <ScalarProperty Name="sugars" ColumnName="sugars" />
@@ -1791,7 +1845,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblCategory">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblCategory">
+            <EntityTypeMapping TypeName="diabeasyModel.tblCategory">
               <MappingFragment StoreEntitySet="tblCategory">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1799,7 +1853,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblConsistOf">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblConsistOf">
+            <EntityTypeMapping TypeName="diabeasyModel.tblConsistOf">
               <MappingFragment StoreEntitySet="tblConsistOf">
                 <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="Recipe_id" ColumnName="Recipe_id" />
@@ -1809,7 +1863,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblDoctor">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblDoctor">
+            <EntityTypeMapping TypeName="diabeasyModel.tblDoctor">
               <MappingFragment StoreEntitySet="tblDoctor">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email" ColumnName="email" />
@@ -1822,8 +1876,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tblEventOf">
+            <EntityTypeMapping TypeName="diabeasyModel.tblEventOf">
+              <MappingFragment StoreEntitySet="tblEventOf">
+                <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
+                <ScalarProperty Name="date_time" ColumnName="date_time" />
+                <ScalarProperty Name="ExceptionalEvent_id" ColumnName="ExceptionalEvent_id" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="tblExceptionalEvent">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblExceptionalEvent">
+            <EntityTypeMapping TypeName="diabeasyModel.tblExceptionalEvent">
               <MappingFragment StoreEntitySet="tblExceptionalEvent">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1832,7 +1896,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblForum">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblForum">
+            <EntityTypeMapping TypeName="diabeasyModel.tblForum">
               <MappingFragment StoreEntitySet="tblForum">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
@@ -1845,7 +1909,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblGroupType">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblGroupType">
+            <EntityTypeMapping TypeName="diabeasyModel.tblGroupType">
               <MappingFragment StoreEntitySet="tblGroupType">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="min_height" ColumnName="min_height" />
@@ -1858,7 +1922,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblHistorylog">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblHistorylog">
+            <EntityTypeMapping TypeName="diabeasyModel.tblHistorylog">
               <MappingFragment StoreEntitySet="tblHistorylog">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
@@ -1869,7 +1933,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblInsulinType">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblInsulinType">
+            <EntityTypeMapping TypeName="diabeasyModel.tblInsulinType">
               <MappingFragment StoreEntitySet="tblInsulinType">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1878,7 +1942,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPatientData">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblPatientData">
+            <EntityTypeMapping TypeName="diabeasyModel.tblPatientData">
               <MappingFragment StoreEntitySet="tblPatientData">
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="blood_sugar_level" ColumnName="blood_sugar_level" />
@@ -1892,7 +1956,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPatients">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblPatients">
+            <EntityTypeMapping TypeName="diabeasyModel.tblPatients">
               <MappingFragment StoreEntitySet="tblPatients">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email" ColumnName="email" />
@@ -1918,7 +1982,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPrescriptions">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblPrescriptions">
+            <EntityTypeMapping TypeName="diabeasyModel.tblPrescriptions">
               <MappingFragment StoreEntitySet="tblPrescriptions">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
@@ -1931,7 +1995,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblUnitOfMeasure">
-            <EntityTypeMapping TypeName="DiabeasyModel.tblUnitOfMeasure">
+            <EntityTypeMapping TypeName="diabeasyModel.tblUnitOfMeasure">
               <MappingFragment StoreEntitySet="tblUnitOfMeasure">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1940,7 +2004,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tempData">
-            <EntityTypeMapping TypeName="DiabeasyModel.tempData">
+            <EntityTypeMapping TypeName="diabeasyModel.tempData">
               <MappingFragment StoreEntitySet="tempData">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="weekday" ColumnName="weekday" />
@@ -1952,7 +2016,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="PartOf_Ingredients" TypeName="DiabeasyModel.PartOf_Ingredients" StoreEntitySet="PartOf_Ingredients">
+          <AssociationSetMapping Name="PartOf_Ingredients" TypeName="diabeasyModel.PartOf_Ingredients" StoreEntitySet="PartOf_Ingredients">
             <EndProperty Name="tblCategory">
               <ScalarProperty Name="id" ColumnName="Category_id" />
             </EndProperty>
@@ -1960,16 +2024,7 @@
               <ScalarProperty Name="id" ColumnName="Ingredients_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="tblEventOf" TypeName="DiabeasyModel.tblEventOf" StoreEntitySet="tblEventOf">
-            <EndProperty Name="tblExceptionalEvent">
-              <ScalarProperty Name="id" ColumnName="ExceptionalEvent_id" />
-            </EndProperty>
-            <EndProperty Name="tblPatientData">
-              <ScalarProperty Name="date_time" ColumnName="date_time" />
-              <ScalarProperty Name="Patients_id" ColumnName="Patients_id" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="tblFavoritesIngredients" TypeName="DiabeasyModel.tblFavoritesIngredients" StoreEntitySet="tblFavoritesIngredients">
+          <AssociationSetMapping Name="tblFavoritesIngredients" TypeName="diabeasyModel.tblFavoritesIngredients" StoreEntitySet="tblFavoritesIngredients">
             <EndProperty Name="Ingredients">
               <ScalarProperty Name="id" ColumnName="Ingredient_id" />
             </EndProperty>
@@ -1977,7 +2032,7 @@
               <ScalarProperty Name="id" ColumnName="Patient_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="tblFavoritesRecipes" TypeName="DiabeasyModel.tblFavoritesRecipes" StoreEntitySet="tblFavoritesRecipes">
+          <AssociationSetMapping Name="tblFavoritesRecipes" TypeName="diabeasyModel.tblFavoritesRecipes" StoreEntitySet="tblFavoritesRecipes">
             <EndProperty Name="tblPatients">
               <ScalarProperty Name="id" ColumnName="Patient_id" />
             </EndProperty>
@@ -1985,7 +2040,7 @@
               <ScalarProperty Name="id" ColumnName="Recipes_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="tblPartOf_Recipes" TypeName="DiabeasyModel.tblPartOf_Recipes" StoreEntitySet="tblPartOf_Recipes">
+          <AssociationSetMapping Name="tblPartOf_Recipes" TypeName="diabeasyModel.tblPartOf_Recipes" StoreEntitySet="tblPartOf_Recipes">
             <EndProperty Name="tblCategory">
               <ScalarProperty Name="id" ColumnName="Category_id" />
             </EndProperty>
@@ -1993,18 +2048,6 @@
               <ScalarProperty Name="id" ColumnName="Recipe_id" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="alert">
-            <EntityTypeMapping TypeName="DiabeasyModel.alert">
-              <MappingFragment StoreEntitySet="alert">
-                <ScalarProperty Name="active" ColumnName="active" />
-                <ScalarProperty Name="date_time" ColumnName="date_time" />
-                <ScalarProperty Name="content" ColumnName="content" />
-                <ScalarProperty Name="sendding_user_id" ColumnName="sendding_user_id" />
-                <ScalarProperty Name="getting_user_id" ColumnName="getting_user_id" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
