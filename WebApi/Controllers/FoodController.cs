@@ -359,6 +359,7 @@ namespace WebApi.Controllers
                                 image = dt.Rows[i-1]["image"].ToString(),
                                 count = counter
                             });
+                            counter = 1;
                         }
                         list.Add(new HipoDto()
                         {
@@ -374,7 +375,7 @@ namespace WebApi.Controllers
                             image = dt.Rows[i]["image"].ToString(),
                             count = counter
                         });
-                        counter = 1;
+                     
                     }
                 }
                 list=list.OrderByDescending(x => x.date_time).ToList();
