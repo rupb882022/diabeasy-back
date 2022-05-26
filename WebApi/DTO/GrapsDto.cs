@@ -14,5 +14,10 @@ namespace WebApi.DTO
         public string upTo75;
         public string upTo60;
         public string upTo0;
+
+        public string H0;
+        public string H8;
+        public string H14;
+        public string H20;
     }
 }

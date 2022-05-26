@@ -329,13 +329,33 @@ namespace WebApi.Controllers
         {
             try
             {
-                string query = @"select *
-						         from(select MONTH(date_time) as 'month',YEAR(date_time)as 'year',AVG(blood_sugar_level) as averge,
+                string query = @" select month,year,upTo240,upTo180,upTo75,upTo60,upTo0,averge,
+ (case when CONVERT(int,C0008)>0 then CONVERT(int,B0008)/CONVERT(int,C0008)else 0 end ) as 'H00:00-08:00',
+ (case when CONVERT(int,C0814)>0 then CONVERT(int,B0814)/CONVERT(int,C0814)else 0 end)as 'H08:00-14:00',
+  (case when CONVERT(int,C1420)>0 then CONVERT(int,B1420)/CONVERT(int,C1420)else 0 end)as 'H14:00-20:00',
+ (case when CONVERT(int,C2000)>0 then CONVERT(int,B2000)/CONVERT(int,C2000)else 0 end)as 'H20:00-00:00'
+						        from(select MONTH(date_time) as 'month',YEAR(date_time)as 'year',AVG(blood_sugar_level) as 'averge',
 								SUM(CASE WHEN blood_sugar_level >240 THEN 1 ELSE 0 end) as 'upTo240',
 								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
 								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
 								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
-								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'00:00:00:000') AND CONVERT(time,'8:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B0008',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'00:00:00:000') AND CONVERT(time,'8:00:00:000')
+								THEN 1 ELSE 0 end) as 'C0008',
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'8:00:00:000') AND CONVERT(time,'14:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B0814',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'8:00:00:000') AND CONVERT(time,'14:00:00:000')
+								THEN 1 ELSE 0 end) as 'C0814',
+									sum(CASE WHEN cast(date_time as time) between CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B1420',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
+								THEN 1 ELSE 0 end) as 'C1420',
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B2000',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								THEN 1 ELSE 0 end) as 'C2000'
 								 from tblPatientData
 								 where Patients_id=@id
 								 group by MONTH(date_time),YEAR(date_time)
@@ -345,10 +365,26 @@ namespace WebApi.Controllers
 								SUM( CASE WHEN blood_sugar_level <240 and blood_sugar_level>180 THEN 1 ELSE 0 end) as 'upTo180',
 								SUM( CASE WHEN blood_sugar_level <180 and blood_sugar_level>75 THEN 1 ELSE 0 end) as 'upTo75',
 								SUM( CASE WHEN blood_sugar_level <75 and blood_sugar_level>60 THEN 1 ELSE 0 end) as 'upTo60',
-								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0'
+								SUM( CASE WHEN blood_sugar_level <60  THEN 1 ELSE 0 end) as 'upTo0',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'00:00:00:000') AND CONVERT(time,'8:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B0008',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'00:00:00:000') AND CONVERT(time,'8:00:00:000')
+								THEN 1 ELSE 0 end) as 'C0008',
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'8:00:00:000') AND CONVERT(time,'14:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B0814',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'8:00:00:000') AND CONVERT(time,'14:00:00:000')
+								THEN 1 ELSE 0 end) as 'C0814',
+									sum(CASE WHEN cast(date_time as time) between CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B1420',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
+								THEN 1 ELSE 0 end) as 'C1420',
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								THEN blood_sugar_level ELSE 0 end) as 'B2000',
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								THEN 1 ELSE 0 end) as 'C2000'
 								from tblPatientData
 							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)as data
-								order by 'year','month'";
+								order by 'year','month' ";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                  adpter.SelectCommand.Parameters.AddWithValue("@id", id);
@@ -372,6 +408,11 @@ namespace WebApi.Controllers
                             upTo75 = dt.Rows[i]["upTo75"].ToString(),
                             upTo60 = dt.Rows[i]["upTo60"].ToString(),
                             upTo0 = dt.Rows[i]["upTo0"].ToString(),
+
+                            H0 = dt.Rows[i]["H00:00-08:00"].ToString(),
+                            H14 = dt.Rows[i]["H14:00-20:00"].ToString(),
+                            H8 = dt.Rows[i]["H08:00-14:00"].ToString(),
+                            H20 = dt.Rows[i]["H20:00-00:00"].ToString()
                         });
                     }
                 }
@@ -388,7 +429,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("no patients found");
+                logger.Error(e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
