@@ -16,7 +16,7 @@ namespace diabeasy_back
     {
         diabeasyDBContext DB = new diabeasyDBContext();
         static Logger logger = LogManager.GetCurrentClassLogger();
-        static Timer aTimer;
+       // static Timer aTimer;
         public static object objectToSend;
         public bool SendMial(string Email, string Subject, string Body)
         {
@@ -133,36 +133,36 @@ namespace diabeasy_back
         }
 
 
-        public async Task<bool> PushNotification(int seconds)
-        {
-            try
-            {
+        //public async Task<bool> PushNotification(int seconds)
+        //{
+        //    try
+        //    {
           
              
-                Timer aTimer = new Timer();
-                aTimer.Interval = seconds <= 0 ? 1000 : seconds * 1000; // Interval must be greater then 0; Default => 1 sec;
+        //        Timer aTimer = new Timer();
+        //        aTimer.Interval = seconds <= 0 ? 1000 : seconds * 1000; // Interval must be greater then 0; Default => 1 sec;
 
-                objectToSend = new
-                {
-                    to = "ExponentPushToken[2S01zuIBNraplwZePN2Leh]",
-                    title = "DiabeasyApp",
-                    body = "Boker Tov! Hezrakta hayom??? ",
-                    badge = 0,
-                    ttl = 1,
-                };
+        //        objectToSend = new
+        //        {
+        //            to = "ExponentPushToken[2S01zuIBNraplwZePN2Leh]",
+        //            title = "DiabeasyApp",
+        //            body = "Boker Tov! Hezrakta hayom??? ",
+        //            badge = 0,
+        //            ttl = 1,
+        //        };
 
-                aTimer.Enabled = true;
-                aTimer.Elapsed += OnTimedEvent;
+        //        aTimer.Enabled = true;
+        //        aTimer.Elapsed += OnTimedEvent;
       
        
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-                throw;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //        throw;
+        //    }
+        //}
 
         private static void OnTimedEvent(Object o, ElapsedEventArgs e)
         {
@@ -202,7 +202,7 @@ namespace diabeasy_back
             reader.Close();
             dataStream.Close();
             response.Close();
-            aTimer.Enabled = false;
+            //aTimer.Enabled = false;
 
         }
         public string GetTypeByMail(string mail)

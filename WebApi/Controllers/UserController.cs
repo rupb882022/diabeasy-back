@@ -193,21 +193,33 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("api/User/setNewpassword/{email}/{password}")]
-        public IHttpActionResult setNewpassword(string email, string password)
+        [HttpPut]
+        [Route("api/User/setNewpassword")]
+        public IHttpActionResult setNewpassword([FromBody] UserDto User)
         {
             try
-            {//ToDo function for doctor and checnge method to post
+            {
+               string email = User.email.Replace("=", ".");
+
                 tblPatients Patients = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
                 if (Patients != null)
                 {
-                    Patients.password = password;
+                    Patients.password = User.password;
                     DB.SaveChanges();
-                    return Content(HttpStatusCode.OK, Patients);
+                    return Content(HttpStatusCode.OK, "save");
                 }
-                throw new Exception("do not found user- worng email");
-
+                else
+                {
+                    tblDoctor doctor = DB.tblDoctor.Where(x => x.email == email).SingleOrDefault();
+                    if (doctor != null)
+                    {
+                        doctor.password = User.password;
+                        DB.SaveChanges();
+                        return Content(HttpStatusCode.OK, "save");
+                    }
+                    throw new Exception("do not found user- worng email");
+                }
+ 
             }
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)

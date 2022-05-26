@@ -89,6 +89,10 @@ namespace diabeasy_back
                         for (int i = 1; i < resulte.Count; i++)
                         {
                             await get_Food_information_api(resulte[i]);
+                            if (i == 5)
+                            {
+                                break;
+                            }
                         }
 
                     }
