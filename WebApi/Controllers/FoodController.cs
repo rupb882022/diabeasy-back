@@ -298,7 +298,7 @@ namespace WebApi.Controllers
             try
             {
                 string query = @"
-                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name,ate.name,amount,ate.image,pd3.blood_sugar_level
+                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name as UnitName,ate.name as FoodName,amount,ate.image,pd3.blood_sugar_level as blood_sugar_level2H
                     from tblPatientData pd 
                     inner join (
                         select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
@@ -319,7 +319,7 @@ namespace WebApi.Controllers
                                 where Patients_id=@id ) pd3 on pd3.num=number.num+1
                     where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
                     and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
-                    order by pd.date_time desc";
+                    order by ate.name, pd.date_time";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", userId);
@@ -328,7 +328,57 @@ namespace WebApi.Controllers
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "tblHipoReccomend");
                 DataTable dt = ds.Tables["tblHipoReccomend"];
-                return Content(HttpStatusCode.OK, dt);
+                List<HipoDto> list = new List<HipoDto>();
+                int counter = 1;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+
+
+                
+
+                    if (i != 0 && (int)dt.Rows[i]["food_id"] == (int)dt.Rows[i-1]["food_id"])
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        if (counter > 1)
+                        {
+                            list.RemoveAll(x => x.FoodName == dt.Rows[i-1]["foodName"].ToString());
+                            list.Add(new HipoDto()
+                            {
+                                date_time = (DateTime)dt.Rows[i-1]["date_time"],
+                                blood_sugar_level = (int)dt.Rows[i-1]["blood_sugar_level"],
+                                blood_sugar_level_2H = (int)dt.Rows[i-1]["blood_sugar_level2H"],
+                                totalCarbs = (double)dt.Rows[i-1]["totalCarbs"],
+                                amount = (double)dt.Rows[i-1]["amount"],
+                                food_id = (int)dt.Rows[i-1]["food_id"],
+                                UnitOfMeasure_id = (int)dt.Rows[i-1]["UnitOfMeasure_id"],
+                                UnitName = dt.Rows[i-1]["UnitName"].ToString(),
+                                FoodName = dt.Rows[i-1]["FoodName"].ToString(),
+                                image = dt.Rows[i-1]["image"].ToString(),
+                                count = counter
+                            });
+                        }
+                        list.Add(new HipoDto()
+                        {
+                            date_time = (DateTime)dt.Rows[i]["date_time"],
+                            blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
+                            blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
+                            totalCarbs = (double)dt.Rows[i]["totalCarbs"],
+                            amount = (double)dt.Rows[i]["amount"],
+                            food_id = (int)dt.Rows[i]["food_id"],
+                            UnitOfMeasure_id = (int)dt.Rows[i]["UnitOfMeasure_id"],
+                            UnitName = dt.Rows[i]["UnitName"].ToString(),
+                            FoodName = dt.Rows[i]["FoodName"].ToString(),
+                            image = dt.Rows[i]["image"].ToString(),
+                            count = counter
+                        });
+                        counter = 1;
+                    }
+                }
+                list=list.OrderByDescending(x => x.date_time).ToList();
+                return Content(HttpStatusCode.OK, list);
             }
             catch (Exception e)
             {
