@@ -66,7 +66,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-                string query = @"distinct select  I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
+                string query = @" select  distinct I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
                                 case WHEN  FI.Ingredient_id is not null then FI.Ingredient_id else 0 END as favorit
 								from Ingredients I
 								 inner join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
