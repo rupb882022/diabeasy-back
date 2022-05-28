@@ -80,7 +80,7 @@ namespace WebApi.Controllers
                 {
                     query += " and I.name like @search ";
                 }
-                query += " order by I.id,C.id";
+                query += " order by I.id,C.id,UM_ID";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@useId", useId);
 
@@ -97,10 +97,12 @@ namespace WebApi.Controllers
 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
+
                     if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                     {
                         ingrediants.Add(ingrediant);
                     }
+
                     tblUnitOfMeasureDto Unit = new tblUnitOfMeasureDto()
                     {
                         id = (int)dt.Rows[i]["UM_ID"],
@@ -108,7 +110,7 @@ namespace WebApi.Controllers
                         carbs = double.Parse(dt.Rows[i]["carbohydrates"].ToString()),
                         suger = double.Parse(dt.Rows[i]["sugars"].ToString()),
                         weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString()),
-                        image = dt.Rows[i]["UM_image"].ToString()
+                        //image = dt.Rows[i]["UM_image"].ToString()
                     };
                     if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                     {
@@ -119,7 +121,28 @@ namespace WebApi.Controllers
                             image = dt.Rows[i]["image"].ToString(),
                             addByUserId = dt.Rows[i]["addByUserId"].ToString(),
                         };
+
+                    }
+                    if (ingrediant.UnitOfMeasure.Count == 0)
+                    {
                         ingrediant.UnitOfMeasure.Add(Unit);
+                    }
+                    else
+                    {
+                        bool exist = false;
+                        for (int z = 0; z < ingrediant.UnitOfMeasure.Count; z++)
+                        {
+                            if ((int)ingrediant.UnitOfMeasure[z].id == Unit.id)
+                            {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (!exist)
+                        {
+                            ingrediant.UnitOfMeasure.Add(Unit);
+
+                        }
                     }
 
                     if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
@@ -127,10 +150,10 @@ namespace WebApi.Controllers
 
                         ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
                     }
-                    else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"] && ingrediant.category.Count <= 1)
-                    {
-                        ingrediant.UnitOfMeasure.Add(Unit);
-                    }
+                    //else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"] && ingrediant.category.Count <= 1)
+                    //{
+                    //    ingrediant.UnitOfMeasure.Add(Unit);
+                    //}
 
                     if ((int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
                     {
@@ -298,7 +321,9 @@ namespace WebApi.Controllers
             try
             {
                 string query = @"
-                    select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name as UnitName,ate.name as FoodName,amount,ate.image,pd3.blood_sugar_level as blood_sugar_level2H
+                    select *
+                    from
+								( select pd.date_time,pd.blood_sugar_level,totalCarbs,food_id,UnitOfMeasure_id,UM.name as UnitName,ate.name as FoodName,amount,ate.image,pd3.blood_sugar_level as blood_sugar_level2H
                     from tblPatientData pd 
                     inner join (
                         select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
@@ -319,7 +344,31 @@ namespace WebApi.Controllers
                                 where Patients_id=@id ) pd3 on pd3.num=number.num+1
                     where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
                     and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
-                    order by ate.name, pd.date_time";
+                     )
+					 t1 
+					inner join ( select ate.name,count(ate.name) as 'count'
+                    from tblPatientData pd 
+                    inner join (
+                        select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+                        union
+                        select Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Recipes AR 
+                        inner join Recipes R on R.id=AR.Recipe_id
+                        ) as Ate on pd.Patients_id=ate.Patients_id and pd.date_time=ate.date_time
+                        inner join tblUnitOfMeasure UM on um.id=ate.UnitOfMeasure_id
+                        inner join (
+                            select pd2.date_time,ROW_NUMBER() over(order by date_time) as num
+                            from tblPatientData pd2
+                            where Patients_id=@id ) as number on number.date_time=ate.date_time
+                       inner join( 
+                                select pd3.date_time,blood_sugar_level,ROW_NUMBER() over(order by date_time) as num
+                                from tblPatientData pd3
+                                where Patients_id=@id ) pd3 on pd3.num=number.num+1
+                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
+                    and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
+					group by ate.name )  t2 on t2.name=t1.FoodName
+					order by date_time desc,FoodName";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
                 adpter.SelectCommand.Parameters.AddWithValue("@id", userId);
@@ -329,56 +378,118 @@ namespace WebApi.Controllers
                 adpter.Fill(ds, "tblHipoReccomend");
                 DataTable dt = ds.Tables["tblHipoReccomend"];
                 List<HipoDto> list = new List<HipoDto>();
-                int counter = 1;
+                HipoDto hipo = new HipoDto();
+
+
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
 
-
-                
-
-                    if (i != 0 && (int)dt.Rows[i]["food_id"] == (int)dt.Rows[i-1]["food_id"])
+                    AteDto ate = new AteDto()
                     {
-                        counter++;
-                    }
-                    else
+                        amount = (double)dt.Rows[i]["amount"],
+                        foodId = (int)dt.Rows[i]["food_id"],
+                        UnitOfMeasure_id = (int)dt.Rows[i]["UnitOfMeasure_id"],
+                        unitName = dt.Rows[i]["UnitName"].ToString(),
+                        FoodName = dt.Rows[i]["FoodName"].ToString(),
+                        image = dt.Rows[i]["image"].ToString(),
+                        count = (int)dt.Rows[i]["count"],
+                    };
+
+                    if (i == 0 || (DateTime)dt.Rows[i]["date_time"] != (DateTime)dt.Rows[i - 1]["date_time"])
                     {
-                        if (counter > 1)
+                        if (i != 0)
                         {
-                            list.RemoveAll(x => x.FoodName == dt.Rows[i-1]["foodName"].ToString());
-                            list.Add(new HipoDto()
-                            {
-                                date_time = (DateTime)dt.Rows[i-1]["date_time"],
-                                blood_sugar_level = (int)dt.Rows[i-1]["blood_sugar_level"],
-                                blood_sugar_level_2H = (int)dt.Rows[i-1]["blood_sugar_level2H"],
-                                totalCarbs = (double)dt.Rows[i-1]["totalCarbs"],
-                                amount = (double)dt.Rows[i-1]["amount"],
-                                food_id = (int)dt.Rows[i-1]["food_id"],
-                                UnitOfMeasure_id = (int)dt.Rows[i-1]["UnitOfMeasure_id"],
-                                UnitName = dt.Rows[i-1]["UnitName"].ToString(),
-                                FoodName = dt.Rows[i-1]["FoodName"].ToString(),
-                                image = dt.Rows[i-1]["image"].ToString(),
-                                count = counter
-                            });
-                            counter = 1;
+                            list.Add(hipo);
                         }
-                        list.Add(new HipoDto()
+                        hipo = new HipoDto()
                         {
                             date_time = (DateTime)dt.Rows[i]["date_time"],
                             blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
                             blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
-                            totalCarbs = (double)dt.Rows[i]["totalCarbs"],
-                            amount = (double)dt.Rows[i]["amount"],
-                            food_id = (int)dt.Rows[i]["food_id"],
-                            UnitOfMeasure_id = (int)dt.Rows[i]["UnitOfMeasure_id"],
-                            UnitName = dt.Rows[i]["UnitName"].ToString(),
-                            FoodName = dt.Rows[i]["FoodName"].ToString(),
-                            image = dt.Rows[i]["image"].ToString(),
-                            count = counter
-                        });
-                     
+                            totalCarbs = (double)dt.Rows[i]["totalCarbs"]
+                        };
+                        hipo.food.Add(ate);
+                    }
+                    else
+                    {
+                        hipo.food.Add(ate);
+                    }
+
+                }
+                //for (int i = 0; i < dt.Rows.Count; i++)
+                //{
+                //    if (i != 0 && (int)dt.Rows[i]["food_id"] == (int)dt.Rows[i-1]["food_id"])
+                //    {
+                //        counter++;
+                //    }
+                //    else
+                //    {
+                //        if (counter > 1)
+                //        {
+                //            list.RemoveAll(x => x.FoodName == dt.Rows[i-1]["foodName"].ToString());
+                //            list.Add(new HipoDto()
+                //            {
+                //                date_time = (DateTime)dt.Rows[i-1]["date_time"],
+                //                blood_sugar_level = (int)dt.Rows[i-1]["blood_sugar_level"],
+                //                blood_sugar_level_2H = (int)dt.Rows[i-1]["blood_sugar_level2H"],
+                //                totalCarbs = (double)dt.Rows[i-1]["totalCarbs"],
+                //                amount = (double)dt.Rows[i-1]["amount"],
+                //                food_id = (int)dt.Rows[i-1]["food_id"],
+                //                UnitOfMeasure_id = (int)dt.Rows[i-1]["UnitOfMeasure_id"],
+                //                UnitName = dt.Rows[i-1]["UnitName"].ToString(),
+                //                FoodName = dt.Rows[i-1]["FoodName"].ToString(),
+                //                image = dt.Rows[i-1]["image"].ToString(),
+                //                count = counter
+                //            });
+                //            counter = 1;
+                //        }
+                //        list.Add(new HipoDto()
+                //        {
+                //            date_time = (DateTime)dt.Rows[i]["date_time"],
+                //            blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
+                //            blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
+                //            totalCarbs = (double)dt.Rows[i]["totalCarbs"],
+                //            amount = (double)dt.Rows[i]["amount"],
+                //            food_id = (int)dt.Rows[i]["food_id"],
+                //            UnitOfMeasure_id = (int)dt.Rows[i]["UnitOfMeasure_id"],
+                //            UnitName = dt.Rows[i]["UnitName"].ToString(),
+                //            FoodName = dt.Rows[i]["FoodName"].ToString(),
+                //            image = dt.Rows[i]["image"].ToString(),
+                //            count = counter
+                //        });
+
+                //    }
+                //  }
+
+
+                list.Add(hipo);
+                int counter = 0;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    for (int z = i+1; z < list.Count; z++)
+                    {
+                        //check if list have the same food items count in array
+                        if (list[i].food.Count == list[z].food.Count)
+                        {
+                            counter = 0;
+                            for (int x = 0; x < list[i].food.Count; x++)
+                            {
+                                for (int y = 0; y < list[z].food.Count; y++)
+                                {
+                                    //check if list have the same food items in array
+                                    if (list[i].food[x].foodId == list[z].food[y].foodId)
+                                    {
+                                        counter++;
+                                    }
+                                }
+                            }
+                            if(counter== list[i].food.Count)
+                            {
+                                list.RemoveAt(z);
+                            }
+                        }
                     }
                 }
-                list=list.OrderByDescending(x => x.date_time).ToList();
                 return Content(HttpStatusCode.OK, list);
             }
             catch (Exception e)
