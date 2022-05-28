@@ -352,9 +352,9 @@ namespace WebApi.Controllers
 								THEN blood_sugar_level ELSE 0 end) as 'B1420',
 								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
 								THEN 1 ELSE 0 end) as 'C1420',
-								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'23:59:00:000')
 								THEN blood_sugar_level ELSE 0 end) as 'B2000',
-								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'23:59:00:000')
 								THEN 1 ELSE 0 end) as 'C2000'
 								 from tblPatientData
 								 where Patients_id=@id
@@ -378,9 +378,9 @@ namespace WebApi.Controllers
 								THEN blood_sugar_level ELSE 0 end) as 'B1420',
 								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'14:00:00:000') AND CONVERT(time,'20:00:00:000')
 								THEN 1 ELSE 0 end) as 'C1420',
-								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								sum(CASE WHEN cast(date_time as time) between CONVERT(time,'20:00:00:000') AND CONVERT(time,'23:59:00:000')
 								THEN blood_sugar_level ELSE 0 end) as 'B2000',
-								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'00:00:00:000')
+								sum(CASE WHEN cast(date_time as time) between  CONVERT(time,'20:00:00:000') AND CONVERT(time,'23:59:00:000')
 								THEN 1 ELSE 0 end) as 'C2000'
 								from tblPatientData
 							   where Patients_id=@id and DATEDIFF(day,date_time,GETDATE())between 0 and 30)as data

@@ -17,7 +17,7 @@ namespace WebApi.DTO
         //public string FoodName;
         //public double amount;
         //public string image;
-       // public int count;
+        public Nullable<int> times_eaten=1;
         public List<AteDto> food=new List<AteDto>();
     }
 }

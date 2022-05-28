@@ -485,6 +485,7 @@ namespace WebApi.Controllers
                             }
                             if(counter== list[i].food.Count)
                             {
+                                list[i].times_eaten++;
                                 list.RemoveAt(z);
                             }
                         }
