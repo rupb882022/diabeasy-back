@@ -416,51 +416,6 @@ namespace WebApi.Controllers
                     }
 
                 }
-                //for (int i = 0; i < dt.Rows.Count; i++)
-                //{
-                //    if (i != 0 && (int)dt.Rows[i]["food_id"] == (int)dt.Rows[i-1]["food_id"])
-                //    {
-                //        counter++;
-                //    }
-                //    else
-                //    {
-                //        if (counter > 1)
-                //        {
-                //            list.RemoveAll(x => x.FoodName == dt.Rows[i-1]["foodName"].ToString());
-                //            list.Add(new HipoDto()
-                //            {
-                //                date_time = (DateTime)dt.Rows[i-1]["date_time"],
-                //                blood_sugar_level = (int)dt.Rows[i-1]["blood_sugar_level"],
-                //                blood_sugar_level_2H = (int)dt.Rows[i-1]["blood_sugar_level2H"],
-                //                totalCarbs = (double)dt.Rows[i-1]["totalCarbs"],
-                //                amount = (double)dt.Rows[i-1]["amount"],
-                //                food_id = (int)dt.Rows[i-1]["food_id"],
-                //                UnitOfMeasure_id = (int)dt.Rows[i-1]["UnitOfMeasure_id"],
-                //                UnitName = dt.Rows[i-1]["UnitName"].ToString(),
-                //                FoodName = dt.Rows[i-1]["FoodName"].ToString(),
-                //                image = dt.Rows[i-1]["image"].ToString(),
-                //                count = counter
-                //            });
-                //            counter = 1;
-                //        }
-                //        list.Add(new HipoDto()
-                //        {
-                //            date_time = (DateTime)dt.Rows[i]["date_time"],
-                //            blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
-                //            blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
-                //            totalCarbs = (double)dt.Rows[i]["totalCarbs"],
-                //            amount = (double)dt.Rows[i]["amount"],
-                //            food_id = (int)dt.Rows[i]["food_id"],
-                //            UnitOfMeasure_id = (int)dt.Rows[i]["UnitOfMeasure_id"],
-                //            UnitName = dt.Rows[i]["UnitName"].ToString(),
-                //            FoodName = dt.Rows[i]["FoodName"].ToString(),
-                //            image = dt.Rows[i]["image"].ToString(),
-                //            count = counter
-                //        });
-
-                //    }
-                //  }
-
 
                 list.Add(hipo);
                 int counter = 0;

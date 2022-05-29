@@ -321,6 +321,146 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/User/GetInjectionRecommend/{id}/{blood_sugar_level}/{injectionType}")]
+        public IHttpActionResult GetInjectionRecommend(int id,int blood_sugar_level, string injectionType)
+        {
+            try
+            {
+
+
+                string query = "";
+                dynamic res = null;
+                DataSet ds = new DataSet();
+                SqlDataAdapter adpter;
+                if (injectionType == "food" && blood_sugar_level <= 155)
+                {
+                    query = @"
+				select AVG(pd1.totalCarbs/pd1.value_of_ingection) as 'ratio'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('food') 
+                and pd1.blood_sugar_level>70 and
+                (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 and injectionType='food'
+				and pd1.blood_sugar_level<=155";
+                    adpter = new SqlDataAdapter(query, con);
+                    adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                    adpter.SelectCommand.Parameters.AddWithValue("@value", blood_sugar_level);
+
+                    adpter.Fill(ds, "DataForRecommend");
+                    DataTable dt = ds.Tables["DataForRecommend"];
+                    res = new { food = dt.Rows[0]["ratio"] };
+                }
+                else if (injectionType == "food" || injectionType == "fix")
+                {
+
+                    query = @"declare @max int,@min int
+ 	            set @max=(select top 1 blood_sugar_level
+				from tblPatientData
+				where injectionType='fix' and Patients_id=@id
+				order by blood_sugar_level desc)
+				set @min=(select top 1 blood_sugar_level
+				from tblPatientData
+				where injectionType='fix' and Patients_id=@id
+				order by blood_sugar_level)
+	           if @value not between @min and @max
+ 			  if @value >= @max
+				set  @value =@max
+				else if
+				 @value <= @min
+				set  @value =@min
+                select avg(ratio)  as ratio
+                from
+                (select
+                pd1.blood_sugar_level,avg(((100-pd1.blood_sugar_level)*-1)/pd1.value_of_ingection) as ratio,ROW_NUMBER()OVER (Order by pd1.blood_sugar_level)  'num'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('fix') 
+                and pd1.blood_sugar_level>70 and
+                (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 and injectionType='fix'
+                 group by pd1.blood_sugar_level
+                ) t1 inner join
+                (select
+                pd1.blood_sugar_level,ROW_NUMBER()OVER (Order by pd1.blood_sugar_level)  'num'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('fix') 
+                and pd1.blood_sugar_level>70 and
+                (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 and injectionType='fix' 
+                group by pd1.blood_sugar_level
+                ) t2 on t1.num+1=t2.num
+                where @value between t1.blood_sugar_level and t2.blood_sugar_level";
+
+
+                     adpter = new SqlDataAdapter(query, con);
+                    adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                    adpter.SelectCommand.Parameters.AddWithValue("@value", blood_sugar_level);
+
+                 
+                    adpter.Fill(ds, "DataForRecommend");
+                    DataTable dt = ds.Tables["DataForRecommend"];
+                     res = new { fix = dt.Rows[0]["ratio"] };
+
+
+                    if (injectionType == "food" && blood_sugar_level > 155)
+                    {
+                        query = @"declare @max int,@min int
+                     set @max=(select top 1 blood_sugar_level
+				from tblPatientData
+				where injectionType='food' and Patients_id=@id
+				order by blood_sugar_level desc)
+				set @min=(select top 1 blood_sugar_level
+				from tblPatientData
+				where injectionType='fix' and Patients_id=@id
+				order by blood_sugar_level)
+				if @value not between @min and @max
+				 if @value>@max
+				 set @value=@max
+				 else if @value<@min
+				 set @value=@min
+
+				select top 1 pd1.totalCarbs/(value_of_ingection-ROUND(((100-pd1.blood_sugar_level)*-1)/@ratio, 0)) as 'carbsRatio'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('food') 
+                and pd1.blood_sugar_level>70 and
+                (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 and injectionType='food'
+				and @value<=pd1.blood_sugar_level and (value_of_ingection-ROUND(((100-pd1.blood_sugar_level)*-1)/@ratio, 0)) <>0
+				order by pd1.blood_sugar_level  ";
+
+                        adpter = new SqlDataAdapter(query, con);
+                        adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                        adpter.SelectCommand.Parameters.AddWithValue("@value", blood_sugar_level);
+                        adpter.SelectCommand.Parameters.AddWithValue("@ratio", dt.Rows[0]["ratio"]);
+                        adpter.Fill(ds, "DataForRecommendFood");
+                        DataTable dt2 = ds.Tables["DataForRecommendFood"];
+
+                        res = new { fix = dt.Rows[0]["ratio"], food = dt2.Rows[0]["carbsRatio"] };
+                    }
+                }
+                
+
+
+                return Content(HttpStatusCode.OK,res);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
 
 
         [HttpGet]
