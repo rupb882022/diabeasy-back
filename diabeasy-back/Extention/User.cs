@@ -407,7 +407,7 @@ namespace diabeasy_back
                         adpter.SelectCommand.Parameters.AddWithValue("@ratio", dt.Rows[0]["ratio"]);
                         adpter.Fill(ds, "DataForRecommendFood");
                         DataTable dt2 = ds.Tables["DataForRecommendFood"];
-                        int carbsRatio = int.Parse(dt2.Rows[0]["carbsRatio"].ToString());
+                        double carbsRatio = double.Parse(dt2.Rows[0]["carbsRatio"].ToString());
                         if (carbsRatio <= 0)
                         {
                             query = @"
