@@ -17,5 +17,6 @@ namespace WebApi.DTO
         public Nullable<double> totalCarbs;
         public List<AteDto> food=new List<AteDto>();
         public List<int> ExceptionalEvent;
+        public bool reccomandtion=false;
     }
 }
