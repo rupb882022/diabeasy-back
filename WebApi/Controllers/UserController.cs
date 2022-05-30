@@ -84,11 +84,12 @@ namespace WebApi.Controllers
             try
             {
               alert a=DB.alert.Where(x => x.id == id).SingleOrDefault();
+               
                 if (a != null)
                 {
                     a.active = false;
                     DB.SaveChanges();
-                    return Created(new Uri(Request.RequestUri.AbsoluteUri), "OK");
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), a.sendding_user_id);
                 }
                 else
                 {
@@ -617,15 +618,9 @@ namespace WebApi.Controllers
                     DB.alert.Add(alert);
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
-<<<<<<< HEAD
 
                     user.PushNotificationNow(docID,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
-=======
-                    int patientID = Convert.ToInt32(obj.Patients_id);
-                    tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == patientID);
-                   // int docID = Convert.ToInt32(obj.Doctor_id);
-                    user.PushNotificationNow((int)p.Doctor_id,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
->>>>>>> 83ddee0356f9750a5cfec1da10f4b1f574fd0d50
+
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "  --OKKK");
                 }
                 else
