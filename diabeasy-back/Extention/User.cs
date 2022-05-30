@@ -348,8 +348,8 @@ namespace diabeasy_back
 				from tblPatientData
 				where injectionType='fix' and Patients_id=@id
 				order by blood_sugar_level)
-	           if @value not between @min and @max
- 			  if @value >= @max
+	            if @value not between @min and @max
+ 			    if @value >= @max
 				set  @value =@max
 				else if
 				 @value <= @min

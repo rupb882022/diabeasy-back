@@ -597,23 +597,27 @@ namespace WebApi.Controllers
             {
                 DateTime d = (DateTime)obj.date_time;
                 string requestDate = d.ToString("MMM dd yyyy").Substring(0, 11);
+
                 int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
                 if (amount <= 3)
                 {
-
+                   
+                    int patientID = Convert.ToInt32(obj.Patients_id);
+                    tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == patientID);
+                    int docID = Convert.ToInt32(p.Doctor_id);
+                    obj.Doctor_id = docID;
                     alert alert = new alert()
                     {
                         active = true,
-                        getting_user_id = obj.Doctor_id,
-                        sendding_user_id = obj.Patients_id,
-                        content = "addRequest",
-                        date_time = new DateTime()
+                        getting_user_id = docID,
+                        sendding_user_id = patientID,
+                        content = "addPrescription",
+                        date_time = (DateTime)obj.date_time
                     };
+                    DB.alert.Add(alert);
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
-                    int patientID = Convert.ToInt32(obj.Patients_id);
-                    tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == patientID);
-                    int docID = Convert.ToInt32(obj.Doctor_id);
+
                     user.PushNotificationNow(docID,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "  --OKKK");
                 }
@@ -666,6 +670,15 @@ namespace WebApi.Controllers
                 if (prescription != null)
                 {
                     prescription.status = obj.status;
+                    alert alert = new alert()
+                    {
+                        active = true,
+                        getting_user_id = obj.Patients_id,
+                        sendding_user_id = obj.Doctor_id,
+                        content = "statusPrescription",
+                        date_time = (DateTime)obj.date_time
+                    };
+                    DB.alert.Add(alert);
                     DB.SaveChanges();
                     int patientID = Convert.ToInt32(prescription.Patients_id);
                     user.PushNotificationNow(patientID,$"New update for your prescription request from {Convert.ToDateTime(prescription.date_time).ToString("MMM dd yyyy").Substring(0,11)}");
