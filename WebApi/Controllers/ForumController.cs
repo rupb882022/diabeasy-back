@@ -128,7 +128,7 @@ namespace WebApi.Controllers
                 //else
                 //{
                 List<tblForum> TB = DB.tblForum.Where(x => x.subject == obj.subject).OrderByDescending(z => z.Patients_id).ToList();
-                List<int> Ids = null;
+                List<int> Ids = new List<int>();
                 for (int i = 0; i < TB.Count; i++)
                 {
                     int id = tblForum.writtenBy(TB[i]);
