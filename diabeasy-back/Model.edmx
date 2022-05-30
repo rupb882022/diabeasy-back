@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="diabeasyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="alert">
           <Key>
             <PropertyRef Name="id" />
@@ -137,6 +137,7 @@
           <Property Name="password" Type="nvarchar" MaxLength="255" />
           <Property Name="gender" Type="char" MaxLength="1" />
           <Property Name="profileimage" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushtoken" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="tblEventOf">
           <Key>
@@ -905,8 +906,7 @@
             <End Role="tblPrescriptions" EntitySet="tblPrescriptions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="diabeasyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1064,6 +1064,7 @@
           <NavigationProperty Name="tblForum" Relationship="Self.FK__tblForum__Doctor__40058253" FromRole="tblDoctor" ToRole="tblForum" />
           <NavigationProperty Name="tblPatients" Relationship="Self.FK__tblPatien__Docto__395884C4" FromRole="tblDoctor" ToRole="tblPatients" />
           <NavigationProperty Name="tblPrescriptions" Relationship="Self.FK__tblPrescr__Docto__44CA3770" FromRole="tblDoctor" ToRole="tblPrescriptions" />
+          <Property Name="pushtoken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblEventOf">
           <Key>
@@ -1865,6 +1866,7 @@
           <EntitySetMapping Name="tblDoctor">
             <EntityTypeMapping TypeName="diabeasyModel.tblDoctor">
               <MappingFragment StoreEntitySet="tblDoctor">
+                <ScalarProperty Name="pushtoken" ColumnName="pushtoken" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="firstname" ColumnName="firstname" />

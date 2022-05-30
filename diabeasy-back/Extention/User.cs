@@ -38,11 +38,6 @@ namespace diabeasy_back
 
 
 
-
-
-
-
-
                 //string to = Email;
                 //string subject = Subject;
                 //string body = Body;
@@ -65,15 +60,6 @@ namespace diabeasy_back
                 //    smtp.Send(mm);
                 //    return true;
                 //}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -137,8 +123,8 @@ namespace diabeasy_back
         //{
         //    try
         //    {
-          
-             
+
+
         //        Timer aTimer = new Timer();
         //        aTimer.Interval = seconds <= 0 ? 1000 : seconds * 1000; // Interval must be greater then 0; Default => 1 sec;
 
@@ -153,8 +139,8 @@ namespace diabeasy_back
 
         //        aTimer.Enabled = true;
         //        aTimer.Elapsed += OnTimedEvent;
-      
-       
+
+
         //        return true;
         //    }
         //    catch (Exception)
@@ -164,16 +150,46 @@ namespace diabeasy_back
         //    }
         //}
 
-        private static void OnTimedEvent(Object o, ElapsedEventArgs e)
-        {
+     
 
+        public string PushNotificationNow(int id,string body) { 
+        {
             // Create a request using a URL that can receive a post.   
             WebRequest request = WebRequest.Create("https://exp.host/--/api/v2/push/send");
             // Set the Method property of the request to POST.  
             request.Method = "POST";
-            // Create POST data and convert it to a byte array.  
+                // Create POST data and convert it to a byte array.  
+                string token;
+                if (id % 2 == 0)
+                {
+                    tblDoctor d = DB.tblDoctor.SingleOrDefault(x => x.id == id);
+                    if (d.pushtoken == null)
+                    {
+                        return $"No doctor Token id {id}";
+                    }
+                    token = d.pushtoken;
+                }
+                else
+                {
+                    tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == id);
+                    if (p.pushtoken == null)
+                    {
+                        return $"No patient Token id {id}";
+                    }
+                    token = p.pushtoken;
+                }
+                    var objectToSend = new
+            {
+                //  to = "ExponentPushToken[I8PGiZHdZMMnFcg_USV5r_]",      "ExponentPushToken[2S01zuIBNraplwZePN2Leh]"
+                to = token,
+                title = "Diabeasy App",
+                body = body,
+                badge = 0,
+                //data = new { name = "nir", grade = 100, seconds = DateTime.Now.Second }
+            };
 
             string postData = new JavaScriptSerializer().Serialize(objectToSend);
+
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             // Set the ContentType property of the WebRequest.  
             request.ContentType = "application/json";
@@ -202,10 +218,15 @@ namespace diabeasy_back
             reader.Close();
             dataStream.Close();
             response.Close();
-            //aTimer.Enabled = false;
 
+            return "success:) --- " + responseFromServer + ",-- " + returnStatus;
         }
-        public string GetTypeByMail(string mail)
+    }
+
+
+
+
+    public string GetTypeByMail(string mail)
         {
             try
             {
@@ -282,6 +303,24 @@ namespace diabeasy_back
         }
 
     }
+    public class PushNotData
+    {
+        public string to { get; set; }
+        public string title { get; set; }
+        public string body { get; set; }
+        public int badge { get; set; }
+        public int ttl { get; set; }
+        public Data data { get; set; }
 
+       //  public int id { get; set; }
+
+    }
+
+    public class Data
+    {
+        public string to { get; set; }
+        public string title { get; set; }
+        public string status { get; set; }
+    }
 
 }

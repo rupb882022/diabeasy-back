@@ -21,13 +21,13 @@ namespace WebApi.Controllers
         diabeasyDBContext DB = new diabeasyDBContext();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["diabeasyDB"].ConnectionString);
         static Logger logger = LogManager.GetCurrentClassLogger();
-        
+        User user=new User();
         [HttpGet]
         [Route("api/Forum")]
         public IHttpActionResult GetAllCommentsDetails()
         {
             try
-            { 
+            {
                 string sqlQuery = @"select F.id,date_time,subject,value,
                                             CASE
                                             WHEN P.firstname is not null
@@ -62,7 +62,7 @@ namespace WebApi.Controllers
                 {
                     tblForumDto obj = new tblForumDto()
                     {
-                        id = dt.Rows[index]["id"].ToString(), 
+                        id = dt.Rows[index]["id"].ToString(),
                         date_time = dt.Rows[index]["date_time"].ToString(),
                         subject = dt.Rows[index]["subject"].ToString(),
                         value = dt.Rows[index]["value"].ToString(),
@@ -127,27 +127,31 @@ namespace WebApi.Controllers
                 //}
                 //else
                 //{
-                    List<tblForum>TB= DB.tblForum.Where(x => x.subject == obj.subject).OrderByDescending(z=>z.Patients_id).ToList();
-                    for (int i = 0; i < TB.Count; i++)
-                    {
-                        int id = tblForum.writtenBy(TB[i]); 
-                            if (writtenBy!=id&&( i == 0|| id != tblForum.writtenBy(TB[i-1]))) {
-                                newAlert = new alert()
-                                {
-                                    active = true,
-                                    getting_user_id = id,
-                                    sendding_user_id = writtenBy,
-                                    content = obj.Id_Continue_comment != null? "forum-comment" : "forum-subject",
-                                    date_time = obj.date_time
-                                };
-                                DB.alert.Add(newAlert);
-                        }
+                List<tblForum> TB = DB.tblForum.Where(x => x.subject == obj.subject).OrderByDescending(z => z.Patients_id).ToList();
+                List<int> Ids = null;
+                for (int i = 0; i < TB.Count; i++)
+                {
+                    int id = tblForum.writtenBy(TB[i]);
+                    if (writtenBy != id && (i == 0 || id != tblForum.writtenBy(TB[i - 1]))) {
+                        newAlert = new alert()
+                        {
+                            active = true,
+                            getting_user_id = id,
+                            sendding_user_id = writtenBy,
+                            content = obj.Id_Continue_comment != null ? "forum-comment" : "forum-subject",
+                            date_time = obj.date_time
+                        };
+                        DB.alert.Add(newAlert);
+                        Ids.Add(id);
                     }
-                //}
-        
-                        DB.tblForum.Add(obj);
-                        DB.SaveChanges();
-                        return Created(new Uri(Request.RequestUri.AbsoluteUri), "created");
+                }
+                DB.tblForum.Add(obj);
+                DB.SaveChanges();
+                for (int i = 0; i < Ids.Count; i++)
+                {
+                    user.PushNotificationNow(Ids[i], "A new comment was added on a subject that you were part of");
+                }
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), "created");
             }
             catch (Exception e)
             {
@@ -208,5 +212,30 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
+//        [HttpGet]
+//        [Route("api/Forum/push")]
+//        public IHttpActionResult Get()
+//{
+//            List<int> Ids = new List<int>()
+//            {
+//                1,3,5
+//            };
+//                            for (int i = 0; i<Ids.Count; i++)
+//                {
+//                        dynamic pnd = new 
+//                        {
+//                            id = Ids[i],
+//                            title = "Diabeasy App",
+//                            body = "New Comment was added",
+//                            badge = 0,
+//                            ttl = 3
+//                        };
+
+//        user.SendPushNotification(Ids[i], "Diabeasy App", "New Comment was added");
+//                }
+//            return Content(HttpStatusCode.OK, Ids);
+
+//        }
     }
 }

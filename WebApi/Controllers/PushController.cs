@@ -26,9 +26,9 @@ namespace WebApi.Controllers
      private static Timer aTimer;
       public static object objectToSend;
 
-
+       // [HttpPost]
         [Route("api/sendpushnotification")]
-        public static string SendPushNotification([FromBody] PushNotData pnd)
+        public string SendPushNotification([FromBody] PushNotData pnd)
         {
             try
             {
@@ -110,10 +110,11 @@ namespace WebApi.Controllers
             // Create POST data and convert it to a byte array.  
             var objectToSend = new
             {
-                to = "ExponentPushToken[I8PGiZHdZMMnFcg_USV5r_]",
-                title = "form local Server",
+              //  to = "ExponentPushToken[I8PGiZHdZMMnFcg_USV5r_]",
+              to= "ExponentPushToken[2S01zuIBNraplwZePN2Leh]",
+                title = "בטעות",
                 body = "body from local Server",
-                badge = 75,
+                badge = 0,
                 //data = new { name = "nir", grade = 100, seconds = DateTime.Now.Second }
             };
 
@@ -160,6 +161,8 @@ namespace WebApi.Controllers
         public int badge { get; set; }
         public int ttl { get; set; }
         public Data data { get; set; }
+
+        //public int id ;
     }
 
     public class Data
