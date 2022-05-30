@@ -18,5 +18,6 @@ namespace WebApi.DTO
         public List<AteDto> food=new List<AteDto>();
         public List<int> ExceptionalEvent;
         public bool reccomandtion=false;
+        public double system_recommendations;
     }
 }

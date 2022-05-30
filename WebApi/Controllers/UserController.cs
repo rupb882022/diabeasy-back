@@ -816,6 +816,7 @@ namespace WebApi.Controllers
                     injection_site = PatientDatadata.injection_site,
                     value_of_ingection = PatientDatadata.value_of_ingection,
                     Patients_id = (int)PatientDatadata.Patients_id,
+                    system_recommendations=PatientDatadata.system_recommendations
                 };
                 if (PatientDatadata.ExceptionalEvent != null && PatientDatadata.ExceptionalEvent.Count > 0)
                 {
@@ -836,16 +837,16 @@ namespace WebApi.Controllers
                 DB.SaveChanges();
 
                 //if user ask for reccomandtion
-                if (PatientDatadata.reccomandtion)
-                {
-                    dynamic res = user.GetInjectionRecommend((int)PatientDatadata.Patients_id,(int)PatientDatadata.blood_sugar_level, PatientDatadata.injectionType);
-                    if (res == null)
-                    {
-                        throw new Exception("no query resulte");
-                    }
-                    return Created(new Uri(Request.RequestUri.AbsoluteUri), res);
+                //if (PatientDatadata.reccomandtion)
+                //{
+                //    dynamic res = user.GetInjectionRecommend((int)PatientDatadata.Patients_id,(int)PatientDatadata.blood_sugar_level, PatientDatadata.injectionType);
+                //    if (res == null)
+                //    {
+                //        throw new Exception("no query resulte");
+                //    }
+                //    return Created(new Uri(Request.RequestUri.AbsoluteUri), res);
 
-                }
+                //}
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
             }
             catch (Exception e)
