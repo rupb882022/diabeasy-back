@@ -617,8 +617,15 @@ namespace WebApi.Controllers
                     DB.alert.Add(alert);
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
+<<<<<<< HEAD
 
                     user.PushNotificationNow(docID,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
+=======
+                    int patientID = Convert.ToInt32(obj.Patients_id);
+                    tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == patientID);
+                   // int docID = Convert.ToInt32(obj.Doctor_id);
+                    user.PushNotificationNow((int)p.Doctor_id,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
+>>>>>>> 83ddee0356f9750a5cfec1da10f4b1f574fd0d50
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "  --OKKK");
                 }
                 else
@@ -681,7 +688,7 @@ namespace WebApi.Controllers
                     DB.alert.Add(alert);
                     DB.SaveChanges();
                     int patientID = Convert.ToInt32(prescription.Patients_id);
-                    user.PushNotificationNow(patientID,$"New update for your prescription request from {Convert.ToDateTime(prescription.date_time).ToString("MMM dd yyyy").Substring(0,11)}");
+                    user.PushNotificationNow(patientID,$"New update for your prescription request from {Convert.ToDateTime(prescription.date_time).ToString("MMM-dd-yyyy").Substring(0,11)}");
                     return Content(HttpStatusCode.OK, new { id = prescription.id, status = prescription.status });
                 }
                 return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
