@@ -856,27 +856,6 @@ namespace WebApi.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("api/User/test")]
-        //public async Task<bool> test()
-        //{
-
-
-        //    try
-        //    {
-
-        //        await user.PushNotification(0);
-
-        //        return true;
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        return false;
-        //    }
-
-        //}
-
 
     }
 }

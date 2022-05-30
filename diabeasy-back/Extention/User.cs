@@ -407,8 +407,29 @@ namespace diabeasy_back
                         adpter.SelectCommand.Parameters.AddWithValue("@ratio", dt.Rows[0]["ratio"]);
                         adpter.Fill(ds, "DataForRecommendFood");
                         DataTable dt2 = ds.Tables["DataForRecommendFood"];
+                        int carbsRatio = int.Parse(dt2.Rows[0]["carbsRatio"].ToString());
+                        if (carbsRatio <= 0)
+                        {
+                            query = @"
+				select AVG(pd1.totalCarbs/pd1.value_of_ingection) as 'carbsRatio'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('food') 
+                and pd1.blood_sugar_level>70 and
+                (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 and injectionType='food'
+				and pd1.blood_sugar_level<=155";
+                            adpter = new SqlDataAdapter(query, con);
+                            adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                            adpter.SelectCommand.Parameters.AddWithValue("@value", blood_sugar_level);
 
-                        res = new { fix = dt.Rows[0]["ratio"], food = dt2.Rows[0]["carbsRatio"] };
+                            adpter.Fill(ds, "DataForRecommendFood2");
+                             dt2 = ds.Tables["DataForRecommendFood2"];
+                        }
+
+                            res = new { fix = dt.Rows[0]["ratio"], food = dt2.Rows[0]["carbsRatio"] };
                     }
                 }
 
