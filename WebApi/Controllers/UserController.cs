@@ -155,6 +155,8 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
+
+
         }
         [HttpPost]
         [Route("api/User/HistoryLog")]
