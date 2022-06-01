@@ -156,7 +156,41 @@ namespace WebApi.Controllers
             }
 
         }
+        [HttpPost]
+        [Route("api/User/HistoryLog")]
+        public IHttpActionResult insertHistoryLog([FromBody] HistoryLogDto obj)
+        {
+           
+            try
+            {
+                tblHistorylog H= DB.tblHistorylog.Where(x => x.Patients_id == obj.Patients_id && x.Historylog_key == obj.Historylog_key).SingleOrDefault();
+                if (H != null)
+                {
+                    H.date_time = DateTime.Now;
+                    H.Historylog_value = obj.Historylog_value;
+                }
+                else
+                {
+                    H = new tblHistorylog()
+                    {
+                        date_time = DateTime.Now,
+                        Historylog_key = obj.Historylog_key,
+                        Historylog_value = obj.Historylog_value,
+                        Patients_id = obj.Patients_id,
+                    };
+                    DB.tblHistorylog.Add(H);
+                }
+                DB.SaveChanges();
+                return Content(HttpStatusCode.Created, "created");
 
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message+" \n"+e.InnerException);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
 
 
         [HttpGet]
@@ -778,7 +812,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPost]
+            [HttpPost]
         [Route("api/User/InsertData")]
         public IHttpActionResult InsertData([FromBody] tblPatientDataDto PatientDatadata)
         {

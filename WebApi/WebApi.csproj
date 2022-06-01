@@ -185,6 +185,7 @@
     <Compile Include="DTO\AteDto.cs" />
     <Compile Include="DTO\GrapsDto.cs" />
     <Compile Include="DTO\HipoDto.cs" />
+    <Compile Include="DTO\HistoryLogDto.cs" />
     <Compile Include="DTO\IngrediantDto.cs" />
     <Compile Include="DTO\IngredientsForRecipeDto.cs" />
     <Compile Include="DTO\tblCategoryDto.cs" />
