@@ -342,7 +342,7 @@ namespace WebApi.Controllers
                                 select pd3.date_time,blood_sugar_level,ROW_NUMBER() over(order by date_time) as num
                                 from tblPatientData pd3
                                 where Patients_id=@id ) pd3 on pd3.num=number.num+1
-                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
+                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and (value_of_ingection is null or value_of_ingection=0)
                     and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
                      )
 					 t1 
@@ -365,7 +365,7 @@ namespace WebApi.Controllers
                                 select pd3.date_time,blood_sugar_level,ROW_NUMBER() over(order by date_time) as num
                                 from tblPatientData pd3
                                 where Patients_id=@id ) pd3 on pd3.num=number.num+1
-                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and value_of_ingection is null
+                    where pd.Patients_id=@id and pd.blood_sugar_level<=75 and (value_of_ingection is null or value_of_ingection=0)
                     and (pd3.blood_sugar_level between 75 and 155 and DATEDIFF(second, pd.date_time, pd3.date_time) / 3600.0 between 2 and 4  )
 					group by ate.name )  t2 on t2.name=t1.FoodName
 					order by date_time desc,FoodName";
