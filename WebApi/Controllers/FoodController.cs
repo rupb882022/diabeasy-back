@@ -406,7 +406,8 @@ namespace WebApi.Controllers
                             date_time = (DateTime)dt.Rows[i]["date_time"],
                             blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
                             blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
-                            totalCarbs = (double)dt.Rows[i]["totalCarbs"]
+                            totalCarbs = (double)dt.Rows[i]["totalCarbs"],
+                            times_eaten=(int)dt.Rows[i]["count"],
                         };
                         hipo.food.Add(ate);
                     }
@@ -418,35 +419,57 @@ namespace WebApi.Controllers
                 }
 
                 list.Add(hipo);
-                int counter = 0;
+
+
+
+                //int counter = 0;
+
+                //for (int i = 0; i < list.Count; i++)
+                //{
+                //    for (int z = i + 1; z < list.Count; z++)
+                //    {
+                //        //check if list have the same food items count in array
+                //        if (list[i].food.Count == list[z].food.Count)
+                //        {
+                //            counter = 0;
+                //            for (int x = 0; x < list[i].food.Count; x++)
+                //            {
+                //                for (int y = 0; y < list[z].food.Count; y++)
+                //                {
+                //                    //check if list have the same food items in array
+                //                    if (list[i].food[x].foodId == list[z].food[y].foodId)
+                //                    {
+                //                        counter++;
+                //                    }
+                //                }
+                //            }
+                //            if (counter == list[i].food.Count)
+                //            {
+                //                list[i].times_eaten++;
+                //                list.RemoveAt(z);
+                //            }
+                //        }
+                //    }
+                //}
+
+
+                //remove all duplicate food name
+                list = list.OrderBy(x => x.food[0].FoodName).ToList();
+                List<HipoDto> listNew = new List<HipoDto>();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    for (int z = i+1; z < list.Count; z++)
+                    if (i!=0&&list[i].food.Count== list[i-1].food.Count && list[i].food[0].foodId== list[i-1].food[0].foodId)
                     {
-                        //check if list have the same food items count in array
-                        if (list[i].food.Count == list[z].food.Count)
-                        {
-                            counter = 0;
-                            for (int x = 0; x < list[i].food.Count; x++)
-                            {
-                                for (int y = 0; y < list[z].food.Count; y++)
-                                {
-                                    //check if list have the same food items in array
-                                    if (list[i].food[x].foodId == list[z].food[y].foodId)
-                                    {
-                                        counter++;
-                                    }
-                                }
-                            }
-                            if(counter== list[i].food.Count)
-                            {
-                                list[i].times_eaten++;
-                                list.RemoveAt(z);
-                            }
-                        }
+                        //list.RemoveAt(i);
+                    }
+                    else
+                    {
+                        listNew.Add(list[i]);
                     }
                 }
-                return Content(HttpStatusCode.OK, list);
+                listNew = listNew.OrderByDescending(x => x.date_time).ToList();
+
+                return Content(HttpStatusCode.OK, listNew);
             }
             catch (Exception e)
             {
