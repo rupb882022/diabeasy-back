@@ -37,6 +37,33 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/User/editPersonalInfo/{id}")]
+        public IHttpActionResult GetPersonalInfo(int id)
+        {
+            try
+            {
+                tblPatients Pat = DB.tblPatients.SingleOrDefault(x => x.id == id);
+                if (Pat!=null)
+                {
+                var DocMail = Pat.Doctor_id;
+                var d = DB.tblDoctor.Where(x => x.id == DocMail).Select(x => x.email);
+               //  tblDoctor d = DB.tblDoctor.Where(x=>x.id ==id).Select(x=>x.email);
+                  var P = DB.tblPatients.Where(x => x.id == id).Select(x => new {id =x.id ,firstname=x.firstname,lastname=x.lastname,gender=x.gender,birthdate=x.birthdate,weight=x.weight,height=x.height,InsulinType_id = x.InsulinType_id, InsulinType_long_id = x.InsulinType_long_id,docEmail=d});
+                 return Content(HttpStatusCode.OK, P);
+                }
+                else
+                {
+                    return Content(HttpStatusCode.NotFound, " not exist");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error("GET Personal info to edit " + e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("api/User/alert/{id}")]
         public IHttpActionResult getAlert(int id)
         {
