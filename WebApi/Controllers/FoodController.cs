@@ -54,15 +54,12 @@ namespace WebApi.Controllers
                 //check if getIngredient exist when user search getIngredient
                 if (foodName != "all")
                 {
-                    Ingredients I = null;
-                    //Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
+                   Ingredients I = null;
+                  //  Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
                     if (I == null)
                     {
                         var res = food.search_by_name_api(foodName);
-                        if (res.Result == null)
-                        {
-                            throw new Exception("cannot find " + foodName + "in api reqest");
-                        }
+                        logger.Info("res of food serach api- row effected"+ res);
                     }
                 }
 
@@ -94,7 +91,7 @@ namespace WebApi.Controllers
                 IngrediantDto ingrediant = new IngrediantDto();
 
 
-
+                if (dt.Rows.Count > 0) { 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
 
@@ -163,7 +160,11 @@ namespace WebApi.Controllers
                 }
                 //add last ingrediant in query list
                 ingrediants.Add(ingrediant);
-
+                }
+                else
+                {
+                    throw new Exception("cannot find " + foodName + "in api reqest");
+                }
 
 
                 return Content(HttpStatusCode.OK, ingrediants);

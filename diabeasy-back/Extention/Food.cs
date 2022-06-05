@@ -73,7 +73,7 @@ namespace diabeasy_back
                     // Parse the response body.
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    dynamic json = JsonConvert.DeserializeObject(responseBody);
+                    dynamic json = JsonConvert.DeserializeObject(responseBody.ToString());
 
                     dynamic resulte = JsonConvert.DeserializeObject(json.results.ToString());
                     if (resulte.Count == 0)
@@ -84,20 +84,29 @@ namespace diabeasy_back
 
 
                     logger.Debug(json.results);
+                    int foodCounter = 0;
                     if (resulte.Count > 1)
                     {
-                        for (int i = 1; i < resulte.Count; i++)
+                        for (int i = 0; i < resulte.Count; i++)
                         {
-                            await get_Food_information_api(resulte[i]);
-                            if (i == 5)
+                            string food_id=resulte[i].id;
+                            string food_name=resulte[i].name;
+                            Ingredients I = DB.Ingredients.Where(x => x.api_id.ToString() == food_id || x.name== food_name).FirstOrDefault();
+                            if (I == null)
+                            {
+                                await get_Food_information_api(resulte[i]);
+                                foodCounter++;
+                            }    
+
+                            if (foodCounter == 5)
                             {
                                 break;
                             }
                         }
 
                     }
-                    var firstFood = json.results[0];
-                    return await get_Food_information_api(firstFood);
+
+                    return foodCounter;
                 }
                 else
                 {
