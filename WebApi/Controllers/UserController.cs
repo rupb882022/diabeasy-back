@@ -43,13 +43,13 @@ namespace WebApi.Controllers
             try
             {
                 tblPatients Pat = DB.tblPatients.SingleOrDefault(x => x.id == id);
-                if (Pat!=null)
+                if (Pat != null)
                 {
-                var DocMail = Pat.Doctor_id;
-                var d = DB.tblDoctor.Where(x => x.id == DocMail).Select(x => x.email);
-               //  tblDoctor d = DB.tblDoctor.Where(x=>x.id ==id).Select(x=>x.email);
-                  var P = DB.tblPatients.Where(x => x.id == id).Select(x => new {id =x.id ,firstname=x.firstname,lastname=x.lastname,gender=x.gender,birthdate=x.birthdate,weight=x.weight,height=x.height,InsulinType_id = x.InsulinType_id, InsulinType_long_id = x.InsulinType_long_id,docEmail=d});
-                 return Content(HttpStatusCode.OK, P);
+                    var DocMail = Pat.Doctor_id;
+                    var d = DB.tblDoctor.Where(x => x.id == DocMail).Select(x => x.email);
+                    //  tblDoctor d = DB.tblDoctor.Where(x=>x.id ==id).Select(x=>x.email);
+                    var P = DB.tblPatients.Where(x => x.id == id).Select(x => new { id = x.id, firstname = x.firstname, lastname = x.lastname, gender = x.gender, birthdate = x.birthdate, weight = x.weight, height = x.height, InsulinType_id = x.InsulinType_id, InsulinType_long_id = x.InsulinType_long_id, docEmail = d });
+                    return Content(HttpStatusCode.OK, P);
                 }
                 else
                 {
@@ -110,8 +110,8 @@ namespace WebApi.Controllers
         {
             try
             {
-              alert a=DB.alert.Where(x => x.id == id).SingleOrDefault();
-               
+                alert a = DB.alert.Where(x => x.id == id).SingleOrDefault();
+
                 if (a != null)
                 {
                     a.active = false;
@@ -122,13 +122,13 @@ namespace WebApi.Controllers
                 {
                     throw new Exception("cannot find alert id");
                 }
-              
+
 
             }
             catch (Exception e)
             {
 
-                logger.Error("delete alert "+ e.Message);
+                logger.Error("delete alert " + e.Message);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
@@ -189,10 +189,10 @@ namespace WebApi.Controllers
         [Route("api/User/HistoryLog")]
         public IHttpActionResult insertHistoryLog([FromBody] HistoryLogDto obj)
         {
-           
+
             try
             {
-                tblHistorylog H= DB.tblHistorylog.Where(x => x.Patients_id == obj.Patients_id && x.Historylog_key == obj.Historylog_key).SingleOrDefault();
+                tblHistorylog H = DB.tblHistorylog.Where(x => x.Patients_id == obj.Patients_id && x.Historylog_key == obj.Historylog_key).SingleOrDefault();
                 if (H != null)
                 {
                     H.date_time = DateTime.Now;
@@ -215,7 +215,7 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                logger.Error(e.Message+" \n"+e.InnerException);
+                logger.Error(e.Message + " \n" + e.InnerException);
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
 
@@ -263,7 +263,7 @@ namespace WebApi.Controllers
         {
             try
             {
-               string email = User.email.Replace("=", ".");
+                string email = User.email.Replace("=", ".");
 
                 tblPatients Patients = DB.tblPatients.Where(x => x.email == email).SingleOrDefault();
                 if (Patients != null)
@@ -283,7 +283,7 @@ namespace WebApi.Controllers
                     }
                     throw new Exception("do not found user- worng email");
                 }
- 
+
             }
             //handel erorrs from DB like uniqe value
             catch (DbUpdateException e)
@@ -387,7 +387,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("api/User/GetInjectionRecommend/{id}/{blood_sugar_level}/{injectionType}")]
-        public IHttpActionResult GetInjectionRecommend(int id,int blood_sugar_level, string injectionType)
+        public IHttpActionResult GetInjectionRecommend(int id, int blood_sugar_level, string injectionType)
         {
             try
             {
@@ -400,7 +400,7 @@ namespace WebApi.Controllers
                     throw new Exception("no query resulte");
                 }
 
-                return Content(HttpStatusCode.OK,res);
+                return Content(HttpStatusCode.OK, res);
             }
             catch (Exception e)
             {
@@ -474,7 +474,7 @@ namespace WebApi.Controllers
 								order by 'year','month' ";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
-                 adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
 
                 DataSet ds = new DataSet();
                 adpter.Fill(ds, "DataForGraphs");
@@ -550,7 +550,7 @@ namespace WebApi.Controllers
 
             try
             {
-               List<tblExceptionalEventDto> E=DB.tblExceptionalEvent.Select(x=>new tblExceptionalEventDto() {id= x.id,name=x.name,date=x.date_time }).ToList();
+                List<tblExceptionalEventDto> E = DB.tblExceptionalEvent.Select(x => new tblExceptionalEventDto() { id = x.id, name = x.name, date = x.date_time }).ToList();
                 return Content(HttpStatusCode.OK, E);
             }
             catch (Exception e)
@@ -665,7 +665,7 @@ namespace WebApi.Controllers
                 int amount = DB.tblPrescriptions.Count(x => x.Patients_id == obj.Patients_id && x.date_time.ToString().Substring(0, 11) == requestDate);
                 if (amount <= 3)
                 {
-                   
+
                     int patientID = Convert.ToInt32(obj.Patients_id);
                     tblPatients p = DB.tblPatients.SingleOrDefault(x => x.id == patientID);
                     int docID = Convert.ToInt32(p.Doctor_id);
@@ -682,7 +682,7 @@ namespace WebApi.Controllers
                     DB.tblPrescriptions.Add(obj);
                     DB.SaveChanges();
 
-                    user.PushNotificationNow(docID,$"You got a new prescription request from {p.firstname +" "+ p.lastname}");
+                    user.PushNotificationNow(docID, $"You got a new prescription request from {p.firstname + " " + p.lastname}");
 
                     return Created(new Uri(Request.RequestUri.AbsoluteUri), "  --OKKK");
                 }
@@ -746,7 +746,7 @@ namespace WebApi.Controllers
                     DB.alert.Add(alert);
                     DB.SaveChanges();
                     int patientID = Convert.ToInt32(prescription.Patients_id);
-                    user.PushNotificationNow(patientID,$"New update for your prescription request from {Convert.ToDateTime(prescription.date_time).ToString("MMM-dd-yyyy").Substring(0,11)}");
+                    user.PushNotificationNow(patientID, $"New update for your prescription request from {Convert.ToDateTime(prescription.date_time).ToString("MMM-dd-yyyy").Substring(0, 11)}");
                     return Content(HttpStatusCode.OK, new { id = prescription.id, status = prescription.status });
                 }
                 return Content(HttpStatusCode.NotFound, "id=" + id + "of prescription is not found");
@@ -841,7 +841,7 @@ namespace WebApi.Controllers
         }
 
 
-            [HttpPost]
+        [HttpPost]
         [Route("api/User/InsertData")]
         public IHttpActionResult InsertData([FromBody] tblPatientDataDto PatientDatadata)
         {
@@ -886,7 +886,7 @@ namespace WebApi.Controllers
                     injection_site = PatientDatadata.injection_site,
                     value_of_ingection = PatientDatadata.value_of_ingection,
                     Patients_id = (int)PatientDatadata.Patients_id,
-                    system_recommendations=PatientDatadata.system_recommendations
+                    system_recommendations = PatientDatadata.system_recommendations
                 };
                 if (PatientDatadata.ExceptionalEvent != null && PatientDatadata.ExceptionalEvent.Count > 0)
                 {
@@ -906,17 +906,7 @@ namespace WebApi.Controllers
                 DB.tblPatientData.Add(p);
                 DB.SaveChanges();
 
-                //if user ask for reccomandtion
-                //if (PatientDatadata.reccomandtion)
-                //{
-                //    dynamic res = user.GetInjectionRecommend((int)PatientDatadata.Patients_id,(int)PatientDatadata.blood_sugar_level, PatientDatadata.injectionType);
-                //    if (res == null)
-                //    {
-                //        throw new Exception("no query resulte");
-                //    }
-                //    return Created(new Uri(Request.RequestUri.AbsoluteUri), res);
 
-                //}
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
             }
             catch (Exception e)
@@ -925,6 +915,25 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.InnerException);
             }
         }
+        [HttpPost]
+        [Route("api/User/test")]
+        public IHttpActionResult test([FromBody] tblPatientDataDto PatientDatadata)
+        {
+            try
+            {
+                user.MLRecommend((int)PatientDatadata.blood_sugar_level, (double)PatientDatadata.totalCarbs, DateTime.Now);
+
+
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.InnerException);
+            }
+
+        }
+
 
 
 

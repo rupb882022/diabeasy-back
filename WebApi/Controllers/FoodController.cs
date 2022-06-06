@@ -58,7 +58,8 @@ namespace WebApi.Controllers
                   //  Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
                     if (I == null)
                     {
-                        var res = food.search_by_name_api(foodName);
+                             foodName=foodName.ToLower();
+                           var res = food.search_by_name_api(foodName);
                         logger.Info("res of food serach api- row effected"+ res);
                     }
                 }
