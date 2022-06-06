@@ -409,6 +409,29 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/User/GetLastBloodTest/{id}")]
+        public IHttpActionResult GetLastBloodTest(int id)
+        {
+            try
+            {
+
+            tblPatientData  pd= DB.tblPatientData.Where(x => x.Patients_id== id).OrderByDescending(z=>z.date_time).FirstOrDefault();
+
+                if (pd == null)
+                {
+                    throw new Exception("cannot find Patients_id the id is:" + id);
+                }
+              
+                return Content(HttpStatusCode.OK, pd.date_time);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("api/User/GetdataForGraphs/{id}")]
