@@ -915,24 +915,27 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.InnerException);
             }
         }
-        [HttpPost]
-        [Route("api/User/test")]
-        public IHttpActionResult test([FromBody] tblPatientDataDto PatientDatadata)
-        {
-            try
-            {
-                user.MLRecommend((int)PatientDatadata.blood_sugar_level, (double)PatientDatadata.totalCarbs, DateTime.Now);
 
 
-                return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
-            }
-            catch (Exception e)
-            {
-                logger.Fatal(e.Message);
-                return Content(HttpStatusCode.BadRequest, e.InnerException);
-            }
 
-        }
+        //[HttpPost]
+        //[Route("api/User/test")]
+        //public IHttpActionResult test([FromBody] tblPatientDataDto PatientDatadata)
+        //{
+        //    try
+        //    {
+        //        user.MLRecommend((int)PatientDatadata.blood_sugar_level, (double)PatientDatadata.totalCarbs, DateTime.Now);
+
+
+        //        return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        logger.Fatal(e.Message);
+        //        return Content(HttpStatusCode.BadRequest, e.InnerException);
+        //    }
+
+        //}
 
 
 

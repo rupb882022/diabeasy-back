@@ -344,8 +344,38 @@ namespace diabeasy_back
                     }
                 }
 
+                query = @"
+				delete tempData where 1=1
+                declare @id int 
+                set @id=1
 
+                insert into tempData
+                select datename(dw,pd1.date_time)as 'weekday',
+                CASE
+	            WHEN DATEPART(HOUR, pd1.date_time) between 0 and 6 then 'night'
+		        WHEN DATEPART(HOUR, pd1.date_time) between 6 and 12 then 'morning'
+			    WHEN DATEPART(HOUR, pd1.date_time) between 12 and 18 then 'noon'
+				WHEN DATEPART(HOUR, pd1.date_time) between 18 and 24 then 'evning'
+				end as 'dayTime',
+                pd1.blood_sugar_level,pd1.value_of_ingection,pd1.totalCarbs,
+                CASE
+	            WHEN (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 THEN 1 
+	            else 0 end as 'good injection'
+                from(
+                select *,ROW_NUMBER() OVER (Order by date_time) AS RowNumber
+                from tblPatientData
+                where Patients_id=@id )as pd1 inner join (select date_time,blood_sugar_level,ROW_NUMBER() OVER (Order by date_time) AS RowNumber from tblPatientData where Patients_id=@id) as pd2 on
+                pd1.RowNumber+1=pd2.RowNumber
+                where DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4 and pd1.injectionType in('food','fix') 
+                and pd1.blood_sugar_level>70;
+                select count (*) as 'rowNum'
+                from tempData";
 
+                adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                adpter.Fill(ds, "tempData");
+                DataTable dt3 = ds.Tables["tempData"];
+                logger.Debug("Ml tempData rowNum= "+dt3.Rows[0]["rowNum"]);
                 return res;
             }
             catch (Exception e)
