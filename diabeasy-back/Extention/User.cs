@@ -346,9 +346,6 @@ namespace diabeasy_back
 
                 query = @"
 				delete tempData where 1=1
-                declare @id int 
-                set @id=1
-
                 insert into tempData
                 select datename(dw,pd1.date_time)as 'weekday',
                 CASE
@@ -357,7 +354,9 @@ namespace diabeasy_back
 			    WHEN DATEPART(HOUR, pd1.date_time) between 12 and 18 then 'noon'
 				WHEN DATEPART(HOUR, pd1.date_time) between 18 and 24 then 'evning'
 				end as 'dayTime',
-                pd1.blood_sugar_level,pd1.value_of_ingection,pd1.totalCarbs,
+                pd1.blood_sugar_level,
+				CASE WHEN pd1.value_of_ingection is not null then pd1.value_of_ingection else 0 end as 'value_of_ingection',
+				pd1.totalCarbs,
                 CASE
 	            WHEN (DATEDIFF(second, pd1.date_time, pd2.date_time) / 3600.0 between 2 and 4) and pd2.blood_sugar_level between 70 and 155 THEN 1 
 	            else 0 end as 'good injection'
