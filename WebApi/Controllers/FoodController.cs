@@ -479,6 +479,99 @@ namespace WebApi.Controllers
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+        [HttpGet]
+        [Route("api/Food/foodRecomendtion/{userId}")]
+        public IHttpActionResult foodRecomendtion(int userId)
+        {
+            try
+            {
+                //           string query = @"select *
+                // from
+                //( select *
+                // from
+                //( select *,ROW_NUMBER() over(order by date_time) as num
+                // from tblPatientData
+                // where Patients_id=@id)as pd1
+                // inner join (
+                // select date_time as date_time2,blood_sugar_level as blood_sugar_level2,ROW_NUMBER() over(order by date_time) as num2
+                // from tblPatientData
+                // where Patients_id=@id 
+                // )pd2 on pd2.num2=pd1.num+1
+                // where pd2.blood_sugar_level2 between 75 and 155 and DATEDIFF(second, pd1.date_time, pd2.date_time2) / 3600.0 between 2 and 4 
+                // and pd1.injectionType='food' and pd1.value_of_ingection is not null and pd1.blood_sugar_level>75)as pd
+                //   inner join (
+                //                   select isGood, Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                //                   from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+                //                   union
+                //                   select isGood, Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                //                   from tblATE_Recipes AR 
+                //                   inner join Recipes R on R.id=AR.Recipe_id
+                //                   ) as Ate on pd.Patients_id=ate.Patients_id and pd.date_time=ate.date_time
+                //	order by pd.date_time desc";
+
+
+                string query = @"select t1.food_id,t1.food_name,t2.food_id,t2.name,cast((t1.countGood*1.0)/t2.foodCount*100as  decimal(10,1)) as ratio,t2.image
+				from
+				(select Ate.food_id,ate.name as food_name, count(distinct pd.date_time)as 'countGood'
+					 from
+					( select *
+					 from
+					( select *,ROW_NUMBER() over(order by date_time) as num
+					 from tblPatientData
+					 where Patients_id=@id)as pd1
+					 inner join (
+					 select date_time as date_time2,blood_sugar_level as blood_sugar_level2,ROW_NUMBER() over(order by date_time) as num2
+					 from tblPatientData
+					 where Patients_id=@id 
+					 )pd2 on pd2.num2=pd1.num+1
+					 where pd2.blood_sugar_level2 between 75 and 155 and DATEDIFF(second, pd1.date_time, pd2.date_time2) / 3600.0 between 2 and 4 
+					 and pd1.injectionType='food' and pd1.value_of_ingection is not null and pd1.blood_sugar_level>75)as pd
+					   inner join (
+                        select isGood, Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+                        union
+                        select isGood, Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Recipes AR 
+                        inner join Recipes R on R.id=AR.Recipe_id
+                        ) as Ate on pd.Patients_id=ate.Patients_id and pd.date_time=ate.date_time
+						group by Ate.food_id ,ate.name)as t1 inner join
+
+						(select Ate.food_id,Ate.name,count(distinct date_time)as foodCount,Ate.image
+						from
+						(select isGood, Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+						where Patients_id=@id
+                        union
+                        select isGood, Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,name,amount,image
+                        from tblATE_Recipes AR 
+                        inner join Recipes R on R.id=AR.Recipe_id
+						where Patients_id=@id
+                        ) as Ate
+						group by  Ate.food_id,Ate.name,Ate.image)as t2 on t1.food_id=t2.food_id";
+
+
+
+
+
+
+
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", userId);
+
+
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "foodRecomendtion");
+                DataTable dt = ds.Tables["foodRecomendtion"];
+
+                return Content(HttpStatusCode.OK, dt);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("api/Food/getUnitOfMeasure")]

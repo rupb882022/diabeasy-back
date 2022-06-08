@@ -928,7 +928,19 @@ namespace WebApi.Controllers
 
                 DB.tblPatientData.Add(p);
                 DB.SaveChanges();
+                //is good food
+                //if(PatientDatadata.blood_sugar_level>75 && PatientDatadata.blood_sugar_level <= 155)
+                //{
+                //   tblPatientData pd= DB.tblPatientData.Where(x => x.Patients_id == (int)PatientDatadata.Patients_id).OrderByDescending(z => z.date_time).FirstOrDefault();
+                //    if (pd != null&&pd.value_of_ingection!=null&& pd.value_of_ingection>0)
+                //    {
+                //        double diifhour = (pd.date_time - PatientDatadata.date_time).TotalHours;
+                //        if(diifhour>=2&& diifhour <= 4)
+                //        {
 
+                //        }
+                //    }
+                //}
 
                 return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
             }
