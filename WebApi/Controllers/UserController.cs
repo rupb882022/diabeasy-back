@@ -858,6 +858,23 @@ namespace WebApi.Controllers
                             DB.tblEventOf.Remove(e);
                         }
                     }
+                    List <tblATE_Ingredients> AI= DB.tblATE_Ingredients.Where(x => x.date_time == t&&x.Patients_id== userId).ToList();
+                    if (AI != null && AI.Count > 0)
+                    {
+                        foreach(tblATE_Ingredients ai in AI)
+                        {
+                            DB.tblATE_Ingredients.Remove(ai);
+                        }  
+                    }
+                    List<tblATE_Recipes> AR = DB.tblATE_Recipes.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
+                    if (AI != null && AI.Count > 0)
+                    {
+                        foreach (tblATE_Recipes ar in AR)
+                        {
+                            DB.tblATE_Recipes.Remove(ar);
+                        }
+                    }
+                    DB.SaveChanges();
                     DB.tblPatientData.Remove(p);
                     DB.SaveChanges();
                     return Content(HttpStatusCode.OK, p);
