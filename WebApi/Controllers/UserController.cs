@@ -841,15 +841,23 @@ namespace WebApi.Controllers
 
 
         [HttpDelete]
-        [Route("api/User/deleteTableRow/{time}")]
-        public IHttpActionResult Delete(string time)
+        [Route("api/User/deleteTableRow/{time}/{userId}")]
+        public IHttpActionResult Delete(string time,int userId)
         {
             try
             {
                 DateTime t = Convert.ToDateTime(time.ToString().Replace("!", ":"));
-                tblPatientData p = DB.tblPatientData.SingleOrDefault(x => x.date_time == t);
+                tblPatientData p = DB.tblPatientData.SingleOrDefault(x => x.date_time == t && x.Patients_id == userId);
                 if (p != null)
                 {
+                   List <tblEventOf> E= DB.tblEventOf.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
+                    if (E != null && E.Count > 0)
+                    {
+                        foreach (tblEventOf e in E)
+                        {
+                            DB.tblEventOf.Remove(e);
+                        }
+                    }
                     DB.tblPatientData.Remove(p);
                     DB.SaveChanges();
                     return Content(HttpStatusCode.OK, p);

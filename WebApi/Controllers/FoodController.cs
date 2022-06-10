@@ -510,7 +510,7 @@ namespace WebApi.Controllers
                 //	order by pd.date_time desc";
 
 
-                string query = @"select t1.food_id,t1.food_name,t2.food_id,t2.name,cast((t1.countGood*1.0)/t2.foodCount*100as  decimal(10,1)) as ratio,t2.image
+                string query = @"select t1.food_name,t2.food_id,cast((t1.countGood*1.0)/t2.foodCount*100as  decimal(10,1)) as ratio,t2.image,t1.countGood,t2.foodCount
 				from
 				(select Ate.food_id,ate.name as food_name, count(distinct pd.date_time)as 'countGood'
 					 from
