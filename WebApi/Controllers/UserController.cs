@@ -584,6 +584,42 @@ namespace WebApi.Controllers
 
         }
 
+        [HttpGet]
+        [Route("api/User/more_details_PD/{id}/{date_time}")]
+        public IHttpActionResult GET_more_details_PD(int id,DateTime dateTime)
+        {
+
+            try
+            {
+                string query = @"select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,I.name as name_food,amount,I.image as image_food
+                        from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
+						inner join tblUnitOfMeasure UM on um.id=Ai.UnitOfMeasure_id
+						 where Patients_id=@id  and date_time=@date_time
+                        union
+                        select Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,R.name as name_food,amount,R.image as image_food
+                        from tblATE_Recipes AR 
+                        inner join Recipes R on R.id=AR.Recipe_id
+						inner join tblUnitOfMeasure UM on um.id=Ar.UnitOfMeasure_id
+						where Patients_id=@id and date_time=@date_time";
+
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+                adpter.SelectCommand.Parameters.AddWithValue("@id", id);
+                adpter.SelectCommand.Parameters.AddWithValue("@date_time", dateTime);
+
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "DataPdDetails");
+                DataTable dt = ds.Tables["DataPdDetails"];
+
+                return Content(HttpStatusCode.OK, dt);
+            }
+            catch (Exception e)
+            {
+                logger.Error("do not found ");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
+
 
 
         [HttpPost]
