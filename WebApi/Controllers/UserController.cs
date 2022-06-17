@@ -586,11 +586,12 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("api/User/more_details_PD/{id}/{date_time}")]
-        public IHttpActionResult GET_more_details_PD(int id,DateTime dateTime)
+        public IHttpActionResult GET_more_details_PD(int id,string date_time)
         {
 
             try
             {
+                DateTime dateTime = Convert.ToDateTime(date_time.Replace("!", ":"));
                 string query = @"select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,I.name as name_food,amount,I.image as image_food
                         from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
 						inner join tblUnitOfMeasure UM on um.id=Ai.UnitOfMeasure_id
