@@ -416,13 +416,13 @@ namespace WebApi.Controllers
             try
             {
 
-            tblPatientData  pd= DB.tblPatientData.Where(x => x.Patients_id== id).OrderByDescending(z=>z.date_time).FirstOrDefault();
+                tblPatientData pd = DB.tblPatientData.Where(x => x.Patients_id == id).OrderByDescending(z => z.date_time).FirstOrDefault();
 
                 if (pd == null)
                 {
                     throw new Exception("cannot find Patients_id the id is:" + id);
                 }
-              
+
                 return Content(HttpStatusCode.OK, pd.date_time);
             }
             catch (Exception e)
@@ -586,21 +586,29 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("api/User/more_details_PD/{id}/{date_time}")]
-        public IHttpActionResult GET_more_details_PD(int id,string date_time)
+        public IHttpActionResult GET_more_details_PD(int id, string date_time)
         {
 
             try
             {
                 DateTime dateTime = Convert.ToDateTime(date_time.Replace("!", ":"));
-                string query = @"select Ingredient_id as food_id,Patients_id,date_time,UnitOfMeasure_id,I.name as name_food,amount,I.image as image_food
+                string query = @"select I.id as food_id,Patients_id,date_time,AI.UnitOfMeasure_id,I.name as name_food,amount,I.image as image_food,UM.name as UM_name,
+						case when AI.UnitOfMeasure_id<>5 then B.carbohydrates*amount else B.carbohydrates*(amount/100) end as 'carbohydrates' ,
+						 	case when AI.UnitOfMeasure_id<>5 then B.sugars*amount else B.sugars*(amount/100) end as 'sugars',
+								case when AI.UnitOfMeasure_id<>5 then B.weightInGrams*amount else amount end as 'weightInGrams'
                         from tblATE_Ingredients AI inner join Ingredients I on I.id=AI.Ingredient_id
 						inner join tblUnitOfMeasure UM on um.id=Ai.UnitOfMeasure_id
+						inner join tblBelong B on B.Ingredient_id=I.id and B.UnitOfMeasure_id=AI.UnitOfMeasure_id
 						 where Patients_id=@id  and date_time=@date_time
                         union
-                        select Recipe_id as food_id,Patients_id,date_time,UnitOfMeasure_id,R.name as name_food,amount,R.image as image_food
+                      select R.id as food_id,Patients_id,date_time,AR.UnitOfMeasure_id,R.name as name_food,amount,R.image as image_food,UM.name as UM_name,
+							case when AR.UnitOfMeasure_id<>5 then BR.carbohydrates*amount else BR.carbohydrates*(amount/100) end as 'carbohydrates' ,
+						 	case when AR.UnitOfMeasure_id<>5 then BR.sugars*amount else BR.sugars*(amount/100) end as 'sugars',
+								case when AR.UnitOfMeasure_id<>5 then BR.weightInGrams*amount else amount end as 'weightInGrams'
                         from tblATE_Recipes AR 
                         inner join Recipes R on R.id=AR.Recipe_id
 						inner join tblUnitOfMeasure UM on um.id=Ar.UnitOfMeasure_id
+						inner join tblBelongToRecipe BR on BR.Recipe_id=R.id and AR.UnitOfMeasure_id=BR.UnitOfMeasure_id
 						where Patients_id=@id and date_time=@date_time";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
@@ -879,7 +887,7 @@ namespace WebApi.Controllers
 
         [HttpDelete]
         [Route("api/User/deleteTableRow/{time}/{userId}")]
-        public IHttpActionResult Delete(string time,int userId)
+        public IHttpActionResult Delete(string time, int userId)
         {
             try
             {
@@ -887,7 +895,7 @@ namespace WebApi.Controllers
                 tblPatientData p = DB.tblPatientData.SingleOrDefault(x => x.date_time == t && x.Patients_id == userId);
                 if (p != null)
                 {
-                   List <tblEventOf> E= DB.tblEventOf.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
+                    List<tblEventOf> E = DB.tblEventOf.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
                     if (E != null && E.Count > 0)
                     {
                         foreach (tblEventOf e in E)
@@ -895,13 +903,13 @@ namespace WebApi.Controllers
                             DB.tblEventOf.Remove(e);
                         }
                     }
-                    List <tblATE_Ingredients> AI= DB.tblATE_Ingredients.Where(x => x.date_time == t&&x.Patients_id== userId).ToList();
+                    List<tblATE_Ingredients> AI = DB.tblATE_Ingredients.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
                     if (AI != null && AI.Count > 0)
                     {
-                        foreach(tblATE_Ingredients ai in AI)
+                        foreach (tblATE_Ingredients ai in AI)
                         {
                             DB.tblATE_Ingredients.Remove(ai);
-                        }  
+                        }
                     }
                     List<tblATE_Recipes> AR = DB.tblATE_Recipes.Where(x => x.date_time == t && x.Patients_id == userId).ToList();
                     if (AI != null && AI.Count > 0)
