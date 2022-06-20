@@ -38,7 +38,7 @@ namespace diabeasy_back
                 SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new System.Net.NetworkCredential("diabeasyapp@gmail.com", "talgalidan");
+                smtp.Credentials = new System.Net.NetworkCredential("diabeasyapp@gmail.com", "gphncdtawpjokpwh");
                 smtp.Send(mail);
                 return true;
             }
