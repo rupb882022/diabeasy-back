@@ -38,7 +38,7 @@ namespace diabeasy_back
                 SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new System.Net.NetworkCredential("diabeasyapp@gmail.com", "gphncdtawpjokpwh");
+                smtp.Credentials = new System.Net.NetworkCredential("diabeasyapp@gmail.com", "gphncdtawpjokpwh");//talgalidan
                 smtp.Send(mail);
                 return true;
             }
@@ -384,66 +384,81 @@ namespace diabeasy_back
             }
         }
 
-        //public async Task<object> MLRecommend(int Blood_sugar_level, double TotalCarbs, DateTime date_time)
-        //{
-
-        //    HttpClient client = new HttpClient();
-        //    Uri url = new Uri("https://diabeasyml.herokuapp.com/predict");
-
-        //    //client.BaseAddress = url;
-
-
-        //    // Add an Accept header for JSON format.
-        //    client.DefaultRequestHeaders.Accept.Add(
-        //    new MediaTypeWithQualityHeaderValue("application/json"));
-        //    try
+        //    public async Task<object> MLRecommend(int Blood_sugar_level, double TotalCarbs, DateTime date_time)
         //    {
-        //        string Weekday = date_time.DayOfWeek.ToString();
-        //        string DayTime = "";
-        //        if (date_time.Hour > 0 && date_time.Hour <= 6)
+
+        //        HttpClient client = new HttpClient();
+        //        Uri url = new Uri("https://diabeasyml.herokuapp.com/predict");
+
+        //        //client.BaseAddress = url;
+
+
+        //        // Add an Accept header for JSON format.
+        //        client.DefaultRequestHeaders.Accept.Add(
+        //        new MediaTypeWithQualityHeaderValue("application/json"));
+        //        try
         //        {
-        //            DayTime = "night";
+        //            string Weekday = date_time.DayOfWeek.ToString();
+        //            string DayTime = "";
+        //            if (date_time.Hour > 0 && date_time.Hour <= 6)
+        //            {
+        //                DayTime = "night";
+        //            }
+        //            else if (date_time.Hour > 6 && date_time.Hour <= 12)
+        //            {
+        //                DayTime = "morning";
+        //            }
+        //            else if (date_time.Hour > 12 && date_time.Hour <= 18)
+        //            {
+        //                DayTime = "noon";
+        //            }
+        //            else if (date_time.Hour > 18 && date_time.Hour <= 23)
+        //            {
+        //                DayTime = "evning";
+        //            }
+
+        //            int Value_of_ingection = 10;
+        //            //string jsonObject =
+        //            //"{" + $"Weekday = {Weekday}, DayTime = {DayTime}, Blood_sugar_level = {Blood_sugar_level}, Value_of_ingection = {Value_of_ingection}, TotalCarbs = {TotalCarbs}" + "}";
+        //            tblPatientDataML jsonObject = new tblPatientDataML()
+        //            {
+        //                Weekday = Weekday,
+        //                DayTime = DayTime,
+        //                blood_sugar_level = Blood_sugar_level.ToString(),
+        //                value_of_ingection = Value_of_ingection.ToString(),
+        //                TotalCarbs = TotalCarbs.ToString()
+        //            };
+        //            string json = JsonConvert.SerializeObject(jsonObject);
+
+        //            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //            var result =await client.PostAsync(url, content);
+
+        //            //var res = JsonConvert.DeserializeObject(result.ToString());
+
+        //            return result;
+
         //        }
-        //        else if (date_time.Hour > 6 && date_time.Hour <= 12)
+        //        catch (Exception ex)
         //        {
-        //            DayTime = "morning";
+        //            logger.Fatal(ex.Message);
+        //            return null;
         //        }
-        //        else if (date_time.Hour > 12 && date_time.Hour <= 18)
+        //        finally
         //        {
-        //            DayTime = "noon";
+        //            client.Dispose();
         //        }
-        //        else if (date_time.Hour > 18 && date_time.Hour <= 23)
-        //        {
-        //            DayTime = "evning";
-        //        }
-        //        int Value_of_ingection = 10;
-        //        string jsonObject = 
-        //        "{"+ $"Weekday = {Weekday}, DayTime = {DayTime}, Blood_sugar_level = {Blood_sugar_level}, Value_of_ingection = {Value_of_ingection}, TotalCarbs = {TotalCarbs}" +"}";
-
-
-        //        var content = new StringContent(JsonConvert.DeserializeObject(jsonObject).ToString(), Encoding.UTF8, "application/json");
-                
-        //        var result = client.PostAsync(url, content).Result;
-
-        //        var res = JsonConvert.DeserializeObject(result.ToString());
-        //        return res;
-
-
-
-
         //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Fatal(ex.Message);
-        //        return null;
-        //    }
-        //    finally
-        //    {
-        //        client.Dispose();
-        //    }
-        //}
 
     }
+    //public class tblPatientDataML
+    //{
+    //    public string blood_sugar_level;
+    //    public string value_of_ingection;
+    //    public string DayTime;
+    //    public string Weekday;
+    //    public string TotalCarbs;
+    //}
     //public class PushNotData
     //{
     //    public string to { get; set; }

@@ -54,17 +54,19 @@ namespace WebApi.Controllers
                 //check if getIngredient exist when user search getIngredient
                 if (foodName != "all")
                 {
-                   Ingredients I = null;
-                  //  Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
+                    Ingredients I = null;
+                    //  Ingredients I = DB.Ingredients.Where(x => x.name.Contains(foodName) && (x.addByUserId == null || x.addByUserId == useId)).FirstOrDefault();
                     if (I == null)
                     {
-                             foodName=foodName.ToLower();
-                           var res = food.search_by_name_api(foodName);
-                        logger.Info("res of food serach api- row effected"+ res);
+                        foodName = foodName.ToLower();
+                        var res = food.search_by_name_api(foodName);
+                        logger.Info("res of food serach api- row effected" + res);
                     }
                 }
-
-                string query = @" select  distinct I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
+                string query = "";
+                if (useId != -1)
+                {
+                    query = @" select  distinct I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId,
                                 case WHEN  FI.Ingredient_id is not null then FI.Ingredient_id else 0 END as favorit
 								from Ingredients I
 								 inner join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
@@ -72,11 +74,21 @@ namespace WebApi.Controllers
 								inner join tblBelong B on B.Ingredient_id= I.id
                                  inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id
 								 left join (select Ingredient_id from tblFavoritesIngredients where Patient_id=@useId) FI on FI.Ingredient_id=I.id
-                                 where (I.addByUserId is null or I.addByUserId=@useId) ";
+                              where (I.addByUserId is null or I.addByUserId=@useId) ";
 
-                if (foodName != "all")
+                    if (foodName != "all")
+                    {
+                        query += " and I.name like @search ";
+                    }
+                }
+                else //case for admin
                 {
-                    query += " and I.name like @search ";
+                    query = @"select   I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId
+								from Ingredients I
+								 inner join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
+                                inner join tblCategory C on TPI.Category_id= C.id
+								inner join tblBelong B on B.Ingredient_id= I.id
+                                 inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id";
                 }
                 query += " order by I.id,C.id,UM_ID";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
@@ -92,75 +104,76 @@ namespace WebApi.Controllers
                 IngrediantDto ingrediant = new IngrediantDto();
 
 
-                if (dt.Rows.Count > 0) { 
-                for (int i = 0; i < dt.Rows.Count; i++)
+                if (dt.Rows.Count > 0)
                 {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
 
-                    if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
-                    {
-                        ingrediants.Add(ingrediant);
-                    }
-
-                    tblUnitOfMeasureDto Unit = new tblUnitOfMeasureDto()
-                    {
-                        id = (int)dt.Rows[i]["UM_ID"],
-                        name = dt.Rows[i]["UM_name"].ToString(),
-                        carbs = double.Parse(dt.Rows[i]["carbohydrates"].ToString()),
-                        suger = double.Parse(dt.Rows[i]["sugars"].ToString()),
-                        weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString()),
-                        //image = dt.Rows[i]["UM_image"].ToString()
-                    };
-                    if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
-                    {
-                        ingrediant = new IngrediantDto()
+                        if (i != 0 && (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
                         {
-                            id = (int)dt.Rows[i]["id"],
-                            name = dt.Rows[i]["IngrediantName"].ToString(),
-                            image = dt.Rows[i]["image"].ToString(),
-                            addByUserId = dt.Rows[i]["addByUserId"].ToString(),
-                        };
-
-                    }
-                    if (ingrediant.UnitOfMeasure.Count == 0)
-                    {
-                        ingrediant.UnitOfMeasure.Add(Unit);
-                    }
-                    else
-                    {
-                        bool exist = false;
-                        for (int z = 0; z < ingrediant.UnitOfMeasure.Count; z++)
-                        {
-                            if ((int)ingrediant.UnitOfMeasure[z].id == Unit.id)
-                            {
-                                exist = true;
-                                break;
-                            }
+                            ingrediants.Add(ingrediant);
                         }
-                        if (!exist)
+
+                        tblUnitOfMeasureDto Unit = new tblUnitOfMeasureDto()
+                        {
+                            id = (int)dt.Rows[i]["UM_ID"],
+                            name = dt.Rows[i]["UM_name"].ToString(),
+                            carbs = double.Parse(dt.Rows[i]["carbohydrates"].ToString()),
+                            suger = double.Parse(dt.Rows[i]["sugars"].ToString()),
+                            weightInGrams = float.Parse(dt.Rows[i]["weightInGrams"].ToString()),
+                            //image = dt.Rows[i]["UM_image"].ToString()
+                        };
+                        if (i == 0 || (int)dt.Rows[i]["id"] != (int)dt.Rows[i - 1]["id"])
+                        {
+                            ingrediant = new IngrediantDto()
+                            {
+                                id = (int)dt.Rows[i]["id"],
+                                name = dt.Rows[i]["IngrediantName"].ToString(),
+                                image = dt.Rows[i]["image"].ToString(),
+                                addByUserId = dt.Rows[i]["addByUserId"].ToString(),
+                            };
+
+                        }
+                        if (ingrediant.UnitOfMeasure.Count == 0)
                         {
                             ingrediant.UnitOfMeasure.Add(Unit);
+                        }
+                        else
+                        {
+                            bool exist = false;
+                            for (int z = 0; z < ingrediant.UnitOfMeasure.Count; z++)
+                            {
+                                if ((int)ingrediant.UnitOfMeasure[z].id == Unit.id)
+                                {
+                                    exist = true;
+                                    break;
+                                }
+                            }
+                            if (!exist)
+                            {
+                                ingrediant.UnitOfMeasure.Add(Unit);
 
+                            }
+                        }
+
+                        if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
+                        {
+
+                            ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
+                        }
+                        //else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"] && ingrediant.category.Count <= 1)
+                        //{
+                        //    ingrediant.UnitOfMeasure.Add(Unit);
+                        //}
+
+                        if (useId != -1 && (int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
+                        {
+                            ingrediant.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
+                            ingrediant.favorit = true;
                         }
                     }
-
-                    if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
-                    {
-
-                        ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
-                    }
-                    //else if (i == 0 || (int)dt.Rows[i]["id"] == (int)dt.Rows[i - 1]["id"] && ingrediant.category.Count <= 1)
-                    //{
-                    //    ingrediant.UnitOfMeasure.Add(Unit);
-                    //}
-
-                    if ((int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
-                    {
-                        ingrediant.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
-                        ingrediant.favorit = true;
-                    }
-                }
-                //add last ingrediant in query list
-                ingrediants.Add(ingrediant);
+                    //add last ingrediant in query list
+                    ingrediants.Add(ingrediant);
                 }
                 else
                 {
@@ -185,7 +198,10 @@ namespace WebApi.Controllers
             try
             {
                 string recipe_ids = "";
-                string query = @"select R.*,CF.Ingredient_id,I.name as Ingredients_name,i.image as Ingredients_image, amount,UM.id as Ingredient_MeasureId,UM.name as Ingredient_MeasureName,UM2.id as recipe_Unit_id,UM2.name as recipe_Unit_name,BTR.carbohydrates,BTR.sugars,BTR.weightInGrams
+                string query = "";
+                if (useId != -1)
+                {
+                    query = @"select R.*,CF.Ingredient_id,I.name as Ingredients_name,i.image as Ingredients_image, amount,UM.id as Ingredient_MeasureId,UM.name as Ingredient_MeasureName,UM2.id as recipe_Unit_id,UM2.name as recipe_Unit_name,BTR.carbohydrates,BTR.sugars,BTR.weightInGrams
                                  , case WHEN  FI.Recipes_id is not null then FI.Recipes_id else 0 END as favorit
                                 from Recipes R 
                                 inner join tblConsistOf CF on R.id=CF.Recipe_id
@@ -196,9 +212,21 @@ namespace WebApi.Controllers
 	                            left join (select Recipes_id from tblFavoritesRecipes where Patient_id=@useId) FI on FI.Recipes_id=R.id 
                                 where (R.addByUserId is null or R.addByUserId= @useId) ";
 
-                if (foodName != "all")
+                    if (foodName != "all")
+                    {
+                        query += " and ( R.name like @foodName or I.name like @foodName or cookingMethod like @foodName ) ";
+                    }
+                }
+                else
                 {
-                    query += " and ( R.name like @foodName or I.name like @foodName or cookingMethod like @foodName ) ";
+                    query = @"select R.*,CF.Ingredient_id,I.name as Ingredients_name,i.image as Ingredients_image, amount,UM.id as Ingredient_MeasureId,UM.name as Ingredient_MeasureName,UM2.id as recipe_Unit_id,UM2.name as recipe_Unit_name,BTR.carbohydrates,BTR.sugars,BTR.weightInGrams
+                                from Recipes R 
+                                inner join tblConsistOf CF on R.id=CF.Recipe_id
+								inner join Ingredients I on I.id=CF.Ingredient_id
+                                inner join tblUnitOfMeasure UM on CF.UnitOfMeasure_id=UM.id
+                                inner join tblBelongToRecipe BTR on BTR.Recipe_id=R.id 
+								inner join  tblUnitOfMeasure UM2 on UM2.id=BTR.UnitOfMeasure_id";
+
                 }
                 query += " order by R.id,recipe_Unit_id";
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
@@ -265,7 +293,7 @@ namespace WebApi.Controllers
                         };
                         Recipe.Ingrediants.Add(ingrediant);
                     }
-                    if ((int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
+                    if (useId != -1 && (int)dt.Rows[i]["favorit"] != 0 && (i == 0 || (int)dt.Rows[i]["favorit"] != (int)dt.Rows[i - 1]["favorit"]))
                     {
                         Recipe.category.Add(new tblCategoryDto() { id = 4, name = "Favorites" });
                         Recipe.favorit = true;
@@ -409,7 +437,7 @@ namespace WebApi.Controllers
                             blood_sugar_level = (int)dt.Rows[i]["blood_sugar_level"],
                             blood_sugar_level_2H = (int)dt.Rows[i]["blood_sugar_level2H"],
                             totalCarbs = (double)dt.Rows[i]["totalCarbs"],
-                            times_eaten=(int)dt.Rows[i]["count"],
+                            times_eaten = (int)dt.Rows[i]["count"],
                         };
                         hipo.food.Add(ate);
                     }
@@ -460,7 +488,7 @@ namespace WebApi.Controllers
                 List<HipoDto> listNew = new List<HipoDto>();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (i!=0&&list[i].food.Count== list[i-1].food.Count && list[i].food[0].foodId== list[i-1].food[0].foodId)
+                    if (i != 0 && list[i].food.Count == list[i - 1].food.Count && list[i].food[0].foodId == list[i - 1].food[0].foodId)
                     {
                         //list.RemoveAt(i);
                     }

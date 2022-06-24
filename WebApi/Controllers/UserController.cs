@@ -1029,10 +1029,10 @@ namespace WebApi.Controllers
         //{
         //    try
         //    {
-        //        user.MLRecommend((int)PatientDatadata.blood_sugar_level, (double)PatientDatadata.totalCarbs, DateTime.Now);
+        //      var res=  user.MLRecommend((int)PatientDatadata.blood_sugar_level, (double)PatientDatadata.totalCarbs, DateTime.Now);
 
 
-        //        return Created(new Uri(Request.RequestUri.AbsoluteUri), PatientDatadata);
+        //        return Created(new Uri(Request.RequestUri.AbsoluteUri), res);
         //    }
         //    catch (Exception e)
         //    {
