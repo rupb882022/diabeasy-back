@@ -631,6 +631,60 @@ namespace WebApi.Controllers
 
 
 
+        [HttpGet]
+        [Route("api/User/admin_details")]
+        public IHttpActionResult admin_details()
+        {
+
+            try
+            {
+                string query = @"
+select p.Patients,d.Doctors,f.forum,f.subject,Ingredients,Recipes,goodReco,bedReco,report
+from
+(select 1 as x, count (id) as Patients
+from tblPatients) p
+inner join
+(select 1 as x, count (id) as Doctors
+from tblDoctor) d on d.x=p.x
+inner join (select 1 as x, count (id) as forum,count(distinct subject)as subject
+from tblForum)f on f.x=p.x
+inner join
+(select 1 as x, count (id) as Ingredients
+from Ingredients
+where addByUserId is not null) I on I.x=p.x
+inner join
+(select 1 as x, count (id) as Recipes
+from Recipes
+where addByUserId is not null) R on R.x=p.x
+inner join
+(select 1 as x,sum(case when system_recommendations=value_of_ingection then 1 else 0 end) as 'goodReco',
+sum(case when system_recommendations<>value_of_ingection then 1 else 0 end) as 'bedReco'
+from tblPatientData
+where system_recommendations is not null)re on re.x=p.x
+inner join
+(select 1 as x, count(*) as report
+from tblHistorylog
+where Historylog_key='report') h on p.x=h.x";
+
+                SqlDataAdapter adpter = new SqlDataAdapter(query, con);
+
+
+                DataSet ds = new DataSet();
+                adpter.Fill(ds, "adminDetails");
+                DataTable dt = ds.Tables["adminDetails"];
+
+                return Content(HttpStatusCode.OK, dt);
+            }
+            catch (Exception e)
+            {
+                logger.Error("do not found ");
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
+
+
+
         [HttpPost]
         [Route("api/User/RegisterUser")]
         public IHttpActionResult RegisterUser([FromBody] UserDto obj)
