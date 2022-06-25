@@ -155,8 +155,7 @@ namespace WebApi.Controllers
 
                             }
                         }
-
-                        if (ingrediant.category.Count == 0 || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"])
+                        if ( dt.Rows[i]["categoryID"] != DBNull.Value  && (ingrediant.category.Count == 0 || dt.Rows[i-1]["categoryID"] != DBNull.Value || (int)dt.Rows[i]["categoryID"] != (int)dt.Rows[i - 1]["categoryID"]))
                         {
 
                             ingrediant.category.Add(new tblCategoryDto() { id = (int)dt.Rows[i]["categoryID"], name = dt.Rows[i]["categoryName"].ToString() });
@@ -1005,7 +1004,7 @@ namespace WebApi.Controllers
                 tblCategory c;
                 if (categoryId == -1)
                 {
-                    c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
+                     c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
                     if (c == null)
                     {
                         DB.tblCategory.Add(new tblCategory()
@@ -1087,7 +1086,7 @@ namespace WebApi.Controllers
                 con.Open();
 
                 SqlCommand cmd = new SqlCommand(query, con);
-
+             
                 int res = cmd.ExecuteNonQuery();
                 if (res < 1)
                 {
