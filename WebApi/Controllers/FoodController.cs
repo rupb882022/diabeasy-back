@@ -85,7 +85,7 @@ namespace WebApi.Controllers
                 {
                     query = @"select   I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId
 								from Ingredients I
-								 inner join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
+								 left join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
                                 inner join tblCategory C on TPI.Category_id= C.id
 								inner join tblBelong B on B.Ingredient_id= I.id
                                  inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id";
@@ -303,11 +303,16 @@ namespace WebApi.Controllers
                 Recipes.Add(Recipe);
                 recipe_ids += Recipe.id;
 
+
                 //set the category of recipes
                 query = @"select R.id,C.id as categoryID,C.name as categoryName
                         from Recipes R  inner join tblPartOf_Recipes TPR on R.id= TPR.Recipe_id
-                        inner join tblCategory C on TPR.Category_id= C.id
-                     where(R.addByUserId is null or R.addByUserId = @useId) ";
+                        inner join tblCategory C on TPR.Category_id= C.id";
+
+                if (useId != -1)
+                {
+                    query += "  where(R.addByUserId is null or R.addByUserId = @useId) ";
+                }
 
                 if (foodName != "all")
                 {
@@ -316,7 +321,10 @@ namespace WebApi.Controllers
                 query += " order by R.id";
 
                 adpter = new SqlDataAdapter(query, con);
-                adpter.SelectCommand.Parameters.AddWithValue("@useId", useId);
+                if (useId != -1)
+                {
+                    adpter.SelectCommand.Parameters.AddWithValue("@useId", useId);
+                }
 
                 adpter.Fill(ds, "tblCategory");
                 dt = ds.Tables["tblCategory"];
@@ -989,8 +997,8 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
-        [Route("api/Food/addCategory/{foodIDs}/{categoryName}/{categoryId}")]
-        public IHttpActionResult addCategory(List<int>foodIDs, string categoryName, int categoryId)
+        [Route("api/Food/addCategory/{categoryName}/{categoryId}")]
+        public IHttpActionResult addCategory([FromBody] int[] foodIDs, string categoryName, int categoryId)
         {
             try
             {
@@ -1012,7 +1020,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-                c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
+                c = DB.tblCategory.Where(x => x.name == categoryName).SingleOrDefault();
                 string query = "";
                 if (foodIDs[0] % 2 == 0)
                 {
@@ -1024,7 +1032,7 @@ namespace WebApi.Controllers
                     //insert into category connection
                     query = "insert into PartOf_Ingredients values ";
                 }
-                for (int i = 0; i < foodIDs.Count; i++)
+                for (int i = 0; i < foodIDs.Length; i++)
                 {
                     query += $"({foodIDs[i]},{c.id}),";
                 }
@@ -1055,8 +1063,8 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete]
-        [Route("api/Food/deleteCategory/{idfoodIDs}/{categoryId}")]
-        public IHttpActionResult deleteCategory(List<int> foodIDs,int categoryId)
+        [Route("api/Food/deleteCategory/{categoryId}")]
+        public IHttpActionResult deleteCategory([FromBody] int[] foodIDs, int categoryId)
         {
             try
             {
@@ -1069,7 +1077,7 @@ namespace WebApi.Controllers
                 {
                     query = "delete from PartOf_Ingredients where Ingredients_id in (";
                 }
-                for (int i = 0; i < foodIDs.Count; i++)
+                for (int i = 0; i < foodIDs.Length; i++)
                 {
                     query += foodIDs[i] + ",";
 
