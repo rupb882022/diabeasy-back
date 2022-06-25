@@ -86,7 +86,7 @@ namespace WebApi.Controllers
                     query = @"select   I.id, I.name as IngrediantName, I.image,C.id as categoryID,C.name as categoryName,UM.id as UM_ID, UM.name as UM_name,UM.image as UM_image, B.carbohydrates, B.sugars,B.weightInGrams,I.addByUserId
 								from Ingredients I
 								 left join PartOf_Ingredients TPI on I.id= TPI.Ingredients_id
-                                inner join tblCategory C on TPI.Category_id= C.id
+                                left join tblCategory C on TPI.Category_id= C.id
 								inner join tblBelong B on B.Ingredient_id= I.id
                                  inner join tblUnitOfMeasure UM on UM.id= B.UnitOfMeasure_id";
                 }
@@ -1005,7 +1005,7 @@ namespace WebApi.Controllers
                 tblCategory c;
                 if (categoryId == -1)
                 {
-                     c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
+                    c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
                     if (c == null)
                     {
                         DB.tblCategory.Add(new tblCategory()
@@ -1087,7 +1087,7 @@ namespace WebApi.Controllers
                 con.Open();
 
                 SqlCommand cmd = new SqlCommand(query, con);
-             
+
                 int res = cmd.ExecuteNonQuery();
                 if (res < 1)
                 {
