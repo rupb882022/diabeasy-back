@@ -988,26 +988,114 @@ namespace WebApi.Controllers
 
         }
 
-        //[HttpGet]
-        //[Route("api/Food/test/{foodName}")]
-        //public IHttpActionResult test(string foodName)
-        //{
-        //    try
-        //    {
-        //        var res =  food.search_by_name_api(foodName);
+        [HttpPut]
+        [Route("api/Food/addCategory/{foodIDs}/{categoryName}/{categoryId}")]
+        public IHttpActionResult addCategory(List<int>foodIDs, string categoryName, int categoryId)
+        {
+            try
+            {
+                tblCategory c;
+                if (categoryId == -1)
+                {
+                     c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
+                    if (c == null)
+                    {
+                        DB.tblCategory.Add(new tblCategory()
+                        {
+                            name = categoryName,
+                        });
+                        DB.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new Exception("there is allready that category name");
+                    }
+                }
+
+                c = DB.tblCategory.Where(x => x.name.ToLower() == categoryName.ToLower()).SingleOrDefault();
+                string query = "";
+                if (foodIDs[0] % 2 == 0)
+                {
+                    query = "insert into tblPartOf_Recipes values ";
+
+                }
+                else
+                {
+                    //insert into category connection
+                    query = "insert into PartOf_Ingredients values ";
+                }
+                for (int i = 0; i < foodIDs.Count; i++)
+                {
+                    query += $"({foodIDs[i]},{c.id}),";
+                }
+                query = query.Substring(0, query.Length - 1);
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query, con);
+                int res = cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot insert values into tblPartOf_Ingredients");
+                }
 
 
-        //        if (res!=null)
-        //        {
-        //            return Content(HttpStatusCode.OK, res.Result);
-        //        }
-        //        return Content(HttpStatusCode.BadRequest, "cannot find "+ foodName);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        logger.Fatal(e.Message);
-        //        return Content(HttpStatusCode.BadRequest, e.Message);
-        //    }
-        //}
+                DB.SaveChanges();
+
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), res);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+
+        }
+
+        [HttpDelete]
+        [Route("api/Food/deleteCategory/{idfoodIDs}/{categoryId}")]
+        public IHttpActionResult deleteCategory(List<int> foodIDs,int categoryId)
+        {
+            try
+            {
+                string query = "";
+                if (foodIDs[0] % 2 == 0)
+                {
+                    query = "delete from tblPartOf_Recipes where Recipe_id in (";
+                }
+                else
+                {
+                    query = "delete from PartOf_Ingredients where Ingredients_id in (";
+                }
+                for (int i = 0; i < foodIDs.Count; i++)
+                {
+                    query += foodIDs[i] + ",";
+
+                }
+                query = query.Substring(0, query.Length - 1);
+                query += ") and Category_id=" + categoryId;
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand(query, con);
+             
+                int res = cmd.ExecuteNonQuery();
+                if (res < 1)
+                {
+                    throw new Exception("cannot delete " + query);
+                }
+                return Content(HttpStatusCode.OK, res + " was deleted");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
     }
 }
