@@ -185,6 +185,33 @@ namespace WebApi.Controllers
 
 
         }
+        [HttpGet]
+        [Route("api/User/checkAdmin/{userName}/{password}")]
+        public IHttpActionResult checkAdmin(string userName,string password)
+        {
+            try
+            {
+            tblHistorylog Hemail= DB.tblHistorylog.Where(x => x.Historylog_value == userName && x.Historylog_key == "adminUserEmail").SingleOrDefault();
+            tblHistorylog Hpassword= DB.tblHistorylog.Where(x => x.Historylog_value == password && x.Historylog_key == "adminUserPassword").SingleOrDefault();
+
+            if(Hemail!=null&& Hpassword != null)
+            {
+                return Content(HttpStatusCode.OK,"");
+
+            }
+            else
+            {
+                throw new Exception("worng email or password");
+            }
+
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
         [HttpPost]
         [Route("api/User/HistoryLog")]
         public IHttpActionResult insertHistoryLog([FromBody] HistoryLogDto obj)
