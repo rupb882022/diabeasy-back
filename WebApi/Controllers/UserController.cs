@@ -187,22 +187,22 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         [Route("api/User/checkAdmin/{userName}/{password}")]
-        public IHttpActionResult checkAdmin(string userName,string password)
+        public IHttpActionResult checkAdmin(string userName, string password)
         {
             try
             {
-            tblHistorylog Hemail= DB.tblHistorylog.Where(x => x.Historylog_value == userName && x.Historylog_key == "adminUserEmail").SingleOrDefault();
-            tblHistorylog Hpassword= DB.tblHistorylog.Where(x => x.Historylog_value == password && x.Historylog_key == "adminUserPassword").SingleOrDefault();
+                tblHistorylog Hemail = DB.tblHistorylog.Where(x => x.Historylog_value == userName && x.Historylog_key == "adminUserEmail").SingleOrDefault();
+                tblHistorylog Hpassword = DB.tblHistorylog.Where(x => x.Historylog_value == password && x.Historylog_key == "adminUserPassword").SingleOrDefault();
 
-            if(Hemail!=null&& Hpassword != null)
-            {
-                return Content(HttpStatusCode.OK,"");
+                if (Hemail != null && Hpassword != null)
+                {
+                    return Content(HttpStatusCode.OK, "");
 
-            }
-            else
-            {
-                throw new Exception("worng email or password");
-            }
+                }
+                else
+                {
+                    throw new Exception("worng email or password");
+                }
 
             }
             catch (Exception e)
@@ -666,7 +666,7 @@ namespace WebApi.Controllers
             try
             {
                 string query = @"
-select p.Patients,d.Doctors,f.forum,f.subject,Ingredients,Recipes,goodReco,bedReco,report
+select p.Patients,d.Doctors,f.forum,f.subject,Ingredients,Recipes,goodReco,bedReco,report,openReport
 from
 (select 1 as x, count (id) as Patients
 from tblPatients) p
@@ -689,9 +689,9 @@ sum(case when system_recommendations<>value_of_ingection then 1 else 0 end) as '
 from tblPatientData
 where system_recommendations is not null)re on re.x=p.x
 inner join
-(select 1 as x, count(*) as report
-from tblHistorylog
-where Historylog_key='report') h on p.x=h.x";
+(select 1 as x,sum(case when active ='true' then 1 else 0 end) as 'openReport',count(*)as 'report'
+from alert
+where getting_user_id=-1) h on p.x=h.x";
 
                 SqlDataAdapter adpter = new SqlDataAdapter(query, con);
 
@@ -855,23 +855,23 @@ where Historylog_key='report') h on p.x=h.x";
         {
             try
             {
-               
-                    alert alert = new alert()
-                    {
-                        active = obj.active,
-                        getting_user_id = obj.getting_user_id,
-                        sendding_user_id = obj.sendding_user_id,
-                        content = obj.content,
-                        date_time = (DateTime)obj.date_time
-                    };
-                    DB.alert.Add(alert);
 
-                    DB.SaveChanges();
+                alert alert = new alert()
+                {
+                    active = obj.active,
+                    getting_user_id = obj.getting_user_id,
+                    sendding_user_id = obj.sendding_user_id,
+                    content = obj.content,
+                    date_time = (DateTime)obj.date_time
+                };
+                DB.alert.Add(alert);
+
+                DB.SaveChanges();
 
 
-                    return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+                return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
 
-                
+
             }
             catch (Exception e)
             {
@@ -941,6 +941,46 @@ where Historylog_key='report') h on p.x=h.x";
             }
         }
 
+
+        [HttpPut]
+        [Route("api/User/problemSolved")]
+        public IHttpActionResult problemSolved([FromBody] List<alert> obj)
+        {
+            try
+            {
+
+                foreach (alert item in obj)
+                {
+                    if (item.active==true)
+                    {
+                        alert a = DB.alert.Where(x => x.id == item.id).SingleOrDefault();
+                        if (a != null)
+                        {
+                            a.active = false;
+                            item.active = false;
+                            alert Newalert = new alert()
+                            {
+                                active = true,
+                                getting_user_id = a.sendding_user_id,
+                                sendding_user_id = -1,
+                                content = "fixReport",
+                                date_time = new DateTime()
+                            };
+                            DB.alert.Add(Newalert);
+                        }
+                    }
+
+                    DB.SaveChanges();
+
+                }
+                return Content(HttpStatusCode.OK, obj);
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
 
         [HttpPut]
         [Route("api/User/updateTableRow")]
