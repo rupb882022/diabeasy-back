@@ -847,6 +847,40 @@ where Historylog_key='report') h on p.x=h.x";
                 return Content(HttpStatusCode.BadRequest, e.Message);
             }
         }
+
+
+        [HttpPost]
+        [Route("api/User/setAdminReport")]
+        public IHttpActionResult setAdminReport([FromBody] alert obj)
+        {
+            try
+            {
+               
+                    alert alert = new alert()
+                    {
+                        active = obj.active,
+                        getting_user_id = obj.getting_user_id,
+                        sendding_user_id = obj.sendding_user_id,
+                        content = obj.content,
+                        date_time = (DateTime)obj.date_time
+                    };
+                    DB.alert.Add(alert);
+
+                    DB.SaveChanges();
+
+
+                    return Created(new Uri(Request.RequestUri.AbsoluteUri), obj);
+
+                
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+
         [HttpPost]
         [Route("api/User/addToken/{id}")]
         public IHttpActionResult user_addToken(int id, [FromBody] tblPatients obj)
