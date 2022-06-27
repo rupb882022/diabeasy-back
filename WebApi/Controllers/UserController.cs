@@ -964,7 +964,7 @@ where getting_user_id=-1) h on p.x=h.x";
                                 getting_user_id = a.sendding_user_id,
                                 sendding_user_id = -1,
                                 content = "fixReport",
-                                date_time = new DateTime()
+                                date_time = (DateTime)item.date_time,
                             };
                             DB.alert.Add(Newalert);
                         }
