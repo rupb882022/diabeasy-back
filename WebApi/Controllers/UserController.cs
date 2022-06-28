@@ -78,7 +78,7 @@ namespace WebApi.Controllers
                                    when DATEDIFF(HOUR,date_time,GETDATE())<(24*7) then 'Days'
                                    when DATEDIFF(HOUR,date_time,GETDATE())<(24*7*4) then 'Weeks'
                                     else 'Mounts' end 'daysLeftName'
-                                from alert a inner join (
+                                from alert a left join (
                                 select id,profileimage,firstname+' '+lastname as 'name'
                                 from tblPatients
                                 union
