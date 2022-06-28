@@ -909,6 +909,37 @@ where getting_user_id=-1) h on p.x=h.x";
         }
 
         [HttpPut]
+        [Route("api/User/PutPersonalInfo/{id}")]
+        public IHttpActionResult PutPersonalInfo(int id, [FromBody] tblPatients obj)
+        {
+            try
+            {
+                tblPatients P = DB.tblPatients.SingleOrDefault(x => x.id == id);
+                if (P != null)
+                {
+                    tblDoctor d = DB.tblDoctor.SingleOrDefault(x=>x.email==obj.email);
+                    P.firstname= obj.firstname;
+                    P.lastname= obj.lastname;
+                    P.weight= obj.weight;
+                    P.birthdate= obj.birthdate;
+                    P.height= obj.height;
+                    P.gender= obj.gender;
+                    P.InsulinType_id= obj.InsulinType_id;
+                    P.InsulinType_long_id= obj.InsulinType_long_id;
+                    P.Doctor_id = d.id;
+                    DB.SaveChanges();
+                    return Content(HttpStatusCode.OK, "Edit seccessfull");
+                }
+                return Content(HttpStatusCode.NotFound, "id=" + id + " is not found");
+            }
+            catch (Exception e)
+            {
+                logger.Fatal(e.Message);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+        }
+
+        [HttpPut]
         [Route("api/User/Prescription/{id}")]
         public IHttpActionResult Put(int id, [FromBody] tblPrescriptions obj)
         {
