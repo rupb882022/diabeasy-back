@@ -375,7 +375,7 @@ namespace diabeasy_back
                 adpter.Fill(ds, "tempData");
                 DataTable dt3 = ds.Tables["tempData"];
                 logger.Debug("Ml tempData rowNum= "+dt3.Rows[0]["rowNum"]);
-                return res;
+                return new { data=res, rowCount=dt3.Rows[0]["rowNum"] };
             }
             catch (Exception e)
             {

@@ -248,7 +248,31 @@ namespace WebApi.Controllers
 
         }
 
+        [HttpGet]
+        [Route("api/User/HistoryLog/{key}")]
+        public IHttpActionResult GetHistoryLogValue(string key)
+        {
 
+            try
+            {
+                tblHistorylog HL = DB.tblHistorylog.Where(x => x.Historylog_key == key).SingleOrDefault();
+                if (HL != null)
+                {
+                    return Content(HttpStatusCode.OK, HL.Historylog_value);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message + " \n" + e.InnerException);
+                return Content(HttpStatusCode.BadRequest, e.Message);
+            }
+
+        }
         [HttpGet]
         [Route("api/User/userDetails/{email}/{password}")]
         public IHttpActionResult userDetails(string email, string password)
